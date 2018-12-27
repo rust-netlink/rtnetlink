@@ -27,7 +27,10 @@ pub enum ErrorKind {
     #[fail(display = "Failed to parse an IP address: {:?}", _0)]
     InvalidIp(Vec<u8>),
 
-    #[fail(display = "Failed to parse a network address (IP and mask): {:?}/{:?}", _0, _1)]
+    #[fail(
+        display = "Failed to parse a network address (IP and mask): {:?}/{:?}",
+        _0, _1
+    )]
     InvalidAddress(Vec<u8>, Vec<u8>),
 }
 
