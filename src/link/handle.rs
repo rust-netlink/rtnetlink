@@ -1,12 +1,8 @@
 // SPDX-License-Identifier: MIT
 
 use super::{
-    LinkAddRequest,
-    LinkDelPropRequest,
-    LinkDelRequest,
-    LinkGetRequest,
-    LinkNewPropRequest,
-    LinkSetRequest,
+    LinkAddRequest, LinkDelPropRequest, LinkDelRequest, LinkGetRequest,
+    LinkNewPropRequest, LinkSetRequest,
 };
 use crate::Handle;
 

@@ -2,10 +2,10 @@
 use futures::StreamExt;
 
 use crate::{
-    packet::{NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST},
-    try_nl,
-    Error,
-    Handle,
+    packet::{
+        NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
+    },
+    try_nl, Error, Handle,
 };
 
 pub struct QDiscDelRequest {
@@ -25,7 +25,8 @@ impl QDiscDelRequest {
             message,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::DelQueueDiscipline(message));
+        let mut req =
+            NetlinkMessage::from(RtnlMessage::DelQueueDiscipline(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK;
 
         let mut response = handle.request(req)?;

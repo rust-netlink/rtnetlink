@@ -22,10 +22,19 @@ jobs:
             override: true
 
       - name: Test with default feature
+        env:
+          # Needed for the `link::test::create_get_delete_w` test to pass.
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER: "sudo -E"
         run: cargo test
 
       - name: Test with tokio feature
+        env:
+          # Needed for the `link::test::create_get_delete_w` test to pass.
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER: "sudo -E"
         run: cargo test --features tokio_socket
 
       - name: Test with smol_socket feature
+        env:
+          # Needed for the `link::test::create_get_delete_w` test to pass.
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER: "sudo -E"
         run: cargo test --features smol_socket

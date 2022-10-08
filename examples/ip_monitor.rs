@@ -20,15 +20,18 @@ const fn nl_mgrp(group: u32) -> u32 {
 }
 #[tokio::main]
 async fn main() -> Result<(), String> {
-    // conn - `Connection` that has a netlink socket which is a `Future` that polls the socket
-    // and thus must have an event loop
+    // conn - `Connection` that has a netlink socket which is a `Future` that
+    // polls the socket and thus must have an event loop
     //
-    // handle - `Handle` to the `Connection`. Used to send/recv netlink messages.
+    // handle - `Handle` to the `Connection`. Used to send/recv netlink
+    // messages.
     //
     // messages - A channel receiver.
-    let (mut conn, mut _handle, mut messages) = new_connection().map_err(|e| format!("{}", e))?;
+    let (mut conn, mut _handle, mut messages) =
+        new_connection().map_err(|e| format!("{}", e))?;
 
-    // These flags specify what kinds of broadcast messages we want to listen for.
+    // These flags specify what kinds of broadcast messages we want to listen
+    // for.
     let groups = nl_mgrp(RTNLGRP_LINK)
         | nl_mgrp(RTNLGRP_IPV4_IFADDR)
         | nl_mgrp(RTNLGRP_IPV6_IFADDR)
@@ -54,7 +57,8 @@ async fn main() -> Result<(), String> {
     // Spawn `Connection` to start polling netlink socket.
     tokio::spawn(conn);
 
-    // Use `Handle` to send request to kernel to start multicasting rtnetlink events.
+    // Use `Handle` to send request to kernel to start multicasting rtnetlink
+    // events.
     tokio::spawn(async move {
         // Create message to enable
     });

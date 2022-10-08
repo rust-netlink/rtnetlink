@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-use crate::{Handle, IpVersion, RuleAddRequest, RuleDelRequest, RuleGetRequest};
+use crate::{
+    Handle, IpVersion, RuleAddRequest, RuleDelRequest, RuleGetRequest,
+};
 use netlink_packet_route::RuleMessage;
 
 pub struct RuleHandle(Handle);

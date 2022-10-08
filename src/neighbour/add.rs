@@ -5,8 +5,7 @@ use futures::stream::StreamExt;
 use netlink_packet_route::{
     constants::*,
     neighbour::{NeighbourMessage, Nla},
-    NetlinkPayload,
-    RtnlMessage,
+    NetlinkPayload, RtnlMessage,
 };
 
 use netlink_proto::packet::NetlinkMessage;
@@ -99,7 +98,8 @@ impl NeighbourAddRequest {
         self
     }
 
-    /// Set the destination address for the neighbour (see `NDA_DST` for details).
+    /// Set the destination address for the neighbour (see `NDA_DST` for
+    /// details).
     pub fn destination(mut self, addr: IpAddr) -> Self {
         let dst = self.message.nlas.iter_mut().find_map(|nla| match nla {
             Nla::Destination(dst) => Some(dst),

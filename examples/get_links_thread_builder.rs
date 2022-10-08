@@ -8,8 +8,7 @@ use rtnetlink::{
         constants::{AF_BRIDGE, RTEXT_FILTER_BRVLAN},
         link::nlas::Nla,
     },
-    Error,
-    Handle,
+    Error, Handle,
 };
 
 async fn do_it(rt: &tokio::runtime::Runtime) -> Result<(), ()> {

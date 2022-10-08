@@ -5,16 +5,10 @@ use futures::stream::StreamExt;
 use crate::{
     packet::{
         tc::{constants::*, nlas},
-        NetlinkMessage,
-        RtnlMessage,
-        TcMessage,
-        NLM_F_ACK,
-        NLM_F_REQUEST,
+        NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
         TC_H_MAKE,
     },
-    try_nl,
-    Error,
-    Handle,
+    try_nl, Error, Handle,
 };
 
 pub struct QDiscNewRequest {
@@ -40,7 +34,8 @@ impl QDiscNewRequest {
             flags,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::NewQueueDiscipline(message));
+        let mut req =
+            NetlinkMessage::from(RtnlMessage::NewQueueDiscipline(message));
         req.header.flags = NLM_F_ACK | flags;
 
         let mut response = handle.request(req)?;
@@ -95,12 +90,9 @@ mod test {
         new_connection,
         packet::{
             rtnl::tc::nlas::Nla::{HwOffload, Kind},
-            LinkMessage,
-            AF_UNSPEC,
+            LinkMessage, AF_UNSPEC,
         },
-        NetworkNamespace,
-        NETNS_PATH,
-        SELF_NS_PATH,
+        NetworkNamespace, NETNS_PATH, SELF_NS_PATH,
     };
 
     const TEST_NS: &str = "netlink_test_qdisc_ns";
@@ -138,12 +130,13 @@ mod test {
             setns(self.last.as_raw_fd(), CloneFlags::CLONE_NEWNET).unwrap();
 
             let ns_path = Path::new(NETNS_PATH).join(&self.path);
-            nix::mount::umount2(&ns_path, nix::mount::MntFlags::MNT_DETACH).unwrap();
+            nix::mount::umount2(&ns_path, nix::mount::MntFlags::MNT_DETACH)
+                .unwrap();
             nix::unistd::unlink(&ns_path).unwrap();
             // _cur File will be closed auto
-            // Since there is no async drop, NetworkNamespace::del cannot be called
-            // here. Dummy interface will be deleted automatically after netns is
-            // deleted.
+            // Since there is no async drop, NetworkNamespace::del cannot be
+            // called here. Dummy interface will be deleted
+            // automatically after netns is deleted.
         }
     }
 

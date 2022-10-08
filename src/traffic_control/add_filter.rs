@@ -5,17 +5,10 @@ use futures::stream::StreamExt;
 use crate::{
     packet::{
         tc::{self, constants::*},
-        NetlinkMessage,
-        RtnlMessage,
-        TcMessage,
-        NLM_F_ACK,
-        NLM_F_REQUEST,
-        TCM_IFINDEX_MAGIC_BLOCK,
-        TC_H_MAKE,
+        NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
+        TCM_IFINDEX_MAGIC_BLOCK, TC_H_MAKE,
     },
-    try_nl,
-    Error,
-    Handle,
+    try_nl, Error, Handle,
 };
 
 pub struct TrafficFilterNewRequest {
@@ -41,7 +34,8 @@ impl TrafficFilterNewRequest {
             flags,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::NewTrafficFilter(message));
+        let mut req =
+            NetlinkMessage::from(RtnlMessage::NewTrafficFilter(message));
         req.header.flags = NLM_F_ACK | flags;
 
         let mut response = handle.request(req)?;
@@ -102,7 +96,8 @@ impl TrafficFilterNewRequest {
     /// Equivalent to `priority PRIO` or `pref PRIO`.
     pub fn priority(mut self, priority: u16) -> Self {
         assert_eq!(self.message.header.info & TC_H_MAJ_MASK, 0);
-        self.message.header.info = TC_H_MAKE!((priority as u32) << 16, self.message.header.info);
+        self.message.header.info =
+            TC_H_MAKE!((priority as u32) << 16, self.message.header.info);
         self
     }
 
@@ -111,7 +106,8 @@ impl TrafficFilterNewRequest {
     /// Default: ETH_P_ALL 0x0003, see llproto_names at iproute2/lib/ll_proto.c.
     pub fn protocol(mut self, protocol: u16) -> Self {
         assert_eq!(self.message.header.info & TC_H_MIN_MASK, 0);
-        self.message.header.info = TC_H_MAKE!(self.message.header.info, protocol as u32);
+        self.message.header.info =
+            TC_H_MAKE!(self.message.header.info, protocol as u32);
         self
     }
 
@@ -134,8 +130,9 @@ impl TrafficFilterNewRequest {
 
     /// Use u32 to implement traffic redirect.
     /// Equivalent to
-    /// `tc filter add [dev source] [parent ffff:] [protocol all] u32 match u8 0 0 action mirred egress redirect dev dest`
-    /// You need to set the `parent` and `protocol` before call redirect.
+    /// `tc filter add [dev source] [parent ffff:] [protocol all] u32 match u8 0
+    /// 0 action mirred egress redirect dev dest` You need to set the
+    /// `parent` and `protocol` before call redirect.
     pub fn redirect(self, dst_index: u32) -> Self {
         assert_eq!(self.message.nlas.len(), 0);
         let u32_nla = vec![
@@ -149,14 +146,14 @@ impl TrafficFilterNewRequest {
                 tab: TCA_ACT_TAB,
                 nlas: vec![
                     tc::ActNla::Kind(tc::mirred::KIND.to_string()),
-                    tc::ActNla::Options(vec![tc::ActOpt::Mirred(tc::mirred::Nla::Parms(
-                        tc::mirred::TcMirred {
+                    tc::ActNla::Options(vec![tc::ActOpt::Mirred(
+                        tc::mirred::Nla::Parms(tc::mirred::TcMirred {
                             action: TC_ACT_STOLEN,
                             eaction: TCA_EGRESS_REDIR,
                             ifindex: dst_index,
                             ..tc::mirred::TcMirred::default()
-                        },
-                    ))]),
+                        }),
+                    )]),
                 ],
             }]),
         ];
@@ -173,7 +170,10 @@ mod test {
     use tokio::runtime::Runtime;
 
     use super::*;
-    use crate::{new_connection, packet::LinkMessage, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
+    use crate::{
+        new_connection, packet::LinkMessage, NetworkNamespace, NETNS_PATH,
+        SELF_NS_PATH,
+    };
 
     const TEST_NS: &str = "netlink_test_filter_ns";
     const TEST_VETH_1: &str = "test_veth_1";
@@ -211,12 +211,13 @@ mod test {
             setns(self.last.as_raw_fd(), CloneFlags::CLONE_NEWNET).unwrap();
 
             let ns_path = Path::new(NETNS_PATH).join(&self.path);
-            nix::mount::umount2(&ns_path, nix::mount::MntFlags::MNT_DETACH).unwrap();
+            nix::mount::umount2(&ns_path, nix::mount::MntFlags::MNT_DETACH)
+                .unwrap();
             nix::unistd::unlink(&ns_path).unwrap();
             // _cur File will be closed auto
-            // Since there is no async drop, NetworkNamespace::del cannot be called
-            // here. Dummy interface will be deleted automatically after netns is
-            // deleted.
+            // Since there is no async drop, NetworkNamespace::del cannot be
+            // called here. Dummy interface will be deleted
+            // automatically after netns is deleted.
         }
     }
 

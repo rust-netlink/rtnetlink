@@ -7,10 +7,11 @@ use futures::{
 };
 
 use crate::{
-    packet::{tc::constants::*, NetlinkMessage, RtnlMessage, TcMessage, NLM_F_DUMP, NLM_F_REQUEST},
-    try_rtnl,
-    Error,
-    Handle,
+    packet::{
+        tc::constants::*, NetlinkMessage, RtnlMessage, TcMessage, NLM_F_DUMP,
+        NLM_F_REQUEST,
+    },
+    try_rtnl, Error, Handle,
 };
 
 pub struct QDiscGetRequest {
@@ -33,14 +34,17 @@ impl QDiscGetRequest {
             message,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::GetQueueDiscipline(message));
+        let mut req =
+            NetlinkMessage::from(RtnlMessage::GetQueueDiscipline(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
 
         match handle.request(req) {
-            Ok(response) => Either::Left(
-                response.map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewQueueDiscipline))),
-            ),
-            Err(e) => Either::Right(future::err::<TcMessage, Error>(e).into_stream()),
+            Ok(response) => Either::Left(response.map(move |msg| {
+                Ok(try_rtnl!(msg, RtnlMessage::NewQueueDiscipline))
+            })),
+            Err(e) => {
+                Either::Right(future::err::<TcMessage, Error>(e).into_stream())
+            }
         }
     }
 
@@ -76,14 +80,17 @@ impl TrafficClassGetRequest {
             message,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::GetTrafficClass(message));
+        let mut req =
+            NetlinkMessage::from(RtnlMessage::GetTrafficClass(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
 
         match handle.request(req) {
-            Ok(response) => Either::Left(
-                response.map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewTrafficClass))),
-            ),
-            Err(e) => Either::Right(future::err::<TcMessage, Error>(e).into_stream()),
+            Ok(response) => Either::Left(response.map(move |msg| {
+                Ok(try_rtnl!(msg, RtnlMessage::NewTrafficClass))
+            })),
+            Err(e) => {
+                Either::Right(future::err::<TcMessage, Error>(e).into_stream())
+            }
         }
     }
 }
@@ -107,14 +114,17 @@ impl TrafficFilterGetRequest {
             message,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::GetTrafficFilter(message));
+        let mut req =
+            NetlinkMessage::from(RtnlMessage::GetTrafficFilter(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
 
         match handle.request(req) {
-            Ok(response) => Either::Left(
-                response.map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewTrafficFilter))),
-            ),
-            Err(e) => Either::Right(future::err::<TcMessage, Error>(e).into_stream()),
+            Ok(response) => Either::Left(response.map(move |msg| {
+                Ok(try_rtnl!(msg, RtnlMessage::NewTrafficFilter))
+            })),
+            Err(e) => {
+                Either::Right(future::err::<TcMessage, Error>(e).into_stream())
+            }
         }
     }
 
@@ -145,14 +155,17 @@ impl TrafficChainGetRequest {
             message,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::GetTrafficChain(message));
+        let mut req =
+            NetlinkMessage::from(RtnlMessage::GetTrafficChain(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
 
         match handle.request(req) {
-            Ok(response) => Either::Left(
-                response.map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewTrafficChain))),
-            ),
-            Err(e) => Either::Right(future::err::<TcMessage, Error>(e).into_stream()),
+            Ok(response) => Either::Left(response.map(move |msg| {
+                Ok(try_rtnl!(msg, RtnlMessage::NewTrafficChain))
+            })),
+            Err(e) => {
+                Either::Right(future::err::<TcMessage, Error>(e).into_stream())
+            }
         }
     }
 }

@@ -9,8 +9,7 @@ use crate::{
         nlas::{Info, InfoKind, Nla},
         LinkMessage,
     },
-    Error,
-    LinkHandle,
+    Error, LinkHandle,
 };
 
 const IFACE_NAME: &str = "wg142"; // rand?

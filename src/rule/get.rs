@@ -7,7 +7,9 @@ use futures::{
     FutureExt,
 };
 
-use netlink_packet_route::{constants::*, NetlinkMessage, RtnlMessage, RuleMessage};
+use netlink_packet_route::{
+    constants::*, NetlinkMessage, RtnlMessage, RuleMessage,
+};
 
 use crate::{try_rtnl, Error, Handle};
 
@@ -44,10 +46,13 @@ impl RuleGetRequest {
         req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
 
         match handle.request(req) {
-            Ok(response) => {
-                Either::Left(response.map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewRule))))
-            }
-            Err(e) => Either::Right(future::err::<RuleMessage, Error>(e).into_stream()),
+            Ok(response) => Either::Left(
+                response
+                    .map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewRule))),
+            ),
+            Err(e) => Either::Right(
+                future::err::<RuleMessage, Error>(e).into_stream(),
+            ),
         }
     }
 }

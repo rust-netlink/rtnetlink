@@ -7,8 +7,7 @@ use rtnetlink::{
         rtnl::link::nlas::{Nla, Prop},
         LinkMessage,
     },
-    Error,
-    Handle,
+    Error, Handle,
 };
 use std::env;
 
@@ -22,26 +21,40 @@ async fn main() -> Result<(), ()> {
 
     let link_name = &args[1];
     let action = &args[2];
-    let alt_ifnames = &args[3..].iter().map(String::as_str).collect();
+    let alt_ifnames: Vec<&str> = args[3..].iter().map(String::as_str).collect();
 
     let (connection, handle, _) = new_connection().unwrap();
     tokio::spawn(connection);
 
     match action.as_str() {
         "add" => {
-            if let Err(e) = add_property_alt_ifnames(link_name, alt_ifnames, handle.clone()).await {
+            if let Err(e) = add_property_alt_ifnames(
+                link_name,
+                alt_ifnames.clone(),
+                handle.clone(),
+            )
+            .await
+            {
                 eprintln!("{}", e);
             }
         }
 
         "del" => {
-            if let Err(e) = del_property_alt_ifnames(link_name, alt_ifnames, handle.clone()).await {
+            if let Err(e) = del_property_alt_ifnames(
+                link_name,
+                alt_ifnames.clone(),
+                handle.clone(),
+            )
+            .await
+            {
                 eprintln!("{}", e);
             }
         }
 
         "show" => {
-            if let Err(e) = show_property_alt_ifnames(link_name, handle.clone()).await {
+            if let Err(e) =
+                show_property_alt_ifnames(link_name, handle.clone()).await
+            {
                 eprintln!("{}", e);
             }
         }
@@ -52,7 +65,10 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
-async fn show_property_alt_ifnames(link_name: &str, handle: Handle) -> Result<(), Error> {
+async fn show_property_alt_ifnames(
+    link_name: &str,
+    handle: Handle,
+) -> Result<(), Error> {
     for nla in get_link(link_name, handle).await?.nlas.into_iter() {
         if let Nla::PropList(ref prop_list) = nla {
             for prop in prop_list {
@@ -68,7 +84,7 @@ async fn show_property_alt_ifnames(link_name: &str, handle: Handle) -> Result<()
 
 async fn add_property_alt_ifnames(
     link_name: &str,
-    alt_ifnames: &Vec<&str>,
+    alt_ifnames: Vec<&str>,
     handle: Handle,
 ) -> Result<(), Error> {
     let link_index = get_link_index(link_name, handle.clone()).await?;
@@ -76,7 +92,7 @@ async fn add_property_alt_ifnames(
     handle
         .link()
         .property_add(link_index)
-        .alt_ifname(alt_ifnames)
+        .alt_ifname(&alt_ifnames)
         .execute()
         .await?;
 
@@ -85,7 +101,7 @@ async fn add_property_alt_ifnames(
 
 async fn del_property_alt_ifnames(
     link_name: &str,
-    alt_ifnames: &Vec<&str>,
+    alt_ifnames: Vec<&str>,
     handle: Handle,
 ) -> Result<(), Error> {
     let link_index = get_link_index(link_name, handle.clone()).await?;
@@ -93,14 +109,17 @@ async fn del_property_alt_ifnames(
     handle
         .link()
         .property_del(link_index)
-        .alt_ifname(alt_ifnames)
+        .alt_ifname(&alt_ifnames)
         .execute()
         .await?;
 
     Ok(())
 }
 
-async fn get_link(link_name: &str, handle: Handle) -> Result<LinkMessage, Error> {
+async fn get_link(
+    link_name: &str,
+    handle: Handle,
+) -> Result<LinkMessage, Error> {
     let mut links = handle
         .link()
         .get()
