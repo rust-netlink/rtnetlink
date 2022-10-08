@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-//! This example opens a netlink socket, registers for IPv4 and IPv6 routing changes, listens for
-//! said changes and prints the received messages.
+//! This example opens a netlink socket, registers for IPv4 and IPv6 routing
+//! changes, listens for said changes and prints the received messages.
 
 use futures::stream::StreamExt;
 
@@ -14,14 +14,17 @@ use rtnetlink::{
 #[tokio::main]
 async fn main() -> Result<(), String> {
     // Open the netlink socket
-    let (mut connection, _, mut messages) = new_connection().map_err(|e| format!("{}", e))?;
+    let (mut connection, _, mut messages) =
+        new_connection().map_err(|e| format!("{}", e))?;
 
-    // These flags specify what kinds of broadcast messages we want to listen for.
+    // These flags specify what kinds of broadcast messages we want to listen
+    // for.
     let mgroup_flags = RTMGRP_IPV4_ROUTE | RTMGRP_IPV6_ROUTE;
 
     // A netlink socket address is created with said flags.
     let addr = SocketAddr::new(0, mgroup_flags);
-    // Said address is bound so new conenctions and thus new message broadcasts can be received.
+    // Said address is bound so new conenctions and thus new message broadcasts
+    // can be received.
     connection
         .socket_mut()
         .socket_mut()

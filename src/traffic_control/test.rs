@@ -9,9 +9,7 @@ use crate::{
     new_connection,
     packet::{
         rtnl::tc::nlas::Nla::{Chain, HwOffload, Kind},
-        ErrorMessage,
-        TcMessage,
-        AF_UNSPEC,
+        ErrorMessage, TcMessage, AF_UNSPEC,
     },
     Error::NetlinkError,
 };
@@ -56,7 +54,7 @@ async fn _get_tclasses(ifindex: i32) -> Vec<TcMessage> {
 // Return 0 for not found
 fn _get_test_dummy_interface_index() -> i32 {
     let output = Command::new("ip")
-        .args(&["-o", "link", "show", TEST_DUMMY_NIC])
+        .args(["-o", "link", "show", TEST_DUMMY_NIC])
         .output()
         .expect("failed to run ip command");
     if !output.status.success() {
@@ -70,7 +68,7 @@ fn _get_test_dummy_interface_index() -> i32 {
 fn _add_test_dummy_interface() -> i32 {
     if _get_test_dummy_interface_index() == 0 {
         let output = Command::new("ip")
-            .args(&["link", "add", TEST_DUMMY_NIC, "type", "dummy"])
+            .args(["link", "add", TEST_DUMMY_NIC, "type", "dummy"])
             .output()
             .expect("failed to run ip command");
         if !output.status.success() {
@@ -87,7 +85,7 @@ fn _add_test_dummy_interface() -> i32 {
 
 fn _remove_test_dummy_interface() {
     let output = Command::new("ip")
-        .args(&["link", "del", TEST_DUMMY_NIC])
+        .args(["link", "del", TEST_DUMMY_NIC])
         .output()
         .expect("failed to run ip command");
     if !output.status.success() {
@@ -101,7 +99,7 @@ fn _remove_test_dummy_interface() {
 
 fn _add_test_tclass_to_dummy() {
     let output = Command::new("tc")
-        .args(&[
+        .args([
             "qdisc",
             "add",
             "dev",
@@ -123,7 +121,7 @@ fn _add_test_tclass_to_dummy() {
     }
     assert!(output.status.success());
     let output = Command::new("tc")
-        .args(&[
+        .args([
             "class",
             "add",
             "dev",
@@ -151,7 +149,7 @@ fn _add_test_tclass_to_dummy() {
 
 fn _add_test_filter_to_dummy() {
     let output = Command::new("tc")
-        .args(&[
+        .args([
             "filter",
             "add",
             "dev",
@@ -174,7 +172,7 @@ fn _add_test_filter_to_dummy() {
 
 fn _remove_test_tclass_from_dummy() {
     Command::new("tc")
-        .args(&[
+        .args([
             "class",
             "del",
             "dev",
@@ -192,7 +190,7 @@ fn _remove_test_tclass_from_dummy() {
             )
         });
     Command::new("tc")
-        .args(&["qdisc", "del", "dev", TEST_DUMMY_NIC, "root"])
+        .args(["qdisc", "del", "dev", TEST_DUMMY_NIC, "root"])
         .status()
         .unwrap_or_else(|_| {
             panic!(
@@ -204,7 +202,7 @@ fn _remove_test_tclass_from_dummy() {
 
 fn _remove_test_filter_from_dummy() {
     Command::new("tc")
-        .args(&["filter", "del", "dev", TEST_DUMMY_NIC])
+        .args(["filter", "del", "dev", TEST_DUMMY_NIC])
         .status()
         .unwrap_or_else(|_| {
             panic!(

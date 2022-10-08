@@ -27,7 +27,11 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
-async fn add_neighbour(link_name: &str, ip: IpAddr, handle: Handle) -> Result<(), Error> {
+async fn add_neighbour(
+    link_name: &str,
+    ip: IpAddr,
+    handle: Handle,
+) -> Result<(), Error> {
     let mut links = handle
         .link()
         .get()

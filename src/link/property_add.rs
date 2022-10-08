@@ -3,18 +3,10 @@
 use crate::{
     packet::{
         nlas::link::{Nla, Prop},
-        LinkMessage,
-        NetlinkMessage,
-        NetlinkPayload,
-        RtnlMessage,
-        NLM_F_ACK,
-        NLM_F_APPEND,
-        NLM_F_CREATE,
-        NLM_F_EXCL,
-        NLM_F_REQUEST,
+        LinkMessage, NetlinkMessage, NetlinkPayload, RtnlMessage, NLM_F_ACK,
+        NLM_F_APPEND, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REQUEST,
     },
-    Error,
-    Handle,
+    Error, Handle,
 };
 use futures::stream::StreamExt;
 
@@ -37,7 +29,11 @@ impl LinkNewPropRequest {
             message,
         } = self;
         let mut req = NetlinkMessage::from(RtnlMessage::NewLinkProp(message));
-        req.header.flags = NLM_F_REQUEST | NLM_F_ACK | NLM_F_EXCL | NLM_F_CREATE | NLM_F_APPEND;
+        req.header.flags = NLM_F_REQUEST
+            | NLM_F_ACK
+            | NLM_F_EXCL
+            | NLM_F_CREATE
+            | NLM_F_APPEND;
 
         let mut response = handle.request(req)?;
         while let Some(message) = response.next().await {
@@ -53,8 +49,8 @@ impl LinkNewPropRequest {
         &mut self.message
     }
 
-    /// Add alternative name to the link. This is equivalent to `ip link property add altname
-    /// ALT_IFNAME dev LINK`.
+    /// Add alternative name to the link. This is equivalent to `ip link
+    /// property add altname ALT_IFNAME dev LINK`.
     pub fn alt_ifname(mut self, alt_ifnames: &[&str]) -> Self {
         let mut props = Vec::new();
         for alt_ifname in alt_ifnames {

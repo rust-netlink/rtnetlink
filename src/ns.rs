@@ -63,7 +63,9 @@ impl NetworkNamespace {
         NetworkNamespace::prep_for_fork()?;
         log::trace!("Forking...");
         match unsafe { fork() } {
-            Ok(ForkResult::Parent { child, .. }) => NetworkNamespace::parent_process(child),
+            Ok(ForkResult::Parent { child, .. }) => {
+                NetworkNamespace::parent_process(child)
+            }
             Ok(ForkResult::Child) => {
                 NetworkNamespace::child_process(ns_name);
             }
@@ -83,14 +85,19 @@ impl NetworkNamespace {
             netns_path.push_str(&ns_name);
             let ns_path = Path::new(&netns_path);
 
-            if nix::mount::umount2(ns_path, nix::mount::MntFlags::MNT_DETACH).is_err() {
-                let err_msg = String::from("Namespace unmount failed (are you running as root?)");
+            if nix::mount::umount2(ns_path, nix::mount::MntFlags::MNT_DETACH)
+                .is_err()
+            {
+                let err_msg = String::from(
+                    "Namespace unmount failed (are you running as root?)",
+                );
                 return Err(Error::NamespaceError(err_msg));
             }
 
             if nix::unistd::unlink(ns_path).is_err() {
-                let err_msg =
-                    String::from("Namespace file remove failed (are you running as root?)");
+                let err_msg = String::from(
+                    "Namespace file remove failed (are you running as root?)",
+                );
                 return Err(Error::NamespaceError(err_msg));
             }
 
@@ -144,7 +151,8 @@ impl NetworkNamespace {
 
     fn child_process(ns_name: String) -> ! {
         let res = std::panic::catch_unwind(|| -> Result<(), Error> {
-            let netns_path = NetworkNamespace::child_process_create_ns(ns_name)?;
+            let netns_path =
+                NetworkNamespace::child_process_create_ns(ns_name)?;
             NetworkNamespace::unshare_processing(netns_path)?;
             Ok(())
         });
@@ -292,7 +300,11 @@ impl NetworkNamespace {
         open_flags.insert(OFlag::O_RDONLY);
         open_flags.insert(OFlag::O_CLOEXEC);
 
-        let fd = match nix::fcntl::open(Path::new(&SELF_NS_PATH), open_flags, Mode::empty()) {
+        let fd = match nix::fcntl::open(
+            Path::new(&SELF_NS_PATH),
+            open_flags,
+            Mode::empty(),
+        ) {
             Ok(raw_fd) => raw_fd,
             Err(e) => {
                 log::error!("open error: {}", e);

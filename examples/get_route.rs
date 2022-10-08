@@ -23,7 +23,10 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
-async fn dump_addresses(handle: Handle, ip_version: IpVersion) -> Result<(), Error> {
+async fn dump_addresses(
+    handle: Handle,
+    ip_version: IpVersion,
+) -> Result<(), Error> {
     let mut routes = handle.route().get(ip_version).execute();
     while let Some(route) = routes.try_next().await? {
         println!("{:?}", route);

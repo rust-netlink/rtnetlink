@@ -3,10 +3,7 @@
 use futures::stream::StreamExt;
 
 use netlink_packet_route::{
-    constants::*,
-    neighbour::NeighbourMessage,
-    NetlinkPayload,
-    RtnlMessage,
+    constants::*, neighbour::NeighbourMessage, NetlinkPayload, RtnlMessage,
 };
 
 use netlink_proto::packet::NetlinkMessage;

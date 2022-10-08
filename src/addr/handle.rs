@@ -20,7 +20,12 @@ impl AddressHandle {
     }
 
     /// Add an ip address on an interface (equivalent to `ip addr add`)
-    pub fn add(&self, index: u32, address: IpAddr, prefix_len: u8) -> AddressAddRequest {
+    pub fn add(
+        &self,
+        index: u32,
+        address: IpAddr,
+        prefix_len: u8,
+    ) -> AddressAddRequest {
         AddressAddRequest::new(self.0.clone(), index, address, prefix_len)
     }
 

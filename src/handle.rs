@@ -4,15 +4,8 @@ use futures::Stream;
 
 use crate::{
     packet::{NetlinkMessage, RtnlMessage},
-    AddressHandle,
-    Error,
-    LinkHandle,
-    NeighbourHandle,
-    QDiscHandle,
-    RouteHandle,
-    RuleHandle,
-    TrafficChainHandle,
-    TrafficClassHandle,
+    AddressHandle, Error, LinkHandle, NeighbourHandle, QDiscHandle,
+    RouteHandle, RuleHandle, TrafficChainHandle, TrafficClassHandle,
     TrafficFilterHandle,
 };
 use netlink_proto::{sys::SocketAddr, ConnectionHandle};
@@ -34,34 +27,42 @@ impl Handle {
             .map_err(|_| Error::RequestFailed)
     }
 
-    pub fn notify(&mut self, msg: NetlinkMessage<RtnlMessage>) -> Result<(), Error> {
+    pub fn notify(
+        &mut self,
+        msg: NetlinkMessage<RtnlMessage>,
+    ) -> Result<(), Error> {
         self.0
             .notify(msg, SocketAddr::new(0, 0))
             .map_err(|_| Error::RequestFailed)?;
         Ok(())
     }
 
-    /// Create a new handle, specifically for link requests (equivalent to `ip link` commands)
+    /// Create a new handle, specifically for link requests (equivalent to `ip
+    /// link` commands)
     pub fn link(&self) -> LinkHandle {
         LinkHandle::new(self.clone())
     }
 
-    /// Create a new handle, specifically for address requests (equivalent to `ip addr` commands)
+    /// Create a new handle, specifically for address requests (equivalent to
+    /// `ip addr` commands)
     pub fn address(&self) -> AddressHandle {
         AddressHandle::new(self.clone())
     }
 
-    /// Create a new handle, specifically for routing table requests (equivalent to `ip route` commands)
+    /// Create a new handle, specifically for routing table requests (equivalent
+    /// to `ip route` commands)
     pub fn route(&self) -> RouteHandle {
         RouteHandle::new(self.clone())
     }
 
-    /// Create a new handle, specifically for routing rule requests (equivalent to `ip rule` commands)
+    /// Create a new handle, specifically for routing rule requests (equivalent
+    /// to `ip rule` commands)
     pub fn rule(&self) -> RuleHandle {
         RuleHandle::new(self.clone())
     }
 
-    /// Create a new handle, specifically for routing neighbours requests (equivalent to `ip neighbour` commands)
+    /// Create a new handle, specifically for routing neighbours requests
+    /// (equivalent to `ip neighbour` commands)
     pub fn neighbours(&self) -> NeighbourHandle {
         NeighbourHandle::new(self.clone())
     }

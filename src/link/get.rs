@@ -7,10 +7,10 @@ use futures::{
 };
 
 use crate::{
-    packet::{constants::*, nlas::link::Nla, LinkMessage, NetlinkMessage, RtnlMessage},
-    try_rtnl,
-    Error,
-    Handle,
+    packet::{
+        constants::*, nlas::link::Nla, LinkMessage, NetlinkMessage, RtnlMessage,
+    },
+    try_rtnl, Error, Handle,
 };
 
 pub struct LinkGetRequest {
@@ -58,10 +58,13 @@ impl LinkGetRequest {
         }
 
         match handle.request(req) {
-            Ok(response) => {
-                Either::Left(response.map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewLink))))
-            }
-            Err(e) => Either::Right(future::err::<LinkMessage, Error>(e).into_stream()),
+            Ok(response) => Either::Left(
+                response
+                    .map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewLink))),
+            ),
+            Err(e) => Either::Right(
+                future::err::<LinkMessage, Error>(e).into_stream(),
+            ),
         }
     }
 

@@ -7,10 +7,7 @@ use futures::{
 };
 
 use netlink_packet_route::{
-    constants::*,
-    neighbour::NeighbourMessage,
-    NetlinkPayload,
-    RtnlMessage,
+    constants::*, neighbour::NeighbourMessage, NetlinkPayload, RtnlMessage,
 };
 
 use netlink_proto::packet::NetlinkMessage;
@@ -28,7 +25,8 @@ impl NeighbourGetRequest {
         NeighbourGetRequest { handle, message }
     }
 
-    /// List neighbor proxies in the system (equivalent to: `ip neighbor show proxy`).
+    /// List neighbor proxies in the system (equivalent to: `ip neighbor show
+    /// proxy`).
     pub fn proxies(mut self) -> Self {
         self.message.header.flags |= NTF_PROXY;
         self
@@ -40,7 +38,9 @@ impl NeighbourGetRequest {
     }
 
     /// Execute the request
-    pub fn execute(self) -> impl TryStream<Ok = NeighbourMessage, Error = Error> {
+    pub fn execute(
+        self,
+    ) -> impl TryStream<Ok = NeighbourMessage, Error = Error> {
         let NeighbourGetRequest {
             mut handle,
             message,
@@ -53,14 +53,18 @@ impl NeighbourGetRequest {
             Ok(response) => Either::Left(response.map(move |msg| {
                 let (header, payload) = msg.into_parts();
                 match payload {
-                    NetlinkPayload::InnerMessage(RtnlMessage::NewNeighbour(msg)) => Ok(msg),
+                    NetlinkPayload::InnerMessage(
+                        RtnlMessage::NewNeighbour(msg),
+                    ) => Ok(msg),
                     NetlinkPayload::Error(err) => Err(Error::NetlinkError(err)),
                     _ => Err(Error::UnexpectedMessage(NetlinkMessage::new(
                         header, payload,
                     ))),
                 }
             })),
-            Err(e) => Either::Right(future::err::<NeighbourMessage, Error>(e).into_stream()),
+            Err(e) => Either::Right(
+                future::err::<NeighbourMessage, Error>(e).into_stream(),
+            ),
         }
     }
 

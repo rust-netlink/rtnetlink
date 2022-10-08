@@ -29,7 +29,11 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
-async fn add_address(link_name: &str, ip: IpNetwork, handle: Handle) -> Result<(), Error> {
+async fn add_address(
+    link_name: &str,
+    ip: IpNetwork,
+    handle: Handle,
+) -> Result<(), Error> {
     let mut links = handle
         .link()
         .get()

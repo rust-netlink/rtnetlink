@@ -31,7 +31,11 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
-async fn add_route(dest: &Ipv4Network, gateway: &Ipv4Network, handle: Handle) -> Result<(), Error> {
+async fn add_route(
+    dest: &Ipv4Network,
+    gateway: &Ipv4Network,
+    handle: Handle,
+) -> Result<(), Error> {
     let route = handle.route();
     route
         .add()

@@ -16,7 +16,10 @@ async fn main() -> Result<(), String> {
         .updelay(100)
         .downdelay(100)
         .min_links(2)
-        .arp_ip_target(vec![Ipv4Addr::new(6, 6, 7, 7), Ipv4Addr::new(8, 8, 9, 10)])
+        .arp_ip_target(vec![
+            Ipv4Addr::new(6, 6, 7, 7),
+            Ipv4Addr::new(8, 8, 9, 10),
+        ])
         .ns_ip6_target(vec![
             Ipv6Addr::new(0xfd01, 0, 0, 0, 0, 0, 0, 1),
             Ipv6Addr::new(0xfd02, 0, 0, 0, 0, 0, 0, 2),

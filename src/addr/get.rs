@@ -8,12 +8,8 @@ use futures::{
 use std::net::IpAddr;
 
 use netlink_packet_route::{
-    nlas::address::Nla,
-    AddressMessage,
-    NetlinkMessage,
-    RtnlMessage,
-    NLM_F_DUMP,
-    NLM_F_REQUEST,
+    nlas::address::Nla, AddressMessage, NetlinkMessage, RtnlMessage,
+    NLM_F_DUMP, NLM_F_REQUEST,
 };
 
 use crate::{try_rtnl, Error, Handle};
@@ -54,7 +50,9 @@ impl AddressGetRequest {
                     .map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewAddress)))
                     .try_filter(move |msg| future::ready(filter(msg))),
             ),
-            Err(e) => Either::Right(future::err::<AddressMessage, Error>(e).into_stream()),
+            Err(e) => Either::Right(
+                future::err::<AddressMessage, Error>(e).into_stream(),
+            ),
         }
     }
 
@@ -113,10 +111,16 @@ impl AddressFilterBuilder {
 
             if let Some(address) = self.address {
                 for nla in msg.nlas.iter() {
-                    if let Unspec(x) | Address(x) | Local(x) | Multicast(x) | Anycast(x) = nla {
+                    if let Unspec(x) | Address(x) | Local(x) | Multicast(x)
+                    | Anycast(x) = nla
+                    {
                         let is_match = match address {
-                            IpAddr::V4(address) => x[..] == address.octets()[..],
-                            IpAddr::V6(address) => x[..] == address.octets()[..],
+                            IpAddr::V4(address) => {
+                                x[..] == address.octets()[..]
+                            }
+                            IpAddr::V6(address) => {
+                                x[..] == address.octets()[..]
+                            }
                         };
                         if is_match {
                             return true;

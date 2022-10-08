@@ -3,16 +3,10 @@
 use crate::{
     packet::{
         nlas::link::{Nla, Prop},
-        LinkMessage,
-        NetlinkMessage,
-        NetlinkPayload,
-        RtnlMessage,
-        NLM_F_ACK,
-        NLM_F_EXCL,
-        NLM_F_REQUEST,
+        LinkMessage, NetlinkMessage, NetlinkPayload, RtnlMessage, NLM_F_ACK,
+        NLM_F_EXCL, NLM_F_REQUEST,
     },
-    Error,
-    Handle,
+    Error, Handle,
 };
 use futures::stream::StreamExt;
 
@@ -51,8 +45,8 @@ impl LinkDelPropRequest {
         &mut self.message
     }
 
-    /// Remove alternative name to the link. This is equivalent to `ip link property del altname
-    /// ALT_IFNAME dev LINK`.
+    /// Remove alternative name to the link. This is equivalent to `ip link
+    /// property del altname ALT_IFNAME dev LINK`.
     pub fn alt_ifname(mut self, alt_ifnames: &[&str]) -> Self {
         let mut props = Vec::new();
         for alt_ifname in alt_ifnames {

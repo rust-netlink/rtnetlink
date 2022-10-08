@@ -7,16 +7,13 @@ use std::{
 };
 
 use netlink_packet_route::{
-    constants::*,
-    nlas::route::Nla,
-    NetlinkMessage,
-    RouteMessage,
-    RtnlMessage,
+    constants::*, nlas::route::Nla, NetlinkMessage, RouteMessage, RtnlMessage,
 };
 
 use crate::{try_nl, Error, Handle};
 
-/// A request to create a new route. This is equivalent to the `ip route add` commands.
+/// A request to create a new route. This is equivalent to the `ip route add`
+/// commands.
 pub struct RouteAddRequest<T = ()> {
     handle: Handle,
     message: RouteMessage,
@@ -157,7 +154,11 @@ impl RouteAddRequest<Ipv4Addr> {
     }
 
     /// Sets the destination address prefix.
-    pub fn destination_prefix(mut self, addr: Ipv4Addr, prefix_length: u8) -> Self {
+    pub fn destination_prefix(
+        mut self,
+        addr: Ipv4Addr,
+        prefix_length: u8,
+    ) -> Self {
         self.message.header.destination_prefix_length = prefix_length;
         let dst = addr.octets().to_vec();
         self.message.nlas.push(Nla::Destination(dst));
@@ -189,7 +190,11 @@ impl RouteAddRequest<Ipv6Addr> {
     }
 
     /// Sets the destination address prefix.
-    pub fn destination_prefix(mut self, addr: Ipv6Addr, prefix_length: u8) -> Self {
+    pub fn destination_prefix(
+        mut self,
+        addr: Ipv6Addr,
+        prefix_length: u8,
+    ) -> Self {
         self.message.header.destination_prefix_length = prefix_length;
         let dst = addr.octets().to_vec();
         self.message.nlas.push(Nla::Destination(dst));
