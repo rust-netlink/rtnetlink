@@ -3,6 +3,7 @@
 use futures::stream::StreamExt;
 
 use netlink_packet_route::constants::*;
+use netlink_proto::packet::NetlinkEvent;
 use rtnetlink::{
     new_connection,
     sys::{AsyncSocket, SocketAddr},
@@ -26,8 +27,8 @@ async fn main() -> Result<(), String> {
     // handle - `Handle` to the `Connection`. Used to send/recv netlink
     // messages.
     //
-    // messages - A channel receiver.
-    let (mut conn, mut _handle, mut messages) =
+    // events - A channel receiver.
+    let (mut conn, mut _handle, mut events) =
         new_connection().map_err(|e| format!("{}", e))?;
 
     // These flags specify what kinds of broadcast messages we want to listen
@@ -63,10 +64,17 @@ async fn main() -> Result<(), String> {
         // Create message to enable
     });
 
-    // Start receiving events through `messages` channel.
-    while let Some((message, _)) = messages.next().await {
-        let payload = message.payload;
-        println!("{:?}", payload);
+    // Start receiving events through `events` channel.
+    while let Some(event) = events.next().await {
+        match event {
+            NetlinkEvent::Message((message, _)) => {
+                let payload = message.payload;
+                println!("Route change message - {:?}", payload);
+            }
+            NetlinkEvent::Overrun => {
+                println!("Netlink socket overrun. Some messages were lost");
+            }
+        }
     }
     Ok(())
 }
