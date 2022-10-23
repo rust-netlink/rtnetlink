@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-
-use crate::{
-    packet::{
-        tc::{self, constants::*},
-        NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
-        TCM_IFINDEX_MAGIC_BLOCK, TC_H_MAKE,
-    },
-    try_nl, Error, Handle,
+use netlink_packet_route::{
+    tc::{self, constants::*},
+    NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
+    TCM_IFINDEX_MAGIC_BLOCK, TC_H_MAKE,
 };
+
+use crate::{try_nl, Error, Handle};
 
 pub struct TrafficFilterNewRequest {
     handle: Handle,
@@ -166,14 +164,12 @@ mod test {
     use std::{fs::File, os::unix::io::AsRawFd, path::Path};
 
     use futures::stream::TryStreamExt;
+    use netlink_packet_route::LinkMessage;
     use nix::sched::{setns, CloneFlags};
     use tokio::runtime::Runtime;
 
     use super::*;
-    use crate::{
-        new_connection, packet::LinkMessage, NetworkNamespace, NETNS_PATH,
-        SELF_NS_PATH,
-    };
+    use crate::{new_connection, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
 
     const TEST_NS: &str = "netlink_test_filter_ns";
     const TEST_VETH_1: &str = "test_veth_1";

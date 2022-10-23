@@ -2,13 +2,14 @@
 
 use futures::Stream;
 
+use netlink_packet_route::{NetlinkMessage, RtnlMessage};
+use netlink_proto::{sys::SocketAddr, ConnectionHandle};
+
 use crate::{
-    packet::{NetlinkMessage, RtnlMessage},
     AddressHandle, Error, LinkHandle, NeighbourHandle, QDiscHandle,
     RouteHandle, RuleHandle, TrafficChainHandle, TrafficClassHandle,
     TrafficFilterHandle,
 };
-use netlink_proto::{sys::SocketAddr, ConnectionHandle};
 
 #[derive(Clone, Debug)]
 pub struct Handle(ConnectionHandle<RtnlMessage>);

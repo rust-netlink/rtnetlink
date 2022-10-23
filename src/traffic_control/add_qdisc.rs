@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-
-use crate::{
-    packet::{
-        tc::{constants::*, nlas},
-        NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
-        TC_H_MAKE,
-    },
-    try_nl, Error, Handle,
+use netlink_packet_route::{
+    tc::{constants::*, nlas},
+    NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
+    TC_H_MAKE,
 };
+
+use crate::{try_nl, Error, Handle};
 
 pub struct QDiscNewRequest {
     handle: Handle,
@@ -82,18 +80,15 @@ mod test {
     use std::{fs::File, os::unix::io::AsRawFd, path::Path};
 
     use futures::stream::TryStreamExt;
+    use netlink_packet_route::{
+        rtnl::tc::nlas::Nla::{HwOffload, Kind},
+        LinkMessage, AF_UNSPEC,
+    };
     use nix::sched::{setns, CloneFlags};
     use tokio::runtime::Runtime;
 
     use super::*;
-    use crate::{
-        new_connection,
-        packet::{
-            rtnl::tc::nlas::Nla::{HwOffload, Kind},
-            LinkMessage, AF_UNSPEC,
-        },
-        NetworkNamespace, NETNS_PATH, SELF_NS_PATH,
-    };
+    use crate::{new_connection, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
 
     const TEST_NS: &str = "netlink_test_qdisc_ns";
     const TEST_DUMMY: &str = "test_dummy";

@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
-use rtnetlink::{
-    new_connection,
-    packet::{
-        rtnl::link::nlas::{Nla, Prop},
-        LinkMessage,
-    },
-    Error, Handle,
+use netlink_packet_route::{
+    rtnl::link::nlas::{Nla, Prop},
+    LinkMessage,
 };
+use rtnetlink::{new_connection, Error, Handle};
 use std::env;
 
 #[tokio::main]

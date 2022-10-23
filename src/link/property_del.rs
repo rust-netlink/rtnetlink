@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-use crate::{
-    packet::{
-        nlas::link::{Nla, Prop},
-        LinkMessage, NetlinkMessage, NetlinkPayload, RtnlMessage, NLM_F_ACK,
-        NLM_F_EXCL, NLM_F_REQUEST,
-    },
-    Error, Handle,
-};
 use futures::stream::StreamExt;
+use netlink_packet_route::{
+    nlas::link::{Nla, Prop},
+    LinkMessage, NetlinkMessage, NetlinkPayload, RtnlMessage, NLM_F_ACK,
+    NLM_F_EXCL, NLM_F_REQUEST,
+};
+
+use crate::{Error, Handle};
 
 pub struct LinkDelPropRequest {
     handle: Handle,

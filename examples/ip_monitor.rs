@@ -3,10 +3,8 @@
 use futures::stream::StreamExt;
 
 use netlink_packet_route::constants::*;
-use rtnetlink::{
-    new_connection,
-    sys::{AsyncSocket, SocketAddr},
-};
+use netlink_proto::sys::{AsyncSocket, SocketAddr};
+use rtnetlink::new_connection;
 
 const fn nl_mgrp(group: u32) -> u32 {
     if group > 31 {

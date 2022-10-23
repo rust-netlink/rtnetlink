@@ -2,7 +2,7 @@
 
 use thiserror::Error;
 
-use crate::packet::{ErrorMessage, NetlinkMessage, RtnlMessage};
+use netlink_packet_route::{ErrorMessage, NetlinkMessage, RtnlMessage};
 
 #[derive(Clone, Eq, PartialEq, Debug, Error)]
 pub enum Error {

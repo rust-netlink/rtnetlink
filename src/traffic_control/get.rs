@@ -5,14 +5,12 @@ use futures::{
     stream::{StreamExt, TryStream},
     FutureExt,
 };
-
-use crate::{
-    packet::{
-        tc::constants::*, NetlinkMessage, RtnlMessage, TcMessage, NLM_F_DUMP,
-        NLM_F_REQUEST,
-    },
-    try_rtnl, Error, Handle,
+use netlink_packet_route::{
+    tc::constants::*, NetlinkMessage, RtnlMessage, TcMessage, NLM_F_DUMP,
+    NLM_F_REQUEST,
 };
+
+use crate::{try_rtnl, Error, Handle};
 
 pub struct QDiscGetRequest {
     handle: Handle,

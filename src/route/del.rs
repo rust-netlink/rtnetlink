@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-
-use crate::{
-    packet::{
-        NetlinkMessage, NetlinkPayload, RouteMessage, RtnlMessage, NLM_F_ACK,
-        NLM_F_REQUEST,
-    },
-    Error, Handle,
+use netlink_packet_route::{
+    NetlinkMessage, NetlinkPayload, RouteMessage, RtnlMessage, NLM_F_ACK,
+    NLM_F_REQUEST,
 };
+
+use crate::{Error, Handle};
 
 pub struct RouteDelRequest {
     handle: Handle,
