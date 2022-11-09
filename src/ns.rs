@@ -1,16 +1,20 @@
 // SPDX-License-Identifier: MIT
 
 use crate::Error;
+use anyhow::Context;
 use nix::{
     fcntl::OFlag,
-    sched::CloneFlags,
+    sched::{setns, CloneFlags},
     sys::{
         stat::Mode,
         wait::{waitpid, WaitStatus},
     },
-    unistd::{fork, ForkResult},
+    unistd::{fork, getpid, gettid, ForkResult},
 };
-use std::{option::Option, path::Path, process::exit};
+use std::{
+    fs::File, option::Option, os::unix::io::AsRawFd, path::Path, process::exit,
+    marker::PhantomData,
+};
 
 // if "only" smol or smol+tokio were enabled, we use smol because
 // it doesn't require an active tokio runtime - just to be sure.
@@ -338,5 +342,59 @@ impl NetworkNamespace {
         }
 
         Ok(())
+    }
+}
+
+// the netns guard cannot be sent between threads
+type PhantomUnsend = PhantomData<*mut ()>;
+
+/// RAII network namespace guard
+pub struct NetnsGuard {
+    old_netns: Option<File>,
+    _unsend_phantom: PhantomUnsend,
+}
+
+impl NetnsGuard {
+    /// Attach this thread to the new network namespace
+    pub fn new(new_netns_path: &str) -> anyhow::Result<Self> {
+        let old_netns = if !new_netns_path.is_empty() {
+            let current_netns_path =
+                format!("/proc/{}/task/{}/ns/{}", getpid(), gettid(), "net");
+
+            let old_netns =
+                File::open(&current_netns_path).with_context(|| {
+                    format!(
+                        "failed when open current_netns_path {}",
+                        &current_netns_path
+                    )
+                })?;
+
+            let new_netns = File::open(&new_netns_path).with_context(|| {
+                format!("failed when open new netns path {}", &new_netns_path)
+            })?;
+
+            // associate this thread to new network namespace
+            setns(new_netns.as_raw_fd(), CloneFlags::CLONE_NEWNET)
+                .with_context(|| "failed to set netns")?;
+
+            Some(old_netns)
+        } else {
+            None
+        };
+
+        Ok(Self {
+            old_netns , 
+            _unsend_phantom: PhantomData,
+        })
+    }
+}
+
+/// Attach this thread to the old network namespace
+impl Drop for NetnsGuard {
+    fn drop(&mut self) {
+        if let Some(old_netns) = self.old_netns.as_ref() {
+            let old_netns_fd = old_netns.as_raw_fd();
+            setns(old_netns_fd, CloneFlags::CLONE_NEWNET).unwrap();
+        }
     }
 }
