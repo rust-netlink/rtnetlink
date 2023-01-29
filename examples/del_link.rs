@@ -16,7 +16,7 @@ async fn main() -> Result<(), ()> {
     tokio::spawn(connection);
 
     if let Err(e) = del_link(handle, link_name.to_string()).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
 
     Ok(())
@@ -27,7 +27,7 @@ async fn del_link(handle: Handle, name: String) -> Result<(), Error> {
     if let Some(link) = links.try_next().await? {
         handle.link().del(link.header.index).execute().await
     } else {
-        eprintln!("link {} not found", name);
+        eprintln!("link {name} not found");
         Ok(())
     }
 }

@@ -15,7 +15,7 @@ async fn main() -> Result<(), String> {
 
     NetworkNamespace::add(ns_name.to_string())
         .await
-        .map_err(|e| format!("{}", e))
+        .map_err(|e| format!("{e}"))
 }
 
 fn usage() {

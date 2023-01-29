@@ -18,7 +18,7 @@ async fn main() -> Result<(), String> {
 
     create_vxlan(handle, link_name.to_string())
         .await
-        .map_err(|e| format!("{}", e))
+        .map_err(|e| format!("{e}"))
 }
 
 async fn create_vxlan(handle: Handle, name: String) -> Result<(), Error> {
@@ -34,7 +34,7 @@ async fn create_vxlan(handle: Handle, name: String) -> Result<(), Error> {
             .execute()
             .await?
     } else {
-        println!("no link link {} found", name);
+        println!("no link link {name} found");
     }
     Ok(())
 }

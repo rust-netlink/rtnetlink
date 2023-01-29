@@ -9,10 +9,10 @@ async fn main() -> Result<(), ()> {
     tokio::spawn(connection);
 
     let link = "lo".to_string();
-    println!("dumping address for link \"{}\"", link);
+    println!("dumping address for link \"{link}\"");
 
     if let Err(e) = dump_addresses(handle, link).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
 
     Ok(())
@@ -27,11 +27,11 @@ async fn dump_addresses(handle: Handle, link: String) -> Result<(), Error> {
             .set_link_index_filter(link.header.index)
             .execute();
         while let Some(msg) = addresses.try_next().await? {
-            println!("{:?}", msg);
+            println!("{msg:?}");
         }
         Ok(())
     } else {
-        eprintln!("link {} not found", link);
+        eprintln!("link {link} not found");
         Ok(())
     }
 }

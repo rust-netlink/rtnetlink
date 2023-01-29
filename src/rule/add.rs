@@ -12,8 +12,8 @@ use netlink_packet_core::{
 };
 
 use netlink_packet_route::{
-    nlas::rule::Nla, RtnlMessage, RuleMessage,
-    AF_INET, AF_INET6, RT_TABLE_MAIN, FR_ACT_UNSPEC, 
+    nlas::rule::Nla, RtnlMessage, RuleMessage, AF_INET, AF_INET6,
+    FR_ACT_UNSPEC, RT_TABLE_MAIN,
 };
 
 use crate::{try_nl, Error, Handle};

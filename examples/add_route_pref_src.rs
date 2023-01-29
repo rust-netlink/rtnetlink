@@ -31,7 +31,7 @@ async fn main() -> Result<(), ()> {
     tokio::spawn(connection);
 
     if let Err(e) = add_route(&dest, iface, source, handle.clone()).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
     Ok(())
 }

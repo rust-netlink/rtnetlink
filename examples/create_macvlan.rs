@@ -18,7 +18,7 @@ async fn main() -> Result<(), String> {
 
     create_macvlan(handle, link_name.to_string())
         .await
-        .map_err(|e| format!("{}", e))
+        .map_err(|e| format!("{e}"))
 }
 
 async fn create_macvlan(
@@ -35,7 +35,7 @@ async fn create_macvlan(
         );
         request.execute().await?
     } else {
-        println!("no link link {} found", veth_name);
+        println!("no link link {veth_name} found");
     }
     Ok(())
 }

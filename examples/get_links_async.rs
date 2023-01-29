@@ -15,27 +15,27 @@ async fn main() -> Result<(), ()> {
 
     // Fetch a link by its index
     let index = 1;
-    println!("*** retrieving link with index {} ***", index);
+    println!("*** retrieving link with index {index} ***");
     if let Err(e) = get_link_by_index(handle.clone(), index).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
 
     // Fetch a link by its name
     let name = "lo";
-    println!("*** retrieving link named \"{}\" ***", name);
+    println!("*** retrieving link named \"{name}\" ***");
     if let Err(e) = get_link_by_name(handle.clone(), name.to_string()).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
 
     // Dump all the links and print their index and name
     println!("*** dumping links ***");
     if let Err(e) = dump_links(handle.clone()).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
 
     // Dump all the bridge vlan information
     if let Err(e) = dump_bridge_filter_info(handle.clone()).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
 
     Ok(())
@@ -46,7 +46,7 @@ async fn get_link_by_index(handle: Handle, index: u32) -> Result<(), Error> {
     let msg = if let Some(msg) = links.try_next().await? {
         msg
     } else {
-        eprintln!("no link with index {} found", index);
+        eprintln!("no link with index {index} found");
         return Ok(());
     };
     // We should have received only one message
@@ -54,13 +54,12 @@ async fn get_link_by_index(handle: Handle, index: u32) -> Result<(), Error> {
 
     for nla in msg.nlas.into_iter() {
         if let Nla::IfName(name) = nla {
-            println!("found link with index {} (name = {})", index, name);
+            println!("found link with index {index} (name = {name})");
             return Ok(());
         }
     }
     eprintln!(
-        "found link with index {}, but this link does not have a name",
-        index
+        "found link with index {index}, but this link does not have a name"
     );
     Ok(())
 }
@@ -68,11 +67,11 @@ async fn get_link_by_index(handle: Handle, index: u32) -> Result<(), Error> {
 async fn get_link_by_name(handle: Handle, name: String) -> Result<(), Error> {
     let mut links = handle.link().get().match_name(name.clone()).execute();
     if (links.try_next().await?).is_some() {
-        println!("found link {}", name);
+        println!("found link {name}");
         // We should only have one link with that name
         assert!(links.try_next().await?.is_none());
     } else {
-        println!("no link link {} found", name);
+        println!("no link link {name} found");
     }
     Ok(())
 }

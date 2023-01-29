@@ -5,9 +5,7 @@ use futures::{
     stream::{StreamExt, TryStream},
     FutureExt,
 };
-use netlink_packet_core::{
-    NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST,
-};
+use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
     RtnlMessage, RuleMessage, FR_ACT_UNSPEC, RT_TABLE_UNSPEC,
 };

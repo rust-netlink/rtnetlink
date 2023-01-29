@@ -5,7 +5,7 @@ use futures::{
     stream::{StreamExt, TryStream},
     FutureExt,
 };
-use netlink_packet_core::{NetlinkMessage, NLM_F_REQUEST, NLM_F_DUMP};
+use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{link::nlas::Nla, LinkMessage, RtnlMessage};
 
 use crate::{try_rtnl, Error, Handle};

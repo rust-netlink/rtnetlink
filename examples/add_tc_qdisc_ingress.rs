@@ -22,7 +22,7 @@ async fn main() -> Result<(), ()> {
     tokio::spawn(connection);
 
     if let Err(e) = handle.qdisc().add(index as i32).ingress().execute().await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
 
     Ok(())

@@ -12,5 +12,5 @@ async fn main() -> Result<(), String> {
         .veth("veth-rs-1".into(), "veth-rs-2".into())
         .execute()
         .await
-        .map_err(|e| format!("{}", e))
+        .map_err(|e| format!("{e}"))
 }

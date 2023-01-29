@@ -17,7 +17,7 @@ async fn main() -> Result<(), ()> {
     tokio::spawn(connection);
 
     if let Err(e) = flush_addresses(handle, link_name.to_string()).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
 
     Ok(())
@@ -39,7 +39,7 @@ async fn flush_addresses(handle: Handle, link: String) -> Result<(), Error> {
         }
         Ok(())
     } else {
-        eprintln!("link {} not found", link);
+        eprintln!("link {link} not found");
         Ok(())
     }
 }

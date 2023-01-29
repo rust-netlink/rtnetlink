@@ -27,5 +27,5 @@ async fn main() -> Result<(), String> {
         .up()
         .execute()
         .await
-        .map_err(|e| format!("{}", e))
+        .map_err(|e| format!("{e}"))
 }
