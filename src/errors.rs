@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
+use netlink_packet_core::{ErrorMessage, NetlinkMessage};
+use netlink_packet_route::RtnlMessage;
 use thiserror::Error;
-
-use crate::packet::{ErrorMessage, NetlinkMessage, RtnlMessage};
 
 #[derive(Clone, Eq, PartialEq, Debug, Error)]
 pub enum Error {

@@ -6,8 +6,10 @@ use futures::{
     FutureExt,
 };
 
+use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
-    constants::*, NetlinkMessage, RouteMessage, RtnlMessage,
+    RouteMessage, RtnlMessage, AF_INET, AF_INET6, RTN_UNSPEC, RTPROT_UNSPEC,
+    RT_SCOPE_UNIVERSE, RT_TABLE_UNSPEC,
 };
 
 use crate::{try_rtnl, Error, Handle};

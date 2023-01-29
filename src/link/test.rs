@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
+use netlink_packet_route::link::{
+    nlas::{Info, InfoKind, Nla},
+    LinkMessage,
+};
 use tokio::runtime::Runtime;
 
-use crate::{
-    new_connection,
-    packet::rtnl::link::{
-        nlas::{Info, InfoKind, Nla},
-        LinkMessage,
-    },
-    Error, LinkHandle,
-};
+use crate::{new_connection, Error, LinkHandle};
 
 const IFACE_NAME: &str = "wg142"; // rand?
 

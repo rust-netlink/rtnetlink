@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: MIT
 
-use crate::IpVersion;
 use futures::{
     future::{self, Either},
     stream::{StreamExt, TryStream},
     FutureExt,
 };
-
+use netlink_packet_core::{
+    NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST,
+};
 use netlink_packet_route::{
-    constants::*, NetlinkMessage, RtnlMessage, RuleMessage,
+    RtnlMessage, RuleMessage, FR_ACT_UNSPEC, RT_TABLE_UNSPEC,
 };
 
-use crate::{try_rtnl, Error, Handle};
+use crate::{try_rtnl, Error, Handle, IpVersion};
 
 pub struct RuleGetRequest {
     handle: Handle,

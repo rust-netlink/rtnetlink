@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
-use rtnetlink::{
-    new_connection,
-    packet::rtnl::{
-        constants::{AF_BRIDGE, RTEXT_FILTER_BRVLAN},
-        link::nlas::Nla,
-    },
-    Error, Handle,
+use netlink_packet_route::{
+    constants::{AF_BRIDGE, RTEXT_FILTER_BRVLAN},
+    link::nlas::Nla,
 };
+use rtnetlink::{new_connection, Error, Handle};
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {

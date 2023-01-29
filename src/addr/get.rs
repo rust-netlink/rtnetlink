@@ -7,10 +7,8 @@ use futures::{
 };
 use std::net::IpAddr;
 
-use netlink_packet_route::{
-    nlas::address::Nla, AddressMessage, NetlinkMessage, RtnlMessage,
-    NLM_F_DUMP, NLM_F_REQUEST,
-};
+use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
+use netlink_packet_route::{nlas::address::Nla, AddressMessage, RtnlMessage};
 
 use crate::{try_rtnl, Error, Handle};
 

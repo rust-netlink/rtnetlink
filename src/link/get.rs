@@ -5,13 +5,10 @@ use futures::{
     stream::{StreamExt, TryStream},
     FutureExt,
 };
+use netlink_packet_core::{NetlinkMessage, NLM_F_REQUEST, NLM_F_DUMP};
+use netlink_packet_route::{link::nlas::Nla, LinkMessage, RtnlMessage};
 
-use crate::{
-    packet::{
-        constants::*, nlas::link::Nla, LinkMessage, NetlinkMessage, RtnlMessage,
-    },
-    try_rtnl, Error, Handle,
-};
+use crate::{try_rtnl, Error, Handle};
 
 pub struct LinkGetRequest {
     handle: Handle,
