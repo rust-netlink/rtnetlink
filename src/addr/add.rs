@@ -9,8 +9,7 @@ use netlink_packet_core::{
 };
 
 use netlink_packet_route::{
-    nlas::address::Nla, AddressMessage, RtnlMessage, AF_INET,
-    AF_INET6,
+    nlas::address::Nla, AddressMessage, RtnlMessage, AF_INET, AF_INET6,
 };
 
 use crate::{try_nl, Error, Handle};

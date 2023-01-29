@@ -10,13 +10,13 @@ async fn main() -> Result<(), ()> {
 
     println!("dumping rules for IPv4");
     if let Err(e) = dump_addresses(handle.clone(), IpVersion::V4).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
     println!();
 
     println!("dumping rules for IPv6");
     if let Err(e) = dump_addresses(handle.clone(), IpVersion::V6).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
     println!();
 
@@ -29,7 +29,7 @@ async fn dump_addresses(
 ) -> Result<(), Error> {
     let mut rules = handle.rule().get(ip_version).execute();
     while let Some(rule) = rules.try_next().await? {
-        println!("{:?}", rule);
+        println!("{rule:?}");
     }
     Ok(())
 }

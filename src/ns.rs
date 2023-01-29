@@ -70,7 +70,7 @@ impl NetworkNamespace {
                 NetworkNamespace::child_process(ns_name);
             }
             Err(e) => {
-                let err_msg = format!("Fork failed: {}", e);
+                let err_msg = format!("Fork failed: {e}");
                 Err(Error::NamespaceError(err_msg))
             }
         }
@@ -124,14 +124,13 @@ impl NetworkNamespace {
                         return Ok(());
                     }
                     log::error!("Error child result: {}", res);
-                    let err_msg = format!("Error child result: {}", res);
+                    let err_msg = format!("Error child result: {res}");
                     Err(Error::NamespaceError(err_msg))
                 }
                 WaitStatus::Signaled(_, signal, has_dump) => {
                     log::error!("Error child killed by signal: {}", signal);
                     let err_msg = format!(
-                        "Error child process was killed by signal: {} with core dump {}",
-                        signal, has_dump
+                        "Error child process was killed by signal: {signal} with core dump {has_dump}"
                     );
                     Err(Error::NamespaceError(err_msg))
                 }
@@ -143,7 +142,7 @@ impl NetworkNamespace {
             },
             Err(e) => {
                 log::error!("wait error: {}", e);
-                let err_msg = format!("wait error: {}", e);
+                let err_msg = format!("wait error: {e}");
                 Err(Error::NamespaceError(err_msg))
             }
         }
@@ -204,7 +203,7 @@ impl NetworkNamespace {
         if nix::sys::stat::stat(dir_path).is_err() {
             if let Err(e) = nix::unistd::mkdir(dir_path, mkdir_mode) {
                 log::error!("mkdir error: {}", e);
-                let err_msg = format!("mkdir error: {}", e);
+                let err_msg = format!("mkdir error: {e}");
                 return Err(Error::NamespaceError(err_msg));
             }
         }
@@ -235,7 +234,7 @@ impl NetworkNamespace {
                 none_p4,
             ) {
                 log::error!("mount error: {}", e);
-                let err_msg = format!("mount error: {}", e);
+                let err_msg = format!("mount error: {e}");
                 return Err(Error::NamespaceError(err_msg));
             }
         }
@@ -251,7 +250,7 @@ impl NetworkNamespace {
             none_p4,
         ) {
             log::error!("mount error: {}", e);
-            let err_msg = format!("mount error: {}", e);
+            let err_msg = format!("mount error: {e}");
             return Err(Error::NamespaceError(err_msg));
         }
 
@@ -262,14 +261,14 @@ impl NetworkNamespace {
             Ok(raw_fd) => raw_fd,
             Err(e) => {
                 log::error!("open error: {}", e);
-                let err_msg = format!("open error: {}", e);
+                let err_msg = format!("open error: {e}");
                 return Err(Error::NamespaceError(err_msg));
             }
         };
 
         if let Err(e) = nix::unistd::close(fd) {
             log::error!("close error: {}", e);
-            let err_msg = format!("close error: {}", e);
+            let err_msg = format!("close error: {e}");
             let _ = nix::unistd::unlink(ns_path);
             return Err(Error::NamespaceError(err_msg));
         }
@@ -291,7 +290,7 @@ impl NetworkNamespace {
         // unshare to the new network namespace
         if let Err(e) = nix::sched::unshare(CloneFlags::CLONE_NEWNET) {
             log::error!("unshare error: {}", e);
-            let err_msg = format!("unshare error: {}", e);
+            let err_msg = format!("unshare error: {e}");
             let _ = nix::unistd::unlink(ns_path);
             return Err(Error::NamespaceError(err_msg));
         }
@@ -308,7 +307,7 @@ impl NetworkNamespace {
             Ok(raw_fd) => raw_fd,
             Err(e) => {
                 log::error!("open error: {}", e);
-                let err_msg = format!("open error: {}", e);
+                let err_msg = format!("open error: {e}");
                 return Err(Error::NamespaceError(err_msg));
             }
         };
@@ -324,7 +323,7 @@ impl NetworkNamespace {
             none_p4,
         ) {
             log::error!("mount error: {}", e);
-            let err_msg = format!("mount error: {}", e);
+            let err_msg = format!("mount error: {e}");
             let _ = nix::unistd::unlink(ns_path);
             return Err(Error::NamespaceError(err_msg));
         }
@@ -332,7 +331,7 @@ impl NetworkNamespace {
         setns_flags.insert(CloneFlags::CLONE_NEWNET);
         if let Err(e) = nix::sched::setns(fd, setns_flags) {
             log::error!("setns error: {}", e);
-            let err_msg = format!("setns error: {}", e);
+            let err_msg = format!("setns error: {e}");
             let _ = nix::unistd::unlink(ns_path);
             return Err(Error::NamespaceError(err_msg));
         }

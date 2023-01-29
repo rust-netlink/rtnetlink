@@ -10,7 +10,7 @@ async fn main() -> Result<(), ()> {
 
     println!("dumping neighbours");
     if let Err(e) = dump_neighbours(handle.clone()).await {
-        eprintln!("{}", e);
+        eprintln!("{e}");
     }
     println!();
 
@@ -24,7 +24,7 @@ async fn dump_neighbours(handle: Handle) -> Result<(), Error> {
         .set_family(IpVersion::V4)
         .execute();
     while let Some(route) = neighbours.try_next().await? {
-        println!("{:?}", route);
+        println!("{route:?}");
     }
     Ok(())
 }

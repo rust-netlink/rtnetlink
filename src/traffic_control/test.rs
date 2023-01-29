@@ -71,8 +71,7 @@ fn _add_test_dummy_interface() -> i32 {
             .expect("failed to run ip command");
         if !output.status.success() {
             eprintln!(
-                "Failed to create dummy interface {} : {:?}",
-                TEST_DUMMY_NIC, output
+                "Failed to create dummy interface {TEST_DUMMY_NIC} : {output:?}"
             );
         }
         assert!(output.status.success());
@@ -88,8 +87,7 @@ fn _remove_test_dummy_interface() {
         .expect("failed to run ip command");
     if !output.status.success() {
         eprintln!(
-            "Failed to remove dummy interface {} : {:?}",
-            TEST_DUMMY_NIC, output
+            "Failed to remove dummy interface {TEST_DUMMY_NIC} : {output:?}"
         );
     }
     assert!(output.status.success());
@@ -113,8 +111,7 @@ fn _add_test_tclass_to_dummy() {
         .expect("failed to run tc command");
     if !output.status.success() {
         eprintln!(
-            "Failed to add qdisc to dummy interface {} : {:?}",
-            TEST_DUMMY_NIC, output
+            "Failed to add qdisc to dummy interface {TEST_DUMMY_NIC} : {output:?}"
         );
     }
     assert!(output.status.success());
@@ -138,8 +135,7 @@ fn _add_test_tclass_to_dummy() {
         .expect("failed to run tc command");
     if !output.status.success() {
         eprintln!(
-            "Failed to add traffic class to dummy interface {}: {:?}",
-            TEST_DUMMY_NIC, output
+            "Failed to add traffic class to dummy interface {TEST_DUMMY_NIC}: {output:?}"
         );
     }
     assert!(output.status.success());
@@ -163,7 +159,7 @@ fn _add_test_filter_to_dummy() {
         .output()
         .expect("failed to run tc command");
     if !output.status.success() {
-        eprintln!("Failed to add trafice filter to lo: {:?}", output);
+        eprintln!("Failed to add trafice filter to lo: {output:?}");
     }
     assert!(output.status.success());
 }

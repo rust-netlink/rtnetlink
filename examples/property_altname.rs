@@ -32,7 +32,7 @@ async fn main() -> Result<(), ()> {
             )
             .await
             {
-                eprintln!("{}", e);
+                eprintln!("{e}");
             }
         }
 
@@ -44,7 +44,7 @@ async fn main() -> Result<(), ()> {
             )
             .await
             {
-                eprintln!("{}", e);
+                eprintln!("{e}");
             }
         }
 
@@ -52,7 +52,7 @@ async fn main() -> Result<(), ()> {
             if let Err(e) =
                 show_property_alt_ifnames(link_name, handle.clone()).await
             {
-                eprintln!("{}", e);
+                eprintln!("{e}");
             }
         }
 
@@ -70,7 +70,7 @@ async fn show_property_alt_ifnames(
         if let Nla::PropList(ref prop_list) = nla {
             for prop in prop_list {
                 if let Prop::AltIfName(altname) = prop {
-                    println!("altname: {}", altname);
+                    println!("altname: {altname}");
                 }
             }
         }
@@ -126,7 +126,7 @@ async fn get_link(
     match links.try_next().await? {
         Some(msg) => Ok(msg),
         _ => {
-            eprintln!("Interface {} not found", link_name);
+            eprintln!("Interface {link_name} not found");
             Err(Error::RequestFailed)
         }
     }

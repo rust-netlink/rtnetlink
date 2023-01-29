@@ -14,7 +14,7 @@ async fn main() -> Result<(), String> {
 
     NetworkNamespace::del(ns_name.to_string())
         .await
-        .map_err(|e| format!("{}", e))
+        .map_err(|e| format!("{e}"))
 }
 
 fn usage() {

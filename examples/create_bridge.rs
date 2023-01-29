@@ -12,5 +12,5 @@ async fn main() -> Result<(), String> {
         .bridge("my-bridge-1".into())
         .execute()
         .await
-        .map_err(|e| format!("{}", e))
+        .map_err(|e| format!("{e}"))
 }

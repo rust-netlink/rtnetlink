@@ -18,7 +18,7 @@ async fn main() -> Result<(), String> {
 
     set_link_down(handle, link_name.to_string())
         .await
-        .map_err(|e| format!("{}", e))
+        .map_err(|e| format!("{e}"))
 }
 
 async fn set_link_down(handle: Handle, name: String) -> Result<(), Error> {
@@ -31,7 +31,7 @@ async fn set_link_down(handle: Handle, name: String) -> Result<(), Error> {
             .execute()
             .await?
     } else {
-        println!("no link link {} found", name);
+        println!("no link link {name} found");
     }
     Ok(())
 }

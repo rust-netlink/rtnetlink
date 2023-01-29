@@ -26,7 +26,7 @@ async fn main() -> Result<(), String> {
     //
     // messages - A channel receiver.
     let (mut conn, mut _handle, mut messages) =
-        new_connection().map_err(|e| format!("{}", e))?;
+        new_connection().map_err(|e| format!("{e}"))?;
 
     // These flags specify what kinds of broadcast messages we want to listen
     // for.
@@ -64,7 +64,7 @@ async fn main() -> Result<(), String> {
     // Start receiving events through `messages` channel.
     while let Some((message, _)) = messages.next().await {
         let payload = message.payload;
-        println!("{:?}", payload);
+        println!("{payload:?}");
     }
     Ok(())
 }
