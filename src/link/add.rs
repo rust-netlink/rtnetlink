@@ -1,20 +1,22 @@
 // SPDX-License-Identifier: MIT
 
-use futures::stream::StreamExt;
-use netlink_packet_route::link::nlas::InfoMacVtap;
 use std::net::{Ipv4Addr, Ipv6Addr};
 
-use crate::{
-    packet::{
-        nlas::link::{
-            Info, InfoBond, InfoData, InfoKind, InfoMacVlan, InfoVlan,
-            InfoVxlan, Nla, VethInfo,
-        },
-        LinkMessage, NetlinkMessage, RtnlMessage, IFF_UP, NLM_F_ACK,
-        NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE, NLM_F_REQUEST,
-    },
-    try_nl, Error, Handle,
+use futures::stream::StreamExt;
+use netlink_packet_core::{
+    NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE,
+    NLM_F_REQUEST,
 };
+
+use netlink_packet_route::{
+    link::nlas::{
+        Info, InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVlan,
+        InfoVxlan, Nla, VethInfo,
+    },
+    LinkMessage, RtnlMessage, IFF_UP,
+};
+
+use crate::{try_nl, Error, Handle};
 
 pub struct BondAddRequest {
     request: LinkAddRequest,
@@ -560,7 +562,8 @@ impl LinkAddRequest {
     ///
     /// ```rust,no_run
     /// use futures::Future;
-    /// use rtnetlink::{Handle, new_connection, packet::IFF_UP};
+    /// use netlink_packet_route::IFF_UP;
+    /// use rtnetlink::{Handle, new_connection};
     ///
     /// async fn run(handle: Handle) -> Result<(), String> {
     ///     let vlan_id = 100;

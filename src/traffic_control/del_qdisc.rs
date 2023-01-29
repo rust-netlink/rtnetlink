@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
-use futures::StreamExt;
 
-use crate::{
-    packet::{
-        NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
-    },
-    try_nl, Error, Handle,
-};
+use futures::StreamExt;
+use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
+use netlink_packet_route::{RtnlMessage, TcMessage};
+
+use crate::{try_nl, Error, Handle};
 
 pub struct QDiscDelRequest {
     handle: Handle,

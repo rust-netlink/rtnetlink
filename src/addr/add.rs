@@ -3,10 +3,14 @@
 use futures::stream::StreamExt;
 use std::net::{IpAddr, Ipv4Addr};
 
-use netlink_packet_route::{
-    nlas::address::Nla, AddressMessage, NetlinkMessage, RtnlMessage, AF_INET,
-    AF_INET6, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE,
+use netlink_packet_core::{
+    NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE,
     NLM_F_REQUEST,
+};
+
+use netlink_packet_route::{
+    nlas::address::Nla, AddressMessage, RtnlMessage, AF_INET,
+    AF_INET6,
 };
 
 use crate::{try_nl, Error, Handle};

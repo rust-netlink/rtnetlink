@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
 
-use crate::{
-    packet::{
-        nlas::link::Nla, LinkMessage, NetlinkMessage, RtnlMessage, IFF_NOARP,
-        IFF_PROMISC, IFF_UP, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL,
-        NLM_F_REQUEST,
-    },
-    try_nl, Error, Handle,
-};
-use futures::stream::StreamExt;
 use std::os::unix::io::RawFd;
+
+use futures::stream::StreamExt;
+use netlink_packet_core::{
+    NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REQUEST,
+};
+use netlink_packet_route::{
+    link::nlas::Nla, LinkMessage, RtnlMessage, IFF_NOARP, IFF_PROMISC, IFF_UP,
+};
+
+use crate::{try_nl, Error, Handle};
 
 pub struct LinkSetRequest {
     handle: Handle,

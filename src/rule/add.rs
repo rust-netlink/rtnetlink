@@ -6,8 +6,14 @@ use std::{
     net::{Ipv4Addr, Ipv6Addr},
 };
 
+use netlink_packet_core::{
+    NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE,
+    NLM_F_REQUEST,
+};
+
 use netlink_packet_route::{
-    constants::*, nlas::rule::Nla, NetlinkMessage, RtnlMessage, RuleMessage,
+    nlas::rule::Nla, RtnlMessage, RuleMessage,
+    AF_INET, AF_INET6, RT_TABLE_MAIN, FR_ACT_UNSPEC, 
 };
 
 use crate::{try_nl, Error, Handle};

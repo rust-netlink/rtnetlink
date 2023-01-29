@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-
-use crate::{
-    packet::{
-        tc::{constants::*, nlas},
-        NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
-        TC_H_MAKE,
+use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
+use netlink_packet_route::{
+    tc::constants::{
+        TC_H_INGRESS, TC_H_MAJ_MASK, TC_H_MIN_MASK, TC_H_ROOT, TC_H_UNSPEC,
     },
-    try_nl, Error, Handle,
+    tc::nlas::Nla,
+    RtnlMessage, TcMessage, TC_H_MAKE,
 };
+
+use crate::{try_nl, Error, Handle};
 
 pub struct QDiscNewRequest {
     handle: Handle,
@@ -70,9 +71,7 @@ impl QDiscNewRequest {
         assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = TC_H_INGRESS;
         self.message.header.handle = 0xffff0000;
-        self.message
-            .nlas
-            .push(nlas::Nla::Kind("ingress".to_string()));
+        self.message.nlas.push(Nla::Kind("ingress".to_string()));
         self
     }
 }
@@ -86,13 +85,10 @@ mod test {
     use tokio::runtime::Runtime;
 
     use super::*;
-    use crate::{
-        new_connection,
-        packet::{
-            rtnl::tc::nlas::Nla::{HwOffload, Kind},
-            LinkMessage, AF_UNSPEC,
-        },
-        NetworkNamespace, NETNS_PATH, SELF_NS_PATH,
+    use crate::{new_connection, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
+    use netlink_packet_route::{
+        tc::nlas::Nla::{HwOffload, Kind},
+        LinkMessage, AF_UNSPEC,
     };
 
     const TEST_NS: &str = "netlink_test_qdisc_ns";

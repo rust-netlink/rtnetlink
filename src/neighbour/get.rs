@@ -5,12 +5,12 @@ use futures::{
     stream::{StreamExt, TryStream},
     FutureExt,
 };
-
-use netlink_packet_route::{
-    constants::*, neighbour::NeighbourMessage, NetlinkPayload, RtnlMessage,
+use netlink_packet_core::{
+    NetlinkMessage, NetlinkPayload, NLM_F_DUMP, NLM_F_REQUEST,
 };
-
-use netlink_proto::packet::NetlinkMessage;
+use netlink_packet_route::{
+    neighbour::NeighbourMessage, RtnlMessage, NTF_PROXY,
+};
 
 use crate::{Error, Handle, IpVersion};
 

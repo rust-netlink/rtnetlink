@@ -3,16 +3,14 @@
 use std::process::Command;
 
 use futures::stream::TryStreamExt;
+use netlink_packet_core::ErrorMessage;
+use netlink_packet_route::{
+    tc::nlas::Nla::{Chain, HwOffload, Kind},
+    TcMessage, AF_UNSPEC,
+};
 use tokio::runtime::Runtime;
 
-use crate::{
-    new_connection,
-    packet::{
-        rtnl::tc::nlas::Nla::{Chain, HwOffload, Kind},
-        ErrorMessage, TcMessage, AF_UNSPEC,
-    },
-    Error::NetlinkError,
-};
+use crate::{new_connection, Error::NetlinkError};
 
 static TEST_DUMMY_NIC: &str = "netlink-test";
 
@@ -238,7 +236,9 @@ async fn _get_chains(ifindex: i32) -> Vec<TcMessage> {
             Ok(None) => {
                 break;
             }
-            Err(NetlinkError(ErrorMessage { code, header: _ })) => {
+            Err(NetlinkError(ErrorMessage {
+                code, header: _, ..
+            })) => {
                 assert_eq!(code, -95);
                 eprintln!(
                     "The chain in traffic control is not supported, \

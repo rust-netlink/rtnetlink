@@ -1,15 +1,20 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-
-use crate::{
-    packet::{
-        tc::{self, constants::*},
-        NetlinkMessage, RtnlMessage, TcMessage, NLM_F_ACK, NLM_F_REQUEST,
-        TCM_IFINDEX_MAGIC_BLOCK, TC_H_MAKE,
+use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
+use netlink_packet_route::{
+    tc::{
+        self,
+        constants::{
+            TCA_ACT_TAB, TCA_EGRESS_REDIR, TC_ACT_STOLEN, TC_H_CLSACT,
+            TC_H_MAJ_MASK, TC_H_MIN_EGRESS, TC_H_MIN_INGRESS, TC_H_MIN_MASK,
+            TC_H_ROOT, TC_H_UNSPEC, TC_U32_TERMINAL,
+        },
     },
-    try_nl, Error, Handle,
+    RtnlMessage, TcMessage, TCM_IFINDEX_MAGIC_BLOCK, TC_H_MAKE,
 };
+
+use crate::{try_nl, Error, Handle};
 
 pub struct TrafficFilterNewRequest {
     handle: Handle,
@@ -135,27 +140,25 @@ impl TrafficFilterNewRequest {
     /// `parent` and `protocol` before call redirect.
     pub fn redirect(self, dst_index: u32) -> Self {
         assert_eq!(self.message.nlas.len(), 0);
+        let mut sel_na = tc::u32::Sel::default();
+        sel_na.flags = TC_U32_TERMINAL;
+        sel_na.nkeys = 1;
+        sel_na.keys = vec![tc::u32::Key::default()];
+        let mut tc_mirror_nla = tc::mirred::TcMirred::default();
+        tc_mirror_nla.action = TC_ACT_STOLEN;
+        tc_mirror_nla.eaction = TCA_EGRESS_REDIR;
+        tc_mirror_nla.ifindex = dst_index;
+        let mut action_nla = tc::Action::default();
+        action_nla.tab = TCA_ACT_TAB;
+        action_nla.nlas = vec![
+            tc::ActNla::Kind(tc::mirred::KIND.to_string()),
+            tc::ActNla::Options(vec![tc::ActOpt::Mirred(
+                tc::mirred::Nla::Parms(tc_mirror_nla),
+            )]),
+        ];
         let u32_nla = vec![
-            tc::u32::Nla::Sel(tc::u32::Sel {
-                flags: TC_U32_TERMINAL,
-                nkeys: 1,
-                keys: vec![tc::u32::Key::default()],
-                ..tc::u32::Sel::default()
-            }),
-            tc::u32::Nla::Act(vec![tc::Action {
-                tab: TCA_ACT_TAB,
-                nlas: vec![
-                    tc::ActNla::Kind(tc::mirred::KIND.to_string()),
-                    tc::ActNla::Options(vec![tc::ActOpt::Mirred(
-                        tc::mirred::Nla::Parms(tc::mirred::TcMirred {
-                            action: TC_ACT_STOLEN,
-                            eaction: TCA_EGRESS_REDIR,
-                            ifindex: dst_index,
-                            ..tc::mirred::TcMirred::default()
-                        }),
-                    )]),
-                ],
-            }]),
+            tc::u32::Nla::Sel(sel_na),
+            tc::u32::Nla::Act(vec![action_nla]),
         ];
         self.u32(u32_nla)
     }
@@ -166,14 +169,12 @@ mod test {
     use std::{fs::File, os::unix::io::AsRawFd, path::Path};
 
     use futures::stream::TryStreamExt;
+    use netlink_packet_route::LinkMessage;
     use nix::sched::{setns, CloneFlags};
     use tokio::runtime::Runtime;
 
     use super::*;
-    use crate::{
-        new_connection, packet::LinkMessage, NetworkNamespace, NETNS_PATH,
-        SELF_NS_PATH,
-    };
+    use crate::{new_connection, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
 
     const TEST_NS: &str = "netlink_test_filter_ns";
     const TEST_VETH_1: &str = "test_veth_1";

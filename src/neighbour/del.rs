@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-
-use netlink_packet_route::{
-    constants::*, neighbour::NeighbourMessage, NetlinkPayload, RtnlMessage,
+use netlink_packet_core::{
+    NetlinkMessage, NetlinkPayload, NLM_F_ACK, NLM_F_REQUEST,
 };
-
-use netlink_proto::packet::NetlinkMessage;
+use netlink_packet_route::{neighbour::NeighbourMessage, RtnlMessage};
 
 use crate::{Error, Handle};
 

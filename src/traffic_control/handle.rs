@@ -5,10 +5,9 @@ use super::{
     TrafficClassGetRequest, TrafficFilterGetRequest, TrafficFilterNewRequest,
 };
 
-use crate::{
-    packet::{TcMessage, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE},
-    Handle,
-};
+use crate::Handle;
+use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
+use netlink_packet_route::TcMessage;
 
 pub struct QDiscHandle(Handle);
 
