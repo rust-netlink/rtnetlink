@@ -5,6 +5,8 @@ use std::env;
 use ipnetwork::Ipv4Network;
 use rtnetlink::{new_connection, Error, Handle};
 
+const TEST_TABLE_ID: u32 = 299;
+
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     let args: Vec<String> = env::args().collect();
@@ -27,6 +29,8 @@ async fn main() -> Result<(), ()> {
 
     if let Err(e) = add_route(&dest, &gateway, handle.clone()).await {
         eprintln!("{e}");
+    } else {
+        println!("Route has been added to table {TEST_TABLE_ID}");
     }
     Ok(())
 }
@@ -42,6 +46,7 @@ async fn add_route(
         .v4()
         .destination_prefix(dest.ip(), dest.prefix())
         .gateway(gateway.ip())
+        .table_id(TEST_TABLE_ID)
         .execute()
         .await?;
     Ok(())
@@ -49,16 +54,14 @@ async fn add_route(
 
 fn usage() {
     eprintln!(
-        "usage:
+        "\
+usage:
     cargo run --example add_route -- <destination>/<prefix_length> <gateway>
 
-Note that you need to run this program as root. Instead of running cargo as root,
-build the example normally:
+Note that you need to run this program as root:
 
-    cd rtnetlink ; cargo build --example add_route
-
-Then find the binary in the target directory:
-
-    cd ../target/debug/example ; sudo ./add_route <destination>/<prefix_length> <gateway>"
+    env CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER='sudo -E' \\
+        cargo run --example add_route -- <destination>/<prefix_length> \
+        <gateway>"
     );
 }
