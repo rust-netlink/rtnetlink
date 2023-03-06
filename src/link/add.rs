@@ -11,7 +11,7 @@ use netlink_packet_core::{
 use netlink_packet_route::{
     link::nlas::{
         Info, InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVlan,
-        InfoVxlan, Nla, VethInfo,
+        InfoVxlan, InfoXfrmTun, Nla, VethInfo,
     },
     LinkMessage, RtnlMessage, IFF_UP,
 };
@@ -662,6 +662,18 @@ impl LinkAddRequest {
             request: s,
             info_data: vec![InfoVxlan::Id(vni)],
         }
+    }
+
+    /// Create xfrm tunnel
+    /// This is equivalent to `ip link add name NAME type xfrm if_id NUMBER`,
+    /// The NUMBER is a XFRM if_id which may be connected to IPsec policy
+    pub fn xfrmtun(self, name: String, ifid: u32) -> Self {
+        self.name(name)
+            .link_info(
+                InfoKind::Xfrm,
+                Some(InfoData::Xfrm(vec![InfoXfrmTun::IfId(ifid)])),
+            )
+            .up()
     }
 
     /// Create a new bond.
