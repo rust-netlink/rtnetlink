@@ -58,8 +58,21 @@ impl<T> RouteAddRequest<T> {
     /// Sets the route table.
     ///
     /// Default is main route table.
+    #[deprecated(note = "Please use `table_id` instead")]
     pub fn table(mut self, table: u8) -> Self {
         self.message.header.table = table;
+        self
+    }
+
+    /// Sets the route table ID.
+    ///
+    /// Default is main route table.
+    pub fn table_id(mut self, table: u32) -> Self {
+        if table > 255 {
+            self.message.nlas.push(Nla::Table(table));
+        } else {
+            self.message.header.table = table as u8;
+        }
         self
     }
 

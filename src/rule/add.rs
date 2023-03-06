@@ -57,8 +57,21 @@ impl<T> RuleAddRequest<T> {
     /// Sets the rule table.
     ///
     /// Default is main rule table.
+    #[deprecated(note = "Please use `table_id` instead")]
     pub fn table(mut self, table: u8) -> Self {
         self.message.header.table = table;
+        self
+    }
+
+    /// Sets the rule table ID.
+    ///
+    /// Default is main rule table.
+    pub fn table_id(mut self, table: u32) -> Self {
+        if table > 255 {
+            self.message.nlas.push(Nla::Table(table));
+        } else {
+            self.message.header.table = table as u8;
+        }
         self
     }
 
