@@ -8,7 +8,7 @@ use netlink_packet_route::{
         constants::{
             TCA_ACT_TAB, TCA_EGRESS_REDIR, TC_ACT_STOLEN, TC_H_CLSACT,
             TC_H_MAJ_MASK, TC_H_MIN_EGRESS, TC_H_MIN_INGRESS, TC_H_MIN_MASK,
-            TC_H_ROOT, TC_H_UNSPEC, TC_U32_TERMINAL,
+            TC_H_ROOT, TC_U32_TERMINAL,
         },
     },
     RtnlMessage, TcMessage, TCM_IFINDEX_MAGIC_BLOCK, TC_H_MAKE,
@@ -53,7 +53,6 @@ impl TrafficFilterNewRequest {
     /// Set interface index.
     /// Equivalent to `dev STRING`, dev and block are mutually exlusive.
     pub fn index(mut self, index: i32) -> Self {
-        assert_eq!(self.message.header.index, 0);
         self.message.header.index = index;
         self
     }
@@ -61,7 +60,6 @@ impl TrafficFilterNewRequest {
     /// Set block index.
     /// Equivalent to `block BLOCK_INDEX`.
     pub fn block(mut self, block_index: u32) -> Self {
-        assert_eq!(self.message.header.index, 0);
         self.message.header.index = TCM_IFINDEX_MAGIC_BLOCK as i32;
         self.message.header.parent = block_index;
         self
@@ -71,28 +69,24 @@ impl TrafficFilterNewRequest {
     /// Equivalent to `[ root | ingress | egress | parent CLASSID ]`
     /// command args. They are mutually exlusive.
     pub fn parent(mut self, parent: u32) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = parent;
         self
     }
 
     /// Set parent to root.
     pub fn root(mut self) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = TC_H_ROOT;
         self
     }
 
     /// Set parent to ingress.
     pub fn ingress(mut self) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = TC_H_MAKE!(TC_H_CLSACT, TC_H_MIN_INGRESS);
         self
     }
 
     /// Set parent to egress.
     pub fn egress(mut self) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = TC_H_MAKE!(TC_H_CLSACT, TC_H_MIN_EGRESS);
         self
     }
@@ -100,7 +94,6 @@ impl TrafficFilterNewRequest {
     /// Set priority.
     /// Equivalent to `priority PRIO` or `pref PRIO`.
     pub fn priority(mut self, priority: u16) -> Self {
-        assert_eq!(self.message.header.info & TC_H_MAJ_MASK, 0);
         self.message.header.info =
             TC_H_MAKE!((priority as u32) << 16, self.message.header.info);
         self
@@ -110,7 +103,6 @@ impl TrafficFilterNewRequest {
     /// Equivalent to `protocol PROT`.
     /// Default: ETH_P_ALL 0x0003, see llproto_names at iproute2/lib/ll_proto.c.
     pub fn protocol(mut self, protocol: u16) -> Self {
-        assert_eq!(self.message.header.info & TC_H_MIN_MASK, 0);
         self.message.header.info =
             TC_H_MAKE!(self.message.header.info, protocol as u32);
         self
@@ -139,7 +131,6 @@ impl TrafficFilterNewRequest {
     /// 0 action mirred egress redirect dev dest` You need to set the
     /// `parent` and `protocol` before call redirect.
     pub fn redirect(self, dst_index: u32) -> Self {
-        assert_eq!(self.message.nlas.len(), 0);
         let mut sel_na = tc::u32::Sel::default();
         sel_na.flags = TC_U32_TERMINAL;
         sel_na.nkeys = 1;
