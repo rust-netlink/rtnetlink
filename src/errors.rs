@@ -28,4 +28,7 @@ pub enum Error {
 
     #[error("Failed to parse a network address (IP and mask): {0:?}/{1:?}")]
     InvalidAddress(Vec<u8>, Vec<u8>),
+
+    #[error("Attempting to set and Invalid NLA: {0}")]
+    InvalidNla(String),
 }

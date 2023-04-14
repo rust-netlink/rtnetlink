@@ -110,19 +110,24 @@ impl TrafficFilterNewRequest {
 
     /// The 32bit filter allows to match arbitrary bitfields in the packet.
     /// Equivalent to `tc filter ... u32`.
-    pub fn u32(mut self, data: Vec<tc::u32::Nla>) -> Self {
-        assert!(!self
+    pub fn u32(mut self, data: Vec<tc::u32::Nla>) -> Result<Self, Error> {
+        if self
             .message
             .nlas
             .iter()
-            .any(|nla| matches!(nla, tc::Nla::Kind(_))));
+            .any(|nla| matches!(nla, tc::Nla::Kind(_)))
+        {
+            return Err(Error::InvalidNla(
+                "message kind has already been set.".to_string(),
+            ));
+        }
         self.message
             .nlas
             .push(tc::Nla::Kind(tc::u32::KIND.to_string()));
         self.message.nlas.push(tc::Nla::Options(
             data.into_iter().map(tc::TcOpt::U32).collect(),
         ));
-        self
+        Ok(self)
     }
 
     /// Use u32 to implement traffic redirect.
@@ -130,7 +135,7 @@ impl TrafficFilterNewRequest {
     /// `tc filter add [dev source] [parent ffff:] [protocol all] u32 match u8 0
     /// 0 action mirred egress redirect dev dest` You need to set the
     /// `parent` and `protocol` before call redirect.
-    pub fn redirect(self, dst_index: u32) -> Self {
+    pub fn redirect(self, dst_index: u32) -> Result<Self, Error> {
         let mut sel_na = tc::u32::Sel::default();
         sel_na.flags = TC_U32_TERMINAL;
         sel_na.nkeys = 1;
@@ -267,9 +272,21 @@ mod test {
             .parent(0xffff0000)
             .protocol(0x0003)
             .redirect(test2.header.index)
+            .unwrap()
             .execute()
             .await
             .unwrap();
+
+        // Verify that attempting to set 2 redirects causes and error
+        assert!(handle
+            .traffic_filter(test1.header.index as i32)
+            .add()
+            .parent(0xffff0000)
+            .protocol(0x0003)
+            .redirect(test2.header.index)
+            .unwrap()
+            .redirect(test1.header.index)
+            .is_err());
 
         let mut filters_iter = handle
             .traffic_filter(test1.header.index as i32)
