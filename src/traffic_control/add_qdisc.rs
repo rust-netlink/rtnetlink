@@ -3,9 +3,7 @@
 use futures::stream::StreamExt;
 use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
 use netlink_packet_route::{
-    tc::constants::{
-        TC_H_INGRESS, TC_H_MAJ_MASK, TC_H_MIN_MASK, TC_H_ROOT, TC_H_UNSPEC,
-    },
+    tc::constants::{TC_H_INGRESS, TC_H_MAJ_MASK, TC_H_MIN_MASK, TC_H_ROOT},
     tc::nlas::Nla,
     RtnlMessage, TcMessage, TC_H_MAKE,
 };
@@ -54,21 +52,18 @@ impl QDiscNewRequest {
 
     /// Set parent to root.
     pub fn root(mut self) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = TC_H_ROOT;
         self
     }
 
     /// Set parent
     pub fn parent(mut self, parent: u32) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = parent;
         self
     }
 
     /// New a ingress qdisc
     pub fn ingress(mut self) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = TC_H_INGRESS;
         self.message.header.handle = 0xffff0000;
         self.message.nlas.push(Nla::Kind("ingress".to_string()));

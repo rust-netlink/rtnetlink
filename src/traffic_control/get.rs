@@ -7,7 +7,7 @@ use futures::{
 };
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
-    tc::constants::{TC_H_INGRESS, TC_H_ROOT, TC_H_UNSPEC},
+    tc::constants::{TC_H_INGRESS, TC_H_ROOT},
     RtnlMessage, TcMessage,
 };
 
@@ -54,7 +54,6 @@ impl QDiscGetRequest {
 
     /// Get ingress qdisc
     pub fn ingress(mut self) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = TC_H_INGRESS;
         self
     }
@@ -129,7 +128,6 @@ impl TrafficFilterGetRequest {
 
     /// Set parent to root.
     pub fn root(mut self) -> Self {
-        assert_eq!(self.message.header.parent, TC_H_UNSPEC);
         self.message.header.parent = TC_H_ROOT;
         self
     }
