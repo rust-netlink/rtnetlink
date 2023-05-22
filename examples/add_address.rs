@@ -42,7 +42,12 @@ async fn add_address(
     if let Some(link) = links.try_next().await? {
         handle
             .address()
-            .add(link.header.index, ip.ip(), ip.prefix())
+            .add(
+                link.header.index,
+                ip.ip(),
+                ip.prefix(),
+                Some(format!("{}:vip", link_name)),
+            )
             .execute()
             .await?
     }

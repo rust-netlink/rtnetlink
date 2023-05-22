@@ -25,8 +25,15 @@ impl AddressHandle {
         index: u32,
         address: IpAddr,
         prefix_len: u8,
+        label: Option<String>,
     ) -> AddressAddRequest {
-        AddressAddRequest::new(self.0.clone(), index, address, prefix_len)
+        AddressAddRequest::new(
+            self.0.clone(),
+            index,
+            address,
+            prefix_len,
+            label,
+        )
     }
 
     /// Delete the given address
