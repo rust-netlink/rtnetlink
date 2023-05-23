@@ -71,6 +71,11 @@ impl AddressGetRequest {
         self.filter_builder.address = Some(address);
         self
     }
+
+    pub fn set_label_filter(mut self, label: &str) -> Self {
+        self.filter_builder.label = Some(label.to_string());
+        self
+    }
 }
 
 // The reason for having filters, is that we cannot retrieve addresses
@@ -84,6 +89,7 @@ struct AddressFilterBuilder {
     index: Option<u32>,
     address: Option<IpAddr>,
     prefix_len: Option<u8>,
+    label: Option<String>,
 }
 
 impl AddressFilterBuilder {
@@ -127,6 +133,18 @@ impl AddressFilterBuilder {
                 }
                 return false;
             }
+
+            if let Some(ref label) = self.label {
+                for nla in msg.nlas.iter() {
+                    if let Label(l) = nla {
+                        if label == l {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
             true
         }
     }
