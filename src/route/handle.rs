@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use crate::{
-    Handle, IpVersion, RouteAddRequest, RouteDelRequest, RouteGetRequest,
-};
+use crate::{Handle, RouteAddRequest, RouteDelRequest, RouteGetRequest};
 use netlink_packet_route::RouteMessage;
 
 pub struct RouteHandle(Handle);
@@ -12,10 +10,11 @@ impl RouteHandle {
         RouteHandle(handle)
     }
 
-    /// Retrieve the list of routing table entries (equivalent to `ip route
-    /// show`)
-    pub fn get(&self, ip_version: IpVersion) -> RouteGetRequest {
-        RouteGetRequest::new(self.0.clone(), ip_version)
+    /// Retrieve the routing table entry that would be used to route to
+    /// the given destination address (or the entire routing table if
+    /// no destination address is specified)
+    pub fn get(&self) -> RouteGetRequest {
+        RouteGetRequest::new(self.0.clone())
     }
 
     /// Add an routing table entry (equivalent to `ip route add`)

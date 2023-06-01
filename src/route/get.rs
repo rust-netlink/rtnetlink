@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+use std::net::{Ipv4Addr, Ipv6Addr};
+
 use futures::{
     future::{self, Either},
     stream::{StreamExt, TryStream},
@@ -8,15 +10,16 @@ use futures::{
 
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
-    RouteMessage, RtnlMessage, AF_INET, AF_INET6, RTN_UNSPEC, RTPROT_UNSPEC,
-    RT_SCOPE_UNIVERSE, RT_TABLE_UNSPEC,
+    route::Nla, RouteMessage, RtnlMessage, AF_INET, AF_INET6, RTN_UNSPEC,
+    RTPROT_UNSPEC, RT_SCOPE_UNIVERSE, RT_TABLE_UNSPEC,
 };
 
 use crate::{try_rtnl, Error, Handle};
 
-pub struct RouteGetRequest {
+pub struct RouteGetRequest<T = ()> {
     handle: Handle,
     message: RouteMessage,
+    destination_address: Option<T>,
 }
 
 /// Internet Protocol (IP) version.
@@ -37,10 +40,9 @@ impl IpVersion {
     }
 }
 
-impl RouteGetRequest {
-    pub(crate) fn new(handle: Handle, ip_version: IpVersion) -> Self {
+impl<T> RouteGetRequest<T> {
+    pub(crate) fn new(handle: Handle) -> Self {
         let mut message = RouteMessage::default();
-        message.header.address_family = ip_version.family();
 
         // As per rtnetlink(7) documentation, setting the following
         // fields to 0 gets us all the routes from all the tables
@@ -58,7 +60,29 @@ impl RouteGetRequest {
         message.header.table = RT_TABLE_UNSPEC;
         message.header.protocol = RTPROT_UNSPEC;
 
-        RouteGetRequest { handle, message }
+        RouteGetRequest {
+            handle,
+            message,
+            destination_address: None,
+        }
+    }
+
+    pub fn v4(mut self) -> RouteGetRequest<Ipv4Addr> {
+        self.message.header.address_family = AF_INET as u8;
+        RouteGetRequest {
+            handle: self.handle,
+            message: self.message,
+            destination_address: None,
+        }
+    }
+
+    pub fn v6(mut self) -> RouteGetRequest<Ipv6Addr> {
+        self.message.header.address_family = AF_INET6 as u8;
+        RouteGetRequest {
+            handle: self.handle,
+            message: self.message,
+            destination_address: None,
+        }
     }
 
     pub fn message_mut(&mut self) -> &mut RouteMessage {
@@ -69,10 +93,16 @@ impl RouteGetRequest {
         let RouteGetRequest {
             mut handle,
             message,
+            ..
         } = self;
 
         let mut req = NetlinkMessage::from(RtnlMessage::GetRoute(message));
-        req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
+        req.header.flags = NLM_F_REQUEST;
+
+        if let None = self.destination_address {
+            // We want all the route entries, so we set the DUMP flag
+            req.header.flags = req.header.flags | NLM_F_DUMP;
+        }
 
         match handle.request(req) {
             Ok(response) => Either::Left(
@@ -83,5 +113,33 @@ impl RouteGetRequest {
                 future::err::<RouteMessage, Error>(e).into_stream(),
             ),
         }
+    }
+}
+
+impl RouteGetRequest<Ipv4Addr> {
+    pub fn destination_address(
+        mut self,
+        destination_address: Ipv4Addr,
+    ) -> Self {
+        self.destination_address = Some(destination_address);
+        let octets = Vec::from(destination_address.octets());
+        self.message.header.destination_prefix_length =
+            (octets.len() * 8) as u8;
+        self.message.nlas.push(Nla::Destination(octets));
+        self
+    }
+}
+
+impl RouteGetRequest<Ipv6Addr> {
+    pub fn destination_address(
+        mut self,
+        destination_address: Ipv6Addr,
+    ) -> Self {
+        self.destination_address = Some(destination_address);
+        let octets = Vec::from(destination_address.octets());
+        self.message.header.destination_prefix_length =
+            (octets.len() * 8) as u8;
+        self.message.nlas.push(Nla::Destination(octets));
+        self
     }
 }
