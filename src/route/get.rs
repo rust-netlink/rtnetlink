@@ -122,7 +122,7 @@ impl RouteGetRequest<Ipv4Addr> {
         destination_address: Ipv4Addr,
     ) -> Self {
         self.destination_address = Some(destination_address);
-        let octets = Vec::from(destination_address.octets());
+        let octets = destination_address.octets().to_vec();
         self.message.header.destination_prefix_length =
             (octets.len() * 8) as u8;
         self.message.nlas.push(Nla::Destination(octets));
@@ -136,7 +136,7 @@ impl RouteGetRequest<Ipv6Addr> {
         destination_address: Ipv6Addr,
     ) -> Self {
         self.destination_address = Some(destination_address);
-        let octets = Vec::from(destination_address.octets());
+        let octets = destination_address.octets().to_vec();
         self.message.header.destination_prefix_length =
             (octets.len() * 8) as u8;
         self.message.nlas.push(Nla::Destination(octets));
