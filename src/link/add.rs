@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-use std::net::{Ipv4Addr, Ipv6Addr};
+use std::{
+    iter::empty,
+    net::{Ipv4Addr, Ipv6Addr},
+};
 
 use futures::stream::StreamExt;
 use netlink_packet_core::{
@@ -11,7 +14,7 @@ use netlink_packet_core::{
 use netlink_packet_route::{
     link::nlas::{
         Info, InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVlan,
-        InfoVxlan, InfoXfrmTun, Nla, VethInfo,
+        InfoVxlan, InfoXfrmTun, Nla, VethInfo, VlanQosMapping,
     },
     LinkMessage, RtnlMessage, IFF_UP,
 };
@@ -523,6 +526,20 @@ pub struct LinkAddRequest {
     replace: bool,
 }
 
+/// A quality-of-service mapping between the internal priority `from` to the
+/// external vlan priority `to`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct QosMapping {
+    pub from: u32,
+    pub to: u32,
+}
+
+impl From<QosMapping> for VlanQosMapping {
+    fn from(QosMapping { from, to }: QosMapping) -> Self {
+        Self::Mapping { from, to }
+    }
+}
+
 impl LinkAddRequest {
     pub(crate) fn new(handle: Handle) -> Self {
         LinkAddRequest {
@@ -609,11 +626,40 @@ impl LinkAddRequest {
     /// VLAN_ID`, but instead of specifying a link name (`LINK`), we specify
     /// a link index.
     pub fn vlan(self, name: String, index: u32, vlan_id: u16) -> Self {
+        self.vlan_with_qos(name, index, vlan_id, empty(), empty())
+    }
+
+    /// Create VLAN on a link with ingress and egress qos mappings.
+    /// This is equivalent to `ip link add link LINK name NAME type vlan id
+    /// VLAN_ID ingress-qos-mapping INGRESS_QOS egress-qos-mapping EGRESS_QOS`,
+    /// but instead of specifying a link name (`LINK`), we specify a link index.
+    pub fn vlan_with_qos<
+        I: IntoIterator<Item = QosMapping>,
+        E: IntoIterator<Item = QosMapping>,
+    >(
+        self,
+        name: String,
+        index: u32,
+        vlan_id: u16,
+        ingress_qos: I,
+        egress_qos: E,
+    ) -> Self {
+        let mut info = vec![InfoVlan::Id(vlan_id)];
+
+        let ingress: Vec<_> =
+            ingress_qos.into_iter().map(VlanQosMapping::from).collect();
+        if !ingress.is_empty() {
+            info.push(InfoVlan::IngressQos(ingress));
+        }
+
+        let egress: Vec<_> =
+            egress_qos.into_iter().map(VlanQosMapping::from).collect();
+        if !egress.is_empty() {
+            info.push(InfoVlan::EgressQos(egress));
+        }
+
         self.name(name)
-            .link_info(
-                InfoKind::Vlan,
-                Some(InfoData::Vlan(vec![InfoVlan::Id(vlan_id)])),
-            )
+            .link_info(InfoKind::Vlan, Some(InfoData::Vlan(info)))
             .append_nla(Nla::Link(index))
             .up()
     }
