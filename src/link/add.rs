@@ -51,7 +51,7 @@ impl BondAddRequest {
     /// This is equivalent to `ip link add name NAME type bond active_slave
     /// ACTIVE_SLAVE_NAME`.
     pub fn active_slave(mut self, active_slave: u32) -> Self {
-        self.info_data.push(InfoBond::ActiveSlave(active_slave));
+        self.info_data.push(InfoBond::ActivePort(active_slave));
         self
     }
 
@@ -166,7 +166,7 @@ impl BondAddRequest {
     /// ALL_SLAVES_ACTIVE`.
     pub fn all_slaves_active(mut self, all_slaves_active: u8) -> Self {
         self.info_data
-            .push(InfoBond::AllSlavesActive(all_slaves_active));
+            .push(InfoBond::AllPortsActive(all_slaves_active));
         self
     }
 
@@ -191,7 +191,7 @@ impl BondAddRequest {
     /// PACKETS_PER_SLAVE`.
     pub fn packets_per_slave(mut self, packets_per_slave: u32) -> Self {
         self.info_data
-            .push(InfoBond::PacketsPerSlave(packets_per_slave));
+            .push(InfoBond::PacketsPerPort(packets_per_slave));
         self
     }
 
