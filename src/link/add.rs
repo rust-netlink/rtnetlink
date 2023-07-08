@@ -557,7 +557,7 @@ impl LinkAddRequest {
     /// Let's say we want to create a vlan interface on a link with id 6. By
     /// default, the [`vlan()`](#method.vlan) method would create a request
     /// with the `IFF_UP` link set, so that the interface is up after
-    /// creation. If we want to create a interface tha tis down by default we
+    /// creation. If we want to create a interface that is down by default we
     /// could do:
     ///
     /// ```rust,no_run
