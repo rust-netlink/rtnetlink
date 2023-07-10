@@ -23,19 +23,18 @@ async fn main() -> Result<(), String> {
 
 async fn create_macvlan(
     handle: Handle,
-    veth_name: String,
+    link_name: String,
 ) -> Result<(), Error> {
-    let mut links = handle.link().get().match_name(veth_name.clone()).execute();
+    let mut links = handle.link().get().match_name(link_name.clone()).execute();
     if let Some(link) = links.try_next().await? {
-        // hard code mode: 4u32 i.e bridge mode
         let request = handle.link().add().macvlan(
             "test_macvlan".into(),
             link.header.index,
-            4u32,
+            4u32, // bridge mode
         );
         request.execute().await?
     } else {
-        println!("no link link {veth_name} found");
+        println!("no link {link_name} found");
     }
     Ok(())
 }
@@ -48,10 +47,10 @@ fn usage() {
 Note that you need to run this program as root. Instead of running cargo as root,
 build the example normally:
 
-    cd netlink-ip ; cargo build --example create_macvlan
+    cargo build --example create_macvlan
 
 Then find the binary in the target directory:
 
-    cd ../target/debug/example ; sudo ./create_macvlan <link_name>"
+    cd target/debug/examples ; sudo ./create_macvlan <link_name>"
     );
 }
