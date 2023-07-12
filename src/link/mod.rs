@@ -15,6 +15,9 @@ pub use self::get::*;
 mod set;
 pub use self::set::*;
 
+mod set_bond_port;
+pub use self::set_bond_port::*;
+
 mod property_add;
 pub use self::property_add::*;
 
