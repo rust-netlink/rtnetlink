@@ -1,4 +1,18 @@
 # Changelog
+## [0.13.1] - 2023-07-18
+### Breaking changes
+ - Deprecated `BondAddRequest::active_slave()` in the favor of
+   `BondAddRequest::active_port()`. (9b67c97, bf6dbf0)
+ - Deprecated `BondAddRequest::all_slaves_active()` in the favor of
+   `BondAddRequest::all_ports_active()`. (9b67c97, bf6dbf0)
+
+### New features
+ - Support bond port setting. (7afe563)
+ - Support VLAN QOS setting. (78a58db)
+
+### Bug fixes
+ - N/A
+
 ## [0.13.0] - 2023-07-10
 ### Breaking changes
  - `TrafficFilterNewRequest::u32()` changed to return `Result`. (b7f8c73)
