@@ -49,6 +49,12 @@ impl BondAddRequest {
         self
     }
 
+    #[deprecated(note = "Please use `active_port` instead")]
+    pub fn active_slave(mut self, active_port: u32) -> Self {
+        self.info_data.push(InfoBond::ActivePort(active_port));
+        self
+    }
+
     /// Adds the `active_port` attribute to the bond, where `active_port`
     /// is the ifindex of an interface attached to the bond.
     /// This is equivalent to `ip link add name NAME type bond active_slave
@@ -161,6 +167,13 @@ impl BondAddRequest {
     /// NUM_PEER_NOTIF`.
     pub fn num_peer_notif(mut self, num_peer_notif: u8) -> Self {
         self.info_data.push(InfoBond::NumPeerNotif(num_peer_notif));
+        self
+    }
+
+    #[deprecated(note = "Please use `all_ports_active` instead")]
+    pub fn all_slaves_active(mut self, all_ports_active: u8) -> Self {
+        self.info_data
+            .push(InfoBond::AllPortsActive(all_ports_active));
         self
     }
 
