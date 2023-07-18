@@ -49,12 +49,12 @@ impl BondAddRequest {
         self
     }
 
-    /// Adds the `active_slave` attribute to the bond, where `active_slave`
+    /// Adds the `active_port` attribute to the bond, where `active_port`
     /// is the ifindex of an interface attached to the bond.
     /// This is equivalent to `ip link add name NAME type bond active_slave
-    /// ACTIVE_SLAVE_NAME`.
-    pub fn active_slave(mut self, active_slave: u32) -> Self {
-        self.info_data.push(InfoBond::ActivePort(active_slave));
+    /// ACTIVE_PORT_NAME`.
+    pub fn active_port(mut self, active_port: u32) -> Self {
+        self.info_data.push(InfoBond::ActivePort(active_port));
         self
     }
 
@@ -164,12 +164,12 @@ impl BondAddRequest {
         self
     }
 
-    /// Adds the `all_slaves_active` attribute to the bond
+    /// Adds the `all_ports_active` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond all_slaves_active
-    /// ALL_SLAVES_ACTIVE`.
-    pub fn all_slaves_active(mut self, all_slaves_active: u8) -> Self {
+    /// ALL_PORTS_ACTIVE`.
+    pub fn all_ports_active(mut self, all_ports_active: u8) -> Self {
         self.info_data
-            .push(InfoBond::AllPortsActive(all_slaves_active));
+            .push(InfoBond::AllPortsActive(all_ports_active));
         self
     }
 
@@ -189,12 +189,12 @@ impl BondAddRequest {
         self
     }
 
-    /// Adds the `packets_per_slave` attribute to the bond
+    /// Adds the `packets_per_port` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond packets_per_slave
-    /// PACKETS_PER_SLAVE`.
-    pub fn packets_per_slave(mut self, packets_per_slave: u32) -> Self {
+    /// PACKETS_PER_PORT`.
+    pub fn packets_per_port(mut self, packets_per_port: u32) -> Self {
         self.info_data
-            .push(InfoBond::PacketsPerPort(packets_per_slave));
+            .push(InfoBond::PacketsPerPort(packets_per_port));
         self
     }
 
