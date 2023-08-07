@@ -729,11 +729,30 @@ impl LinkAddRequest {
     /// Create xfrm tunnel
     /// This is equivalent to `ip link add name NAME type xfrm if_id NUMBER`,
     /// The NUMBER is a XFRM if_id which may be connected to IPsec policy
+    #[deprecated(note = "Please use `xfrmtun_link` instead")]
     pub fn xfrmtun(self, name: String, ifid: u32) -> Self {
         self.name(name)
             .link_info(
                 InfoKind::Xfrm,
                 Some(InfoData::Xfrm(vec![InfoXfrm::IfId(ifid)])),
+            )
+            .up()
+    }
+
+    /// Create xfrm tunnel
+    /// This is equivalent to `ip link add name NAME type xfrm if_id NUMBER dev
+    /// LINK`. The NUMBER is a XFRM if_id which may be connected to IPsec
+    /// policy. The LINK is the underlying link ID to attach the tunnel to,
+    /// but instead of specifying a link name (`LINK`), we specify a link
+    /// index. A LINK of `0` can be used to specify `NONE`.
+    pub fn xfrmtun_link(self, name: String, ifid: u32, link: u32) -> Self {
+        self.name(name)
+            .link_info(
+                InfoKind::Xfrm,
+                Some(InfoData::Xfrm(vec![
+                    InfoXfrm::IfId(ifid),
+                    InfoXfrm::Link(link),
+                ])),
             )
             .up()
     }
