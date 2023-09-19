@@ -10,7 +10,7 @@ use nix::{
     },
     unistd::{fork, ForkResult},
 };
-use std::{option::Option, path::Path, process::exit};
+use std::{option::Option, os::fd::BorrowedFd, path::Path, process::exit};
 
 // if "only" smol or smol+tokio were enabled, we use smol because
 // it doesn't require an active tokio runtime - just to be sure.
@@ -329,7 +329,10 @@ impl NetworkNamespace {
         }
 
         setns_flags.insert(CloneFlags::CLONE_NEWNET);
-        if let Err(e) = nix::sched::setns(fd, setns_flags) {
+        if let Err(e) = nix::sched::setns(
+            unsafe { BorrowedFd::borrow_raw(fd) },
+            setns_flags,
+        ) {
             log::error!("setns error: {}", e);
             let err_msg = format!("setns error: {e}");
             let _ = nix::unistd::unlink(ns_path);
