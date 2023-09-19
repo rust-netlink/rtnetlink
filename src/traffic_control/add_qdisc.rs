@@ -73,7 +73,7 @@ impl QDiscNewRequest {
 
 #[cfg(test)]
 mod test {
-    use std::{fs::File, os::unix::io::AsRawFd, path::Path};
+    use std::{fs::File, os::fd::AsFd, path::Path};
 
     use futures::stream::TryStreamExt;
     use nix::sched::{setns, CloneFlags};
@@ -106,7 +106,7 @@ mod test {
             // entry new ns
             let ns_path = Path::new(NETNS_PATH);
             let file = File::open(ns_path.join(path)).unwrap();
-            setns(file.as_raw_fd(), CloneFlags::CLONE_NEWNET).unwrap();
+            setns(file.as_fd(), CloneFlags::CLONE_NEWNET).unwrap();
 
             Self {
                 path: path.to_string(),
@@ -118,7 +118,7 @@ mod test {
     impl Drop for Netns {
         fn drop(&mut self) {
             println!("exit ns: {}", self.path);
-            setns(self.last.as_raw_fd(), CloneFlags::CLONE_NEWNET).unwrap();
+            setns(self.last.as_fd(), CloneFlags::CLONE_NEWNET).unwrap();
 
             let ns_path = Path::new(NETNS_PATH).join(&self.path);
             nix::mount::umount2(&ns_path, nix::mount::MntFlags::MNT_DETACH)
