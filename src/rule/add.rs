@@ -93,6 +93,12 @@ impl<T> RuleAddRequest<T> {
         self
     }
 
+    /// Set the fwmark
+    pub fn fw_mark(mut self, fw_mark: u32) -> Self {
+        self.message.nlas.push(Nla::FwMark(fw_mark));
+        self
+    }
+
     /// Build an IP v4 rule
     pub fn v4(mut self) -> RuleAddRequest<Ipv4Addr> {
         self.message.header.family = AF_INET as u8;
