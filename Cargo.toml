@@ -9,6 +9,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/rust-netlink/rtnetlink"
 description = "manipulate linux networking resources via netlink"
+rust-version = "1.66.1"
 
 [features]
 test_as_root = []
