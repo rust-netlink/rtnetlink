@@ -35,3 +35,4 @@ env_logger = "0.10.0"
 ipnetwork = "0.18.0"
 tokio = { version = "1.0.1", features = ["macros", "rt", "rt-multi-thread"] }
 async-std = { version = "1.9.0", features = ["attributes"]}
+macaddr = "1.0"
