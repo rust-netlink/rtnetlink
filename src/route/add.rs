@@ -11,7 +11,7 @@ use netlink_packet_core::{
     NLM_F_REQUEST,
 };
 use netlink_packet_route::{
-    nlas::route::Nla, RouteMessage, RtnlMessage, AF_INET, AF_INET6,
+    nlas::route::Nla, RouteMessage, RtnlMessage, RouteFlags, AF_INET, AF_INET6,
     RTN_UNICAST, RTPROT_STATIC, RT_SCOPE_UNIVERSE, RT_TABLE_MAIN,
 };
 
@@ -97,6 +97,12 @@ impl<T> RouteAddRequest<T> {
     /// Default is unicast route kind.
     pub fn kind(mut self, kind: u8) -> Self {
         self.message.header.kind = kind;
+        self
+    }
+
+    /// Sets the route flags.
+    pub fn flags(mut self, flag: RouteFlags) -> Self {
+        self.message.header.flags = flag;
         self
     }
 
