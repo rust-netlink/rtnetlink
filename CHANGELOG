@@ -1,4 +1,21 @@
 # Changelog
+## [0.14.0] - 2023-12-05
+### Breaking changes
+ - Many `VxlanAddRequest` functions changed from u8 to bool. (ba4825a)
+ - Deprecated `LinkSetRequest::master()` in the favor of
+   `LinkSetRequest::controller()`. (ba4825a)
+ - Deprecated `LinkSetRequest::nomaster()` in the favor of
+   `LinkSetRequest::nocontroller()`. (ba4825a)
+ - Many `NeighbourAddRequest` functions changed from u8/u16 to enum. (ba4825a)
+ - Many `TrafficFilterNewRequest` functions changed from u8/u16 to enum.
+   (ba4825a)
+
+### New features
+ - Rule: function to set fw_mark when adding rule. (dabef43)
+
+### Bug fixes
+ - N/A
+
 ## [0.13.1] - 2023-07-18
 ### Breaking changes
  - Deprecated `BondAddRequest::active_slave()` in the favor of
