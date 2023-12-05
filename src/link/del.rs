@@ -2,7 +2,7 @@
 
 use futures::stream::StreamExt;
 use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
-use netlink_packet_route::{LinkMessage, RtnlMessage};
+use netlink_packet_route::{link::LinkMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
@@ -24,7 +24,8 @@ impl LinkDelRequest {
             mut handle,
             message,
         } = self;
-        let mut req = NetlinkMessage::from(RtnlMessage::DelLink(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::DelLink(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK;
 
         let mut response = handle.request(req)?;

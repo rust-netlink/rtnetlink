@@ -2,8 +2,7 @@
 
 use futures::stream::TryStreamExt;
 use netlink_packet_route::link::{
-    nlas::{Info, InfoKind, Nla},
-    LinkMessage,
+    InfoKind, LinkAttribute, LinkInfo, LinkMessage,
 };
 use tokio::runtime::Runtime;
 
@@ -22,13 +21,13 @@ fn create_get_delete_wg() {
     let msg = msg.unwrap();
     assert!(has_nla(
         &msg,
-        &Nla::Info(vec![Info::Kind(InfoKind::Wireguard)])
+        &LinkAttribute::LinkInfo(vec![LinkInfo::Kind(InfoKind::Wireguard)])
     ));
     rt.block_on(_del_wg(&mut handle, msg.header.index)).unwrap();
 }
 
-fn has_nla(msg: &LinkMessage, nla: &Nla) -> bool {
-    msg.nlas.iter().any(|x| x == nla)
+fn has_nla(msg: &LinkMessage, nla: &LinkAttribute) -> bool {
+    msg.attributes.iter().any(|x| x == nla)
 }
 
 async fn _create_wg() -> Result<LinkHandle, Error> {
@@ -37,9 +36,12 @@ async fn _create_wg() -> Result<LinkHandle, Error> {
     let link_handle = handle.link();
     let mut req = link_handle.add();
     let mutator = req.message_mut();
-    let info = Nla::Info(vec![Info::Kind(InfoKind::Wireguard)]);
-    mutator.nlas.push(info);
-    mutator.nlas.push(Nla::IfName(IFACE_NAME.to_owned()));
+    let info =
+        LinkAttribute::LinkInfo(vec![LinkInfo::Kind(InfoKind::Wireguard)]);
+    mutator.attributes.push(info);
+    mutator
+        .attributes
+        .push(LinkAttribute::IfName(IFACE_NAME.to_owned()));
     req.execute().await?;
     Ok(link_handle)
 }

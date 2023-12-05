@@ -5,7 +5,7 @@ use std::net::IpAddr;
 use super::{AddressAddRequest, AddressDelRequest, AddressGetRequest};
 use crate::Handle;
 
-use netlink_packet_route::AddressMessage;
+use netlink_packet_route::address::AddressMessage;
 
 pub struct AddressHandle(Handle);
 

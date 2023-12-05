@@ -7,7 +7,7 @@ use super::{
 
 use crate::Handle;
 use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
-use netlink_packet_route::TcMessage;
+use netlink_packet_route::tc::TcMessage;
 
 pub struct QDiscHandle(Handle);
 

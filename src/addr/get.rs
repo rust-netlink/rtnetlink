@@ -8,7 +8,10 @@ use futures::{
 use std::net::IpAddr;
 
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
-use netlink_packet_route::{nlas::address::Nla, AddressMessage, RtnlMessage};
+use netlink_packet_route::{
+    address::{AddressAttribute, AddressMessage},
+    RouteNetlinkMessage,
+};
 
 use crate::{try_rtnl, Error, Handle};
 
@@ -38,14 +41,17 @@ impl AddressGetRequest {
             filter_builder,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::GetAddress(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::GetAddress(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
 
         let filter = filter_builder.build();
         match handle.request(req) {
             Ok(response) => Either::Left(
                 response
-                    .map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewAddress)))
+                    .map(move |msg| {
+                        Ok(try_rtnl!(msg, RouteNetlinkMessage::NewAddress))
+                    })
                     .try_filter(move |msg| future::ready(filter(msg))),
             ),
             Err(e) => Either::Right(
@@ -92,7 +98,7 @@ impl AddressFilterBuilder {
     }
 
     fn build(self) -> impl Fn(&AddressMessage) -> bool {
-        use Nla::*;
+        use AddressAttribute::*;
 
         move |msg: &AddressMessage| {
             if let Some(index) = self.index {
@@ -108,19 +114,13 @@ impl AddressFilterBuilder {
             }
 
             if let Some(address) = self.address {
-                for nla in msg.nlas.iter() {
-                    if let Unspec(x) | Address(x) | Local(x) | Multicast(x)
-                    | Anycast(x) = nla
-                    {
-                        let is_match = match address {
-                            IpAddr::V4(address) => {
-                                x[..] == address.octets()[..]
-                            }
-                            IpAddr::V6(address) => {
-                                x[..] == address.octets()[..]
-                            }
-                        };
-                        if is_match {
+                for nla in msg.attributes.iter() {
+                    if let Address(x) | Local(x) = nla {
+                        if x == &address {
+                            return true;
+                        }
+                    } else if let Multicast(x) | Anycast(x) = nla {
+                        if IpAddr::V6(*x) == address {
                             return true;
                         }
                     }

@@ -9,7 +9,8 @@ use netlink_packet_core::{
 };
 
 use netlink_packet_route::{
-    nlas::address::Nla, AddressMessage, RtnlMessage, AF_INET, AF_INET6,
+    address::{AddressAttribute, AddressMessage},
+    AddressFamily, RouteNetlinkMessage,
 };
 
 use crate::{try_nl, Error, Handle};
@@ -34,46 +35,35 @@ impl AddressAddRequest {
         message.header.prefix_len = prefix_len;
         message.header.index = index;
 
-        let address_vec = match address {
-            IpAddr::V4(ipv4) => {
-                message.header.family = AF_INET as u8;
-                ipv4.octets().to_vec()
-            }
-            IpAddr::V6(ipv6) => {
-                message.header.family = AF_INET6 as u8;
-                ipv6.octets().to_vec()
-            }
+        message.header.family = match address {
+            IpAddr::V4(_) => AddressFamily::Inet,
+            IpAddr::V6(_) => AddressFamily::Inet6,
         };
 
         if address.is_multicast() {
-            message.nlas.push(Nla::Multicast(address_vec));
-        } else if address.is_unspecified() {
-            message.nlas.push(Nla::Unspec(address_vec));
-        } else if address.is_ipv6() {
-            message.nlas.push(Nla::Address(address_vec));
+            if let IpAddr::V6(a) = address {
+                message.attributes.push(AddressAttribute::Multicast(a));
+            }
         } else {
-            message.nlas.push(Nla::Address(address_vec.clone()));
+            message.attributes.push(AddressAttribute::Address(address));
 
             // for IPv4 the IFA_LOCAL address can be set to the same value as
             // IFA_ADDRESS
-            message.nlas.push(Nla::Local(address_vec.clone()));
+            message.attributes.push(AddressAttribute::Local(address));
 
             // set the IFA_BROADCAST address as well (IPv6 does not support
             // broadcast)
-            if prefix_len == 32 {
-                message.nlas.push(Nla::Broadcast(address_vec));
-            } else {
-                let ip_addr: u32 = u32::from(Ipv4Addr::new(
-                    address_vec[0],
-                    address_vec[1],
-                    address_vec[2],
-                    address_vec[3],
-                ));
-                let brd = Ipv4Addr::from(
-                    (0xffff_ffff_u32) >> u32::from(prefix_len) | ip_addr,
-                );
-                message.nlas.push(Nla::Broadcast(brd.octets().to_vec()));
-            };
+            if let IpAddr::V4(a) = address {
+                if prefix_len == 32 {
+                    message.attributes.push(AddressAttribute::Broadcast(a));
+                } else {
+                    let ip_addr = u32::from(a);
+                    let brd = Ipv4Addr::from(
+                        (0xffff_ffff_u32) >> u32::from(prefix_len) | ip_addr,
+                    );
+                    message.attributes.push(AddressAttribute::Broadcast(brd));
+                };
+            }
         }
         AddressAddRequest {
             handle,
@@ -97,7 +87,8 @@ impl AddressAddRequest {
             message,
             replace,
         } = self;
-        let mut req = NetlinkMessage::from(RtnlMessage::NewAddress(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::NewAddress(message));
         let replace = if replace { NLM_F_REPLACE } else { NLM_F_EXCL };
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK | replace | NLM_F_CREATE;
 

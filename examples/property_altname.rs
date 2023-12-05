@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
-use netlink_packet_route::{
-    link::nlas::{Nla, Prop},
-    LinkMessage,
-};
+use netlink_packet_route::link::{LinkAttribute, LinkMessage, Prop};
 use rtnetlink::{new_connection, Error, Handle};
 use std::env;
 
@@ -66,8 +63,8 @@ async fn show_property_alt_ifnames(
     link_name: &str,
     handle: Handle,
 ) -> Result<(), Error> {
-    for nla in get_link(link_name, handle).await?.nlas.into_iter() {
-        if let Nla::PropList(ref prop_list) = nla {
+    for nla in get_link(link_name, handle).await?.attributes.into_iter() {
+        if let LinkAttribute::PropList(ref prop_list) = nla {
             for prop in prop_list {
                 if let Prop::AltIfName(altname) = prop {
                     println!("altname: {altname}");

@@ -3,7 +3,7 @@
 use crate::{
     Handle, IpVersion, RouteAddRequest, RouteDelRequest, RouteGetRequest,
 };
-use netlink_packet_route::RouteMessage;
+use netlink_packet_route::route::RouteMessage;
 
 pub struct RouteHandle(Handle);
 
