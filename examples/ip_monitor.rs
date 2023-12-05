@@ -2,9 +2,24 @@
 
 use futures::stream::StreamExt;
 
-use netlink_packet_route::constants::*;
 use netlink_sys::{AsyncSocket, SocketAddr};
 use rtnetlink::new_connection;
+
+const RTNLGRP_LINK: u32 = 1;
+const RTNLGRP_NEIGH: u32 = 3;
+const RTNLGRP_IPV4_IFADDR: u32 = 5;
+const RTNLGRP_IPV4_MROUTE: u32 = 6;
+const RTNLGRP_IPV4_ROUTE: u32 = 7;
+const RTNLGRP_IPV4_RULE: u32 = 8;
+const RTNLGRP_IPV6_IFADDR: u32 = 9;
+const RTNLGRP_IPV6_MROUTE: u32 = 10;
+const RTNLGRP_IPV6_ROUTE: u32 = 11;
+const RTNLGRP_IPV6_RULE: u32 = 19;
+const RTNLGRP_IPV4_NETCONF: u32 = 24;
+const RTNLGRP_IPV6_NETCONF: u32 = 25;
+const RTNLGRP_MPLS_ROUTE: u32 = 27;
+const RTNLGRP_NSID: u32 = 28;
+const RTNLGRP_MPLS_NETCONF: u32 = 29;
 
 const fn nl_mgrp(group: u32) -> u32 {
     if group > 31 {

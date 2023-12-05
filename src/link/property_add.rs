@@ -6,8 +6,8 @@ use netlink_packet_core::{
     NLM_F_EXCL, NLM_F_REQUEST,
 };
 use netlink_packet_route::{
-    link::nlas::{Nla, Prop},
-    LinkMessage, RtnlMessage,
+    link::{LinkAttribute, LinkMessage, Prop},
+    RouteNetlinkMessage,
 };
 
 use crate::{Error, Handle};
@@ -30,7 +30,8 @@ impl LinkNewPropRequest {
             mut handle,
             message,
         } = self;
-        let mut req = NetlinkMessage::from(RtnlMessage::NewLinkProp(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::NewLinkProp(message));
         req.header.flags = NLM_F_REQUEST
             | NLM_F_ACK
             | NLM_F_EXCL
@@ -59,7 +60,7 @@ impl LinkNewPropRequest {
             props.push(Prop::AltIfName(alt_ifname.to_string()));
         }
 
-        self.message.nlas.push(Nla::PropList(props));
+        self.message.attributes.push(LinkAttribute::PropList(props));
         self
     }
 }

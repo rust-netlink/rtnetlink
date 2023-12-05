@@ -4,7 +4,7 @@
 macro_rules! try_rtnl {
     ($msg: expr, $message_type:path) => {{
         use netlink_packet_core::{NetlinkMessage, NetlinkPayload};
-        use netlink_packet_route::RtnlMessage;
+        use netlink_packet_route::RouteNetlinkMessage;
         use $crate::Error;
 
         let (header, payload) = $msg.into_parts();

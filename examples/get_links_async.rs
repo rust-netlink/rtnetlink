@@ -2,8 +2,8 @@
 
 use futures::stream::TryStreamExt;
 use netlink_packet_route::{
-    constants::{AF_BRIDGE, RTEXT_FILTER_BRVLAN},
-    link::nlas::Nla,
+    link::{LinkAttribute, LinkExtentMask},
+    AddressFamily,
 };
 use rtnetlink::{new_connection, Error, Handle};
 
@@ -52,8 +52,8 @@ async fn get_link_by_index(handle: Handle, index: u32) -> Result<(), Error> {
     // We should have received only one message
     assert!(links.try_next().await?.is_none());
 
-    for nla in msg.nlas.into_iter() {
-        if let Nla::IfName(name) = nla {
+    for nla in msg.attributes.into_iter() {
+        if let LinkAttribute::IfName(name) = nla {
             println!("found link with index {index} (name = {name})");
             return Ok(());
         }
@@ -79,8 +79,8 @@ async fn get_link_by_name(handle: Handle, name: String) -> Result<(), Error> {
 async fn dump_links(handle: Handle) -> Result<(), Error> {
     let mut links = handle.link().get().execute();
     'outer: while let Some(msg) = links.try_next().await? {
-        for nla in msg.nlas.into_iter() {
-            if let Nla::IfName(name) = nla {
+        for nla in msg.attributes.into_iter() {
+            if let LinkAttribute::IfName(name) = nla {
                 println!("found link {} ({})", msg.header.index, name);
                 continue 'outer;
             }
@@ -94,11 +94,11 @@ async fn dump_bridge_filter_info(handle: Handle) -> Result<(), Error> {
     let mut links = handle
         .link()
         .get()
-        .set_filter_mask(AF_BRIDGE as u8, RTEXT_FILTER_BRVLAN)
+        .set_filter_mask(AddressFamily::Bridge, vec![LinkExtentMask::Brvlan])
         .execute();
     'outer: while let Some(msg) = links.try_next().await? {
-        for nla in msg.nlas.into_iter() {
-            if let Nla::AfSpecBridge(data) = nla {
+        for nla in msg.attributes.into_iter() {
+            if let LinkAttribute::AfSpecBridge(data) = nla {
                 println!(
                     "found interface {} with AfSpecBridge data {:?})",
                     msg.header.index, data

@@ -3,7 +3,7 @@
 use crate::{
     Handle, IpVersion, RuleAddRequest, RuleDelRequest, RuleGetRequest,
 };
-use netlink_packet_route::RuleMessage;
+use netlink_packet_route::rule::RuleMessage;
 
 pub struct RuleHandle(Handle);
 

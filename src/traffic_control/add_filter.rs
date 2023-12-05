@@ -4,14 +4,13 @@ use futures::stream::StreamExt;
 use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
 use netlink_packet_route::{
     tc::{
-        self,
-        constants::{
-            TCA_ACT_TAB, TCA_EGRESS_REDIR, TC_ACT_STOLEN, TC_H_CLSACT,
-            TC_H_MAJ_MASK, TC_H_MIN_EGRESS, TC_H_MIN_INGRESS, TC_H_MIN_MASK,
-            TC_H_ROOT, TC_U32_TERMINAL,
-        },
+        TcAction, TcActionAttribute, TcActionGeneric, TcActionMirror,
+        TcActionMirrorOption, TcActionOption, TcActionType, TcAttribute,
+        TcFilterU32, TcFilterU32Option, TcHandle, TcHeader, TcMessage,
+        TcMirror, TcMirrorActionType, TcOption, TcU32Key, TcU32Selector,
+        TcU32SelectorFlag,
     },
-    RtnlMessage, TcMessage, TCM_IFINDEX_MAGIC_BLOCK, TC_H_MAKE,
+    RouteNetlinkMessage,
 };
 
 use crate::{try_nl, Error, Handle};
@@ -39,8 +38,9 @@ impl TrafficFilterNewRequest {
             flags,
         } = self;
 
-        let mut req =
-            NetlinkMessage::from(RtnlMessage::NewTrafficFilter(message));
+        let mut req = NetlinkMessage::from(
+            RouteNetlinkMessage::NewTrafficFilter(message),
+        );
         req.header.flags = NLM_F_ACK | flags;
 
         let mut response = handle.request(req)?;
@@ -60,42 +60,50 @@ impl TrafficFilterNewRequest {
     /// Set block index.
     /// Equivalent to `block BLOCK_INDEX`.
     pub fn block(mut self, block_index: u32) -> Self {
-        self.message.header.index = TCM_IFINDEX_MAGIC_BLOCK as i32;
-        self.message.header.parent = block_index;
+        self.message.header.index = TcHeader::TCM_IFINDEX_MAGIC_BLOCK as i32;
+        self.message.header.parent = block_index.into();
         self
     }
 
     /// Set parent.
     /// Equivalent to `[ root | ingress | egress | parent CLASSID ]`
-    /// command args. They are mutually exlusive.
+    /// command args. They are mutually exclusive.
     pub fn parent(mut self, parent: u32) -> Self {
-        self.message.header.parent = parent;
+        self.message.header.parent = parent.into();
         self
     }
 
     /// Set parent to root.
     pub fn root(mut self) -> Self {
-        self.message.header.parent = TC_H_ROOT;
+        self.message.header.parent = TcHandle::ROOT;
         self
     }
 
     /// Set parent to ingress.
     pub fn ingress(mut self) -> Self {
-        self.message.header.parent = TC_H_MAKE!(TC_H_CLSACT, TC_H_MIN_INGRESS);
+        self.message.header.parent = TcHandle {
+            major: 0xffff,
+            minor: TcHandle::MIN_INGRESS,
+        };
         self
     }
 
     /// Set parent to egress.
     pub fn egress(mut self) -> Self {
-        self.message.header.parent = TC_H_MAKE!(TC_H_CLSACT, TC_H_MIN_EGRESS);
+        self.message.header.parent = TcHandle {
+            major: 0xffff,
+            minor: TcHandle::MIN_EGRESS,
+        };
         self
     }
 
     /// Set priority.
     /// Equivalent to `priority PRIO` or `pref PRIO`.
     pub fn priority(mut self, priority: u16) -> Self {
-        self.message.header.info =
-            TC_H_MAKE!((priority as u32) << 16, self.message.header.info);
+        self.message.header.info = u32::from(TcHandle {
+            major: priority,
+            minor: priority,
+        });
         self
     }
 
@@ -103,60 +111,64 @@ impl TrafficFilterNewRequest {
     /// Equivalent to `protocol PROT`.
     /// Default: ETH_P_ALL 0x0003, see llproto_names at iproute2/lib/ll_proto.c.
     pub fn protocol(mut self, protocol: u16) -> Self {
-        self.message.header.info =
-            TC_H_MAKE!(self.message.header.info, protocol as u32);
+        self.message.header.info = u32::from(TcHandle {
+            major: (self.message.header.info >> 16) as u16,
+            minor: protocol,
+        });
         self
     }
 
     /// The 32bit filter allows to match arbitrary bitfields in the packet.
     /// Equivalent to `tc filter ... u32`.
-    pub fn u32(mut self, data: Vec<tc::u32::Nla>) -> Result<Self, Error> {
+    pub fn u32(mut self, options: &[TcFilterU32Option]) -> Result<Self, Error> {
         if self
             .message
-            .nlas
+            .attributes
             .iter()
-            .any(|nla| matches!(nla, tc::Nla::Kind(_)))
+            .any(|nla| matches!(nla, TcAttribute::Kind(_)))
         {
             return Err(Error::InvalidNla(
                 "message kind has already been set.".to_string(),
             ));
         }
         self.message
-            .nlas
-            .push(tc::Nla::Kind(tc::u32::KIND.to_string()));
-        self.message.nlas.push(tc::Nla::Options(
-            data.into_iter().map(tc::TcOpt::U32).collect(),
-        ));
+            .attributes
+            .push(TcAttribute::Kind(TcFilterU32::KIND.to_string()));
+        let mut nla_opts = Vec::new();
+        for opt in options {
+            nla_opts.push(TcOption::U32(opt.clone()));
+        }
+        self.message.attributes.push(TcAttribute::Options(nla_opts));
         Ok(self)
     }
 
     /// Use u32 to implement traffic redirect.
     /// Equivalent to
-    /// `tc filter add [dev source] [parent ffff:] [protocol all] u32 match u8 0
-    /// 0 action mirred egress redirect dev dest` You need to set the
-    /// `parent` and `protocol` before call redirect.
+    /// `tc filter add [dev source] [parent ffff:] [protocol all] \
+    ///     u32 match u8 0 0 action mirred egress redirect dev dest`
+    /// You need to set the `parent` and `protocol` before call redirect.
     pub fn redirect(self, dst_index: u32) -> Result<Self, Error> {
-        let mut sel_na = tc::u32::Sel::default();
-        sel_na.flags = TC_U32_TERMINAL;
+        let mut sel_na = TcU32Selector::default();
+        sel_na.flags = vec![TcU32SelectorFlag::Terminal];
         sel_na.nkeys = 1;
-        sel_na.keys = vec![tc::u32::Key::default()];
-        let mut tc_mirror_nla = tc::mirred::TcMirred::default();
-        tc_mirror_nla.action = TC_ACT_STOLEN;
-        tc_mirror_nla.eaction = TCA_EGRESS_REDIR;
+        sel_na.keys = vec![TcU32Key::default()];
+        let mut tc_mirror_nla = TcMirror::default();
+        tc_mirror_nla.generic = TcActionGeneric::default();
+        tc_mirror_nla.generic.action = TcActionType::Stolen;
+        tc_mirror_nla.eaction = TcMirrorActionType::EgressRedir;
         tc_mirror_nla.ifindex = dst_index;
-        let mut action_nla = tc::Action::default();
-        action_nla.tab = TCA_ACT_TAB;
-        action_nla.nlas = vec![
-            tc::ActNla::Kind(tc::mirred::KIND.to_string()),
-            tc::ActNla::Options(vec![tc::ActOpt::Mirred(
-                tc::mirred::Nla::Parms(tc_mirror_nla),
+        let mut action_nla = TcAction::default();
+        action_nla.attributes = vec![
+            TcActionAttribute::Kind(TcActionMirror::KIND.to_string()),
+            TcActionAttribute::Options(vec![TcActionOption::Mirror(
+                TcActionMirrorOption::Parms(tc_mirror_nla),
             )]),
         ];
         let u32_nla = vec![
-            tc::u32::Nla::Sel(sel_na),
-            tc::u32::Nla::Act(vec![action_nla]),
+            TcFilterU32Option::Selector(sel_na),
+            TcFilterU32Option::Action(vec![action_nla]),
         ];
-        self.u32(u32_nla)
+        self.u32(&u32_nla)
     }
 }
 
@@ -165,12 +177,19 @@ mod test {
     use std::{fs::File, os::fd::AsFd, path::Path};
 
     use futures::stream::TryStreamExt;
-    use netlink_packet_route::LinkMessage;
+    use netlink_packet_route::{
+        link::LinkMessage,
+        tc::{
+            TcAttribute, TcFilterU32, TcFilterU32Option, TcOption, TcU32Key,
+            TcU32SelectorFlag,
+        },
+    };
     use nix::sched::{setns, CloneFlags};
     use tokio::runtime::Runtime;
 
-    use super::*;
-    use crate::{new_connection, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
+    use crate::{
+        new_connection, Handle, NetworkNamespace, NETNS_PATH, SELF_NS_PATH,
+    };
 
     const TEST_NS: &str = "netlink_test_filter_ns";
     const TEST_VETH_1: &str = "test_veth_1";
@@ -297,37 +316,37 @@ mod test {
         let mut found = false;
         while let Some(nl_msg) = filters_iter.try_next().await.unwrap() {
             //filters.push(nl_msg.clone());
-            if nl_msg.header.handle == 0x80000800 {
-                let mut iter = nl_msg.nlas.iter();
+            if nl_msg.header.handle == 0x80000800.into() {
+                let mut iter = nl_msg.attributes.iter();
                 assert_eq!(
                     iter.next().unwrap(),
-                    &tc::Nla::Kind(String::from(tc::u32::KIND))
+                    &TcAttribute::Kind(TcFilterU32::KIND.to_string()),
                 );
-                assert!(matches!(iter.next().unwrap(), &tc::Nla::Chain(_)));
+                assert!(matches!(iter.next().unwrap(), &TcAttribute::Chain(_)));
                 // TCA_OPTIONS
                 let nla = iter.next().unwrap();
-                let filter = if let tc::Nla::Options(f) = nla {
+                let filter = if let TcAttribute::Options(f) = nla {
                     f
                 } else {
                     panic!("expect options nla");
                 };
                 let mut fi = filter.iter();
                 let fa = fi.next().unwrap();
-                let ua = if let tc::TcOpt::U32(u) = fa {
+                let ua = if let TcOption::U32(u) = fa {
                     u
                 } else {
                     panic!("expect u32 nla");
                 };
                 // TCA_U32_SEL
-                let sel = if let tc::u32::Nla::Sel(s) = ua {
+                let sel = if let TcFilterU32Option::Selector(s) = ua {
                     s
                 } else {
                     panic!("expect sel nla");
                 };
-                assert_eq!(sel.flags, TC_U32_TERMINAL);
+                assert_eq!(sel.flags, vec![TcU32SelectorFlag::Terminal]);
                 assert_eq!(sel.nkeys, 1);
                 assert_eq!(sel.keys.len(), 1);
-                assert_eq!(sel.keys[0], tc::u32::Key::default());
+                assert_eq!(sel.keys[0], TcU32Key::default());
                 found = true;
                 break;
             }

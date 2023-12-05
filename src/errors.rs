@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
 use netlink_packet_core::{ErrorMessage, NetlinkMessage};
-use netlink_packet_route::RtnlMessage;
+use netlink_packet_route::RouteNetlinkMessage;
 use thiserror::Error;
 
 #[derive(Clone, Eq, PartialEq, Debug, Error)]
 pub enum Error {
     #[error("Received an unexpected message {0:?}")]
-    UnexpectedMessage(NetlinkMessage<RtnlMessage>),
+    UnexpectedMessage(NetlinkMessage<RouteNetlinkMessage>),
 
     #[error("Received a netlink error message {0}")]
     NetlinkError(ErrorMessage),

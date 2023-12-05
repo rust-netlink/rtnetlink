@@ -2,7 +2,7 @@
 
 use futures::stream::StreamExt;
 use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
-use netlink_packet_route::{AddressMessage, RtnlMessage};
+use netlink_packet_route::{address::AddressMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
@@ -23,7 +23,8 @@ impl AddressDelRequest {
             message,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::DelAddress(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::DelAddress(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK;
         let mut response = handle.request(req)?;
         while let Some(msg) = response.next().await {

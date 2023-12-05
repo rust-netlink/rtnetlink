@@ -8,8 +8,8 @@ use futures::{
 
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
-    RouteMessage, RtnlMessage, AF_INET, AF_INET6, RTN_UNSPEC, RTPROT_UNSPEC,
-    RT_SCOPE_UNIVERSE, RT_TABLE_UNSPEC,
+    route::{RouteHeader, RouteMessage, RouteProtocol, RouteScope, RouteType},
+    AddressFamily, RouteNetlinkMessage,
 };
 
 use crate::{try_rtnl, Error, Handle};
@@ -29,10 +29,10 @@ pub enum IpVersion {
 }
 
 impl IpVersion {
-    pub(crate) fn family(self) -> u8 {
+    pub(crate) fn family(self) -> AddressFamily {
         match self {
-            IpVersion::V4 => AF_INET as u8,
-            IpVersion::V6 => AF_INET6 as u8,
+            IpVersion::V4 => AddressFamily::Inet,
+            IpVersion::V6 => AddressFamily::Inet6,
         }
     }
 }
@@ -51,12 +51,12 @@ impl RouteGetRequest {
         // > is the wildcard.
         message.header.destination_prefix_length = 0;
         message.header.source_prefix_length = 0;
-        message.header.scope = RT_SCOPE_UNIVERSE;
-        message.header.kind = RTN_UNSPEC;
+        message.header.scope = RouteScope::Universe;
+        message.header.kind = RouteType::Unspec;
 
         // I don't know if these two fields matter
-        message.header.table = RT_TABLE_UNSPEC;
-        message.header.protocol = RTPROT_UNSPEC;
+        message.header.table = RouteHeader::RT_TABLE_UNSPEC;
+        message.header.protocol = RouteProtocol::Unspec;
 
         RouteGetRequest { handle, message }
     }
@@ -71,14 +71,14 @@ impl RouteGetRequest {
             message,
         } = self;
 
-        let mut req = NetlinkMessage::from(RtnlMessage::GetRoute(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::GetRoute(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
 
         match handle.request(req) {
-            Ok(response) => Either::Left(
-                response
-                    .map(move |msg| Ok(try_rtnl!(msg, RtnlMessage::NewRoute))),
-            ),
+            Ok(response) => Either::Left(response.map(move |msg| {
+                Ok(try_rtnl!(msg, RouteNetlinkMessage::NewRoute))
+            })),
             Err(e) => Either::Right(
                 future::err::<RouteMessage, Error>(e).into_stream(),
             ),

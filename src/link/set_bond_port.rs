@@ -3,8 +3,11 @@
 use futures::stream::StreamExt;
 use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
 use netlink_packet_route::{
-    link::nlas::{Info, InfoBondPort, InfoPortData, InfoPortKind, Nla},
-    LinkMessage, RtnlMessage,
+    link::{
+        InfoBondPort, InfoPortData, InfoPortKind, LinkAttribute, LinkInfo,
+        LinkMessage,
+    },
+    RouteNetlinkMessage,
 };
 
 use crate::{try_nl, Error, Handle};
@@ -34,12 +37,13 @@ impl BondPortSetRequest {
 
         let mut message = LinkMessage::default();
         message.header.index = index;
-        message.nlas.push(Nla::Info(vec![
-            Info::PortKind(InfoPortKind::Bond),
-            Info::PortData(InfoPortData::BondPort(port_nlas)),
+        message.attributes.push(LinkAttribute::LinkInfo(vec![
+            LinkInfo::PortKind(InfoPortKind::Bond),
+            LinkInfo::PortData(InfoPortData::BondPort(port_nlas)),
         ]));
 
-        let mut req = NetlinkMessage::from(RtnlMessage::NewLink(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::NewLink(message));
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK;
 
         let mut response = handle.request(req)?;
