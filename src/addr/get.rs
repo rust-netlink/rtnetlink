@@ -72,7 +72,7 @@ impl AddressGetRequest {
         self
     }
 
-    /// Return only the addresses of the given prefix length.
+    /// Return only AddressMessages filtered by the given address.
     pub fn set_address_filter(mut self, address: IpAddr) -> Self {
         self.filter_builder.address = Some(address);
         self
