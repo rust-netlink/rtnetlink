@@ -51,6 +51,7 @@ impl NeighbourAddRequest {
         }
     }
 
+    #[cfg(not(target_os = "freebsd"))]
     pub(crate) fn new_bridge(handle: Handle, index: u32, lla: &[u8]) -> Self {
         let mut message = NeighbourMessage::default();
 
