@@ -8,7 +8,9 @@
 mod handle;
 pub use crate::handle::*;
 
+#[cfg(not(target_os = "freebsd"))]
 mod ns;
+#[cfg(not(target_os = "freebsd"))]
 pub use crate::ns::*;
 
 mod errors;
@@ -29,7 +31,9 @@ pub use crate::rule::*;
 mod connection;
 pub use crate::connection::*;
 
+#[cfg(not(target_os = "freebsd"))]
 mod traffic_control;
+#[cfg(not(target_os = "freebsd"))]
 pub use crate::traffic_control::*;
 
 mod neighbour;
