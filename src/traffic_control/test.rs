@@ -5,8 +5,8 @@ use std::process::Command;
 use futures::stream::TryStreamExt;
 use netlink_packet_core::ErrorMessage;
 use netlink_packet_route::{
-    tc::nlas::Nla::{Chain, HwOffload, Kind},
-    TcMessage, AF_UNSPEC,
+    tc::{TcAttribute, TcMessage},
+    AddressFamily,
 };
 use tokio::runtime::Runtime;
 
@@ -29,13 +29,19 @@ async fn _get_qdiscs() -> Vec<TcMessage> {
 fn test_get_qdiscs() {
     let qdiscs = Runtime::new().unwrap().block_on(_get_qdiscs());
     let qdisc_of_loopback_nic = &qdiscs[0];
-    assert_eq!(qdisc_of_loopback_nic.header.family, AF_UNSPEC as u8);
+    assert_eq!(qdisc_of_loopback_nic.header.family, AddressFamily::Unspec);
     assert_eq!(qdisc_of_loopback_nic.header.index, 1);
-    assert_eq!(qdisc_of_loopback_nic.header.handle, 0);
-    assert_eq!(qdisc_of_loopback_nic.header.parent, u32::MAX);
+    assert_eq!(qdisc_of_loopback_nic.header.handle, 0.into());
+    assert_eq!(qdisc_of_loopback_nic.header.parent, u32::MAX.into());
     assert_eq!(qdisc_of_loopback_nic.header.info, 2); // refcount
-    assert_eq!(qdisc_of_loopback_nic.nlas[0], Kind("noqueue".to_string()));
-    assert_eq!(qdisc_of_loopback_nic.nlas[1], HwOffload(0));
+    assert_eq!(
+        qdisc_of_loopback_nic.attributes[0],
+        TcAttribute::Kind("noqueue".to_string())
+    );
+    assert_eq!(
+        qdisc_of_loopback_nic.attributes[1],
+        TcAttribute::HwOffload(0)
+    );
 }
 
 async fn _get_tclasses(ifindex: i32) -> Vec<TcMessage> {
@@ -264,24 +270,30 @@ fn test_get_traffic_classes_filters_and_chains() {
     _remove_test_dummy_interface();
     assert_eq!(tclasses.len(), 1);
     let tclass = &tclasses[0];
-    assert_eq!(tclass.header.family, AF_UNSPEC as u8);
+    assert_eq!(tclass.header.family, AddressFamily::Unspec);
     assert_eq!(tclass.header.index, ifindex);
-    assert_eq!(tclass.header.parent, u32::MAX);
-    assert_eq!(tclass.nlas[0], Kind("htb".to_string()));
+    assert_eq!(tclass.header.parent, u32::MAX.into());
+    assert_eq!(tclass.attributes[0], TcAttribute::Kind("htb".to_string()));
     assert_eq!(filters.len(), 2);
-    assert_eq!(filters[0].header.family, AF_UNSPEC as u8);
+    assert_eq!(filters[0].header.family, AddressFamily::Unspec);
     assert_eq!(filters[0].header.index, ifindex);
-    assert_eq!(filters[0].header.parent, u16::MAX as u32 + 1);
-    assert_eq!(filters[0].nlas[0], Kind("basic".to_string()));
-    assert_eq!(filters[1].header.family, AF_UNSPEC as u8);
+    assert_eq!(filters[0].header.parent, (u16::MAX as u32 + 1).into());
+    assert_eq!(
+        filters[0].attributes[0],
+        TcAttribute::Kind("basic".to_string())
+    );
+    assert_eq!(filters[1].header.family, AddressFamily::Unspec);
     assert_eq!(filters[1].header.index, ifindex);
-    assert_eq!(filters[1].header.parent, u16::MAX as u32 + 1);
-    assert_eq!(filters[1].nlas[0], Kind("basic".to_string()));
+    assert_eq!(filters[1].header.parent, (u16::MAX as u32 + 1).into());
+    assert_eq!(
+        filters[1].attributes[0],
+        TcAttribute::Kind("basic".to_string())
+    );
     assert!(chains.len() <= 1);
     if chains.len() == 1 {
-        assert_eq!(chains[0].header.family, AF_UNSPEC as u8);
+        assert_eq!(chains[0].header.family, AddressFamily::Unspec);
         assert_eq!(chains[0].header.index, ifindex);
-        assert_eq!(chains[0].header.parent, u16::MAX as u32 + 1);
-        assert_eq!(chains[0].nlas[0], Chain([0u8, 0, 0, 0].to_vec()));
+        assert_eq!(chains[0].header.parent, (u16::MAX as u32 + 1).into());
+        assert_eq!(chains[0].attributes[0], TcAttribute::Chain(0),);
     }
 }

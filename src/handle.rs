@@ -2,7 +2,7 @@
 
 use futures::Stream;
 use netlink_packet_core::NetlinkMessage;
-use netlink_packet_route::RtnlMessage;
+use netlink_packet_route::RouteNetlinkMessage;
 use netlink_proto::{sys::SocketAddr, ConnectionHandle};
 
 use crate::{
@@ -12,17 +12,18 @@ use crate::{
 };
 
 #[derive(Clone, Debug)]
-pub struct Handle(ConnectionHandle<RtnlMessage>);
+pub struct Handle(ConnectionHandle<RouteNetlinkMessage>);
 
 impl Handle {
-    pub(crate) fn new(conn: ConnectionHandle<RtnlMessage>) -> Self {
+    pub(crate) fn new(conn: ConnectionHandle<RouteNetlinkMessage>) -> Self {
         Handle(conn)
     }
 
     pub fn request(
         &mut self,
-        message: NetlinkMessage<RtnlMessage>,
-    ) -> Result<impl Stream<Item = NetlinkMessage<RtnlMessage>>, Error> {
+        message: NetlinkMessage<RouteNetlinkMessage>,
+    ) -> Result<impl Stream<Item = NetlinkMessage<RouteNetlinkMessage>>, Error>
+    {
         self.0
             .request(message, SocketAddr::new(0, 0))
             .map_err(|_| Error::RequestFailed)
@@ -30,7 +31,7 @@ impl Handle {
 
     pub fn notify(
         &mut self,
-        msg: NetlinkMessage<RtnlMessage>,
+        msg: NetlinkMessage<RouteNetlinkMessage>,
     ) -> Result<(), Error> {
         self.0
             .notify(msg, SocketAddr::new(0, 0))

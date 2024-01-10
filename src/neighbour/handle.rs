@@ -3,7 +3,7 @@
 use crate::{
     Handle, NeighbourAddRequest, NeighbourDelRequest, NeighbourGetRequest,
 };
-use netlink_packet_route::NeighbourMessage;
+use netlink_packet_route::neighbour::NeighbourMessage;
 use std::net::IpAddr;
 
 pub struct NeighbourHandle(Handle);

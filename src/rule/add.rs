@@ -12,8 +12,9 @@ use netlink_packet_core::{
 };
 
 use netlink_packet_route::{
-    nlas::rule::Nla, RtnlMessage, RuleMessage, AF_INET, AF_INET6,
-    FR_ACT_UNSPEC, RT_TABLE_MAIN,
+    route::RouteHeader,
+    rule::{RuleAction, RuleAttribute, RuleMessage},
+    AddressFamily, RouteNetlinkMessage,
 };
 
 use crate::{try_nl, Error, Handle};
@@ -31,8 +32,8 @@ impl<T> RuleAddRequest<T> {
     pub(crate) fn new(handle: Handle) -> Self {
         let mut message = RuleMessage::default();
 
-        message.header.table = RT_TABLE_MAIN;
-        message.header.action = FR_ACT_UNSPEC;
+        message.header.table = RouteHeader::RT_TABLE_MAIN;
+        message.header.action = RuleAction::Unspec;
 
         RuleAddRequest {
             handle,
@@ -44,13 +45,13 @@ impl<T> RuleAddRequest<T> {
 
     /// Sets the input interface name.
     pub fn input_interface(mut self, ifname: String) -> Self {
-        self.message.nlas.push(Nla::Iifname(ifname));
+        self.message.attributes.push(RuleAttribute::Iifname(ifname));
         self
     }
 
     /// Sets the output interface name.
     pub fn output_interface(mut self, ifname: String) -> Self {
-        self.message.nlas.push(Nla::OifName(ifname));
+        self.message.attributes.push(RuleAttribute::Oifname(ifname));
         self
     }
 
@@ -68,7 +69,7 @@ impl<T> RuleAddRequest<T> {
     /// Default is main rule table.
     pub fn table_id(mut self, table: u32) -> Self {
         if table > 255 {
-            self.message.nlas.push(Nla::Table(table));
+            self.message.attributes.push(RuleAttribute::Table(table));
         } else {
             self.message.header.table = table as u8;
         }
@@ -82,20 +83,28 @@ impl<T> RuleAddRequest<T> {
     }
 
     /// Set action.
-    pub fn action(mut self, action: u8) -> Self {
+    pub fn action(mut self, action: RuleAction) -> Self {
         self.message.header.action = action;
         self
     }
 
     /// Set the priority.
     pub fn priority(mut self, priority: u32) -> Self {
-        self.message.nlas.push(Nla::Priority(priority));
+        self.message
+            .attributes
+            .push(RuleAttribute::Priority(priority));
+        self
+    }
+
+    /// Set the fwmark
+    pub fn fw_mark(mut self, fw_mark: u32) -> Self {
+        self.message.attributes.push(RuleAttribute::FwMark(fw_mark));
         self
     }
 
     /// Build an IP v4 rule
     pub fn v4(mut self) -> RuleAddRequest<Ipv4Addr> {
-        self.message.header.family = AF_INET as u8;
+        self.message.header.family = AddressFamily::Inet;
         RuleAddRequest {
             handle: self.handle,
             message: self.message,
@@ -106,7 +115,7 @@ impl<T> RuleAddRequest<T> {
 
     /// Build an IP v6 rule
     pub fn v6(mut self) -> RuleAddRequest<Ipv6Addr> {
-        self.message.header.family = AF_INET6 as u8;
+        self.message.header.family = AddressFamily::Inet6;
         RuleAddRequest {
             handle: self.handle,
             message: self.message,
@@ -131,7 +140,8 @@ impl<T> RuleAddRequest<T> {
             replace,
             ..
         } = self;
-        let mut req = NetlinkMessage::from(RtnlMessage::NewRule(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::NewRule(message));
         let replace = if replace { NLM_F_REPLACE } else { NLM_F_EXCL };
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK | replace | NLM_F_CREATE;
 
@@ -152,8 +162,9 @@ impl RuleAddRequest<Ipv4Addr> {
     /// Sets the source address prefix.
     pub fn source_prefix(mut self, addr: Ipv4Addr, prefix_length: u8) -> Self {
         self.message.header.src_len = prefix_length;
-        let src = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Source(src));
+        self.message
+            .attributes
+            .push(RuleAttribute::Source(addr.into()));
         self
     }
 
@@ -164,8 +175,9 @@ impl RuleAddRequest<Ipv4Addr> {
         prefix_length: u8,
     ) -> Self {
         self.message.header.dst_len = prefix_length;
-        let dst = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Destination(dst));
+        self.message
+            .attributes
+            .push(RuleAttribute::Destination(addr.into()));
         self
     }
 }
@@ -174,8 +186,9 @@ impl RuleAddRequest<Ipv6Addr> {
     /// Sets the source address prefix.
     pub fn source_prefix(mut self, addr: Ipv6Addr, prefix_length: u8) -> Self {
         self.message.header.src_len = prefix_length;
-        let src = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Source(src));
+        self.message
+            .attributes
+            .push(RuleAttribute::Source(addr.into()));
         self
     }
 
@@ -186,8 +199,9 @@ impl RuleAddRequest<Ipv6Addr> {
         prefix_length: u8,
     ) -> Self {
         self.message.header.dst_len = prefix_length;
-        let dst = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Destination(dst));
+        self.message
+            .attributes
+            .push(RuleAttribute::Destination(addr.into()));
         self
     }
 }

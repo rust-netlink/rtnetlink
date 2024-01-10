@@ -12,11 +12,12 @@ use netlink_packet_core::{
 };
 
 use netlink_packet_route::{
-    link::nlas::{
-        Info, InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVlan,
-        InfoVxlan, InfoXfrmTun, Nla, VethInfo, VlanQosMapping,
+    link::{
+        InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVeth,
+        InfoVlan, InfoVxlan, InfoXfrm, LinkAttribute, LinkFlag, LinkInfo,
+        LinkMessage, VlanQosMapping,
     },
-    LinkMessage, RtnlMessage, IFF_UP,
+    RouteNetlinkMessage,
 };
 
 use crate::{try_nl, Error, Handle};
@@ -444,7 +445,7 @@ impl VxlanAddRequest {
     /// [no]learning`. [no]learning - specifies if unknown source link layer
     /// addresses and IP addresses are entered into the VXLAN
     /// device forwarding database.
-    pub fn learning(mut self, learning: u8) -> Self {
+    pub fn learning(mut self, learning: bool) -> Self {
         self.info_data.push(InfoVxlan::Learning(learning));
         self
     }
@@ -480,7 +481,7 @@ impl VxlanAddRequest {
     /// Adds the `proxy` attribute to the VXLAN
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
     /// [no]proxy`. [no]proxy - specifies ARP proxy is turned on.
-    pub fn proxy(mut self, proxy: u8) -> Self {
+    pub fn proxy(mut self, proxy: bool) -> Self {
         self.info_data.push(InfoVxlan::Proxy(proxy));
         self
     }
@@ -488,7 +489,7 @@ impl VxlanAddRequest {
     /// Adds the `rsc` attribute to the VXLAN
     /// This is equivalent to `ip link add name NAME type vxlan id VNI [no]rsc`.
     /// [no]rsc - specifies if route short circuit is turned on.
-    pub fn rsc(mut self, rsc: u8) -> Self {
+    pub fn rsc(mut self, rsc: bool) -> Self {
         self.info_data.push(InfoVxlan::Rsc(rsc));
         self
     }
@@ -497,7 +498,7 @@ impl VxlanAddRequest {
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
     /// [no]l2miss`. [no]l2miss - specifies if netlink LLADDR miss
     /// notifications are generated.
-    pub fn l2miss(mut self, l2miss: u8) -> Self {
+    pub fn l2miss(mut self, l2miss: bool) -> Self {
         self.info_data.push(InfoVxlan::L2Miss(l2miss));
         self
     }
@@ -506,12 +507,12 @@ impl VxlanAddRequest {
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
     /// [no]l3miss`. [no]l3miss - specifies if netlink IP ADDR miss
     /// notifications are generated.
-    pub fn l3miss(mut self, l3miss: u8) -> Self {
+    pub fn l3miss(mut self, l3miss: bool) -> Self {
         self.info_data.push(InfoVxlan::L3Miss(l3miss));
         self
     }
 
-    pub fn collect_metadata(mut self, collect_metadata: u8) -> Self {
+    pub fn collect_metadata(mut self, collect_metadata: bool) -> Self {
         self.info_data
             .push(InfoVxlan::CollectMetadata(collect_metadata));
         self
@@ -521,7 +522,7 @@ impl VxlanAddRequest {
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
     /// [no]udp_csum`. [no]udpcsum - specifies if UDP checksum is calculated
     /// for transmitted packets over IPv4.
-    pub fn udp_csum(mut self, udp_csum: u8) -> Self {
+    pub fn udp_csum(mut self, udp_csum: bool) -> Self {
         self.info_data.push(InfoVxlan::UDPCsum(udp_csum));
         self
     }
@@ -549,7 +550,7 @@ pub struct QosMapping {
 
 impl From<QosMapping> for VlanQosMapping {
     fn from(QosMapping { from, to }: QosMapping) -> Self {
-        Self::Mapping { from, to }
+        Self::Mapping(from, to)
     }
 }
 
@@ -569,7 +570,8 @@ impl LinkAddRequest {
             message,
             replace,
         } = self;
-        let mut req = NetlinkMessage::from(RtnlMessage::NewLink(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::NewLink(message));
         let replace = if replace { NLM_F_REPLACE } else { NLM_F_EXCL };
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK | replace | NLM_F_CREATE;
 
@@ -586,22 +588,23 @@ impl LinkAddRequest {
     ///
     /// Let's say we want to create a vlan interface on a link with id 6. By
     /// default, the [`vlan()`](#method.vlan) method would create a request
-    /// with the `IFF_UP` link set, so that the interface is up after
+    /// with the `LinkFlag::Up` link set, so that the interface is up after
     /// creation. If we want to create a interface that is down by default we
     /// could do:
     ///
     /// ```rust,no_run
     /// use futures::Future;
-    /// use netlink_packet_route::IFF_UP;
+    /// use netlink_packet_route::link::LinkFlag;
     /// use rtnetlink::{Handle, new_connection};
     ///
     /// async fn run(handle: Handle) -> Result<(), String> {
     ///     let vlan_id = 100;
     ///     let link_id = 6;
-    ///     let mut request = handle.link().add().vlan("my-vlan-itf".into(), link_id, vlan_id);
-    ///     // unset the IFF_UP flag before sending the request
-    ///     request.message_mut().header.flags &= !IFF_UP;
-    ///     request.message_mut().header.change_mask &= !IFF_UP;
+    ///     let mut request = handle.link().add().vlan("my-vlan-itf".into(),
+    ///         link_id, vlan_id);
+    ///     request.message_mut().header.flags.push(LinkFlag::Up);
+    ///     request.message_mut().header.change_mask.retain(
+    ///         |f| *f != LinkFlag::Up);
     ///     // send the request
     ///     request.execute().await.map_err(|e| format!("{}", e))
     /// }
@@ -619,16 +622,16 @@ impl LinkAddRequest {
     /// This is equivalent to `ip link add NAME1 type veth peer name NAME2`.
     pub fn veth(self, name: String, peer_name: String) -> Self {
         // NOTE: `name` is the name of the peer in the netlink message (ie the
-        // link created via the VethInfo::Peer attribute, and
+        // link created via the InfoVeth::Peer attribute, and
         // `peer_name` is the name in the main netlink message.
         // This is a bit weird, but it's all hidden from the user.
 
         let mut peer = LinkMessage::default();
         // FIXME: we get a -107 (ENOTCONN) (???) when trying to set `name` up.
-        // peer.header.flags = LinkFlags::from(IFF_UP);
-        // peer.header.change_mask = LinkFlags::from(IFF_UP);
-        peer.nlas.push(Nla::IfName(name));
-        let link_info_data = InfoData::Veth(VethInfo::Peer(peer));
+        // peer.header.flags.push(LinkFlag::Up);
+        // peer.header.change_mask.push(LinkFlag::Up);
+        peer.attributes.push(LinkAttribute::IfName(name));
+        let link_info_data = InfoData::Veth(InfoVeth::Peer(peer));
         self.name(peer_name)
             .up() // iproute2 does not set this one up
             .link_info(InfoKind::Veth, Some(link_info_data))
@@ -673,7 +676,7 @@ impl LinkAddRequest {
 
         self.name(name)
             .link_info(InfoKind::Vlan, Some(InfoData::Vlan(info)))
-            .append_nla(Nla::Link(index))
+            .append_nla(LinkAttribute::Link(index))
             .up()
     }
 
@@ -690,7 +693,7 @@ impl LinkAddRequest {
                 InfoKind::MacVlan,
                 Some(InfoData::MacVlan(vec![InfoMacVlan::Mode(mode)])),
             )
-            .append_nla(Nla::Link(index))
+            .append_nla(LinkAttribute::Link(index))
             .up()
     }
 
@@ -707,7 +710,7 @@ impl LinkAddRequest {
                 InfoKind::MacVtap,
                 Some(InfoData::MacVtap(vec![InfoMacVtap::Mode(mode)])),
             )
-            .append_nla(Nla::Link(index))
+            .append_nla(LinkAttribute::Link(index))
             .up()
     }
 
@@ -730,7 +733,7 @@ impl LinkAddRequest {
         self.name(name)
             .link_info(
                 InfoKind::Xfrm,
-                Some(InfoData::Xfrm(vec![InfoXfrmTun::IfId(ifid)])),
+                Some(InfoData::Xfrm(vec![InfoXfrm::IfId(ifid)])),
             )
             .up()
     }
@@ -750,7 +753,19 @@ impl LinkAddRequest {
     pub fn bridge(self, name: String) -> Self {
         self.name(name.clone())
             .link_info(InfoKind::Bridge, None)
-            .append_nla(Nla::IfName(name))
+            .append_nla(LinkAttribute::IfName(name))
+    }
+
+    /// Create a wireguard link.
+    /// This is equivalent to `ip link add NAME type wireguard`.
+    pub fn wireguard(self, name: String) -> Self {
+        let mut request = self.name(name).link_info(InfoKind::Wireguard, None);
+        request
+            .message_mut()
+            .header
+            .flags
+            .retain(|f| *f != LinkFlag::Up);
+        request
     }
 
     /// Replace existing matching link.
@@ -762,26 +777,26 @@ impl LinkAddRequest {
     }
 
     fn up(mut self) -> Self {
-        self.message.header.flags = IFF_UP;
-        self.message.header.change_mask = IFF_UP;
+        self.message.header.flags.push(LinkFlag::Up);
+        self.message.header.change_mask.push(LinkFlag::Up);
         self
     }
 
     fn link_info(self, kind: InfoKind, data: Option<InfoData>) -> Self {
-        let mut link_info_nlas = vec![Info::Kind(kind)];
+        let mut link_info_nlas = vec![LinkInfo::Kind(kind)];
         if let Some(data) = data {
-            link_info_nlas.push(Info::Data(data));
+            link_info_nlas.push(LinkInfo::Data(data));
         }
-        self.append_nla(Nla::Info(link_info_nlas))
+        self.append_nla(LinkAttribute::LinkInfo(link_info_nlas))
     }
 
     fn name(mut self, name: String) -> Self {
-        self.message.nlas.push(Nla::IfName(name));
+        self.message.attributes.push(LinkAttribute::IfName(name));
         self
     }
 
-    fn append_nla(mut self, nla: Nla) -> Self {
-        self.message.nlas.push(nla);
+    fn append_nla(mut self, nla: LinkAttribute) -> Self {
+        self.message.attributes.push(nla);
         self
     }
 }

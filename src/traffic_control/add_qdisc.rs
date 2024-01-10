@@ -3,9 +3,8 @@
 use futures::stream::StreamExt;
 use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
 use netlink_packet_route::{
-    tc::constants::{TC_H_INGRESS, TC_H_MAJ_MASK, TC_H_MIN_MASK, TC_H_ROOT},
-    tc::nlas::Nla,
-    RtnlMessage, TcMessage, TC_H_MAKE,
+    tc::{TcAttribute, TcHandle, TcMessage},
+    RouteNetlinkMessage,
 };
 
 use crate::{try_nl, Error, Handle};
@@ -33,8 +32,9 @@ impl QDiscNewRequest {
             flags,
         } = self;
 
-        let mut req =
-            NetlinkMessage::from(RtnlMessage::NewQueueDiscipline(message));
+        let mut req = NetlinkMessage::from(
+            RouteNetlinkMessage::NewQueueDiscipline(message),
+        );
         req.header.flags = NLM_F_ACK | flags;
 
         let mut response = handle.request(req)?;
@@ -45,35 +45,37 @@ impl QDiscNewRequest {
     }
 
     /// Set handle,
-    pub fn handle(mut self, maj: u16, min: u16) -> Self {
-        self.message.header.handle = TC_H_MAKE!((maj as u32) << 16, min as u32);
+    pub fn handle(mut self, major: u16, minor: u16) -> Self {
+        self.message.header.handle = TcHandle { major, minor };
         self
     }
 
     /// Set parent to root.
     pub fn root(mut self) -> Self {
-        self.message.header.parent = TC_H_ROOT;
+        self.message.header.parent = TcHandle::ROOT;
         self
     }
 
     /// Set parent
     pub fn parent(mut self, parent: u32) -> Self {
-        self.message.header.parent = parent;
+        self.message.header.parent = parent.into();
         self
     }
 
     /// New a ingress qdisc
     pub fn ingress(mut self) -> Self {
-        self.message.header.parent = TC_H_INGRESS;
-        self.message.header.handle = 0xffff0000;
-        self.message.nlas.push(Nla::Kind("ingress".to_string()));
+        self.message.header.parent = TcHandle::INGRESS;
+        self.message.header.handle = TcHandle::from(0xffff0000);
+        self.message
+            .attributes
+            .push(TcAttribute::Kind("ingress".to_string()));
         self
     }
 }
 
 #[cfg(test)]
 mod test {
-    use std::{fs::File, os::unix::io::AsRawFd, path::Path};
+    use std::{fs::File, os::fd::AsFd, path::Path};
 
     use futures::stream::TryStreamExt;
     use nix::sched::{setns, CloneFlags};
@@ -82,8 +84,7 @@ mod test {
     use super::*;
     use crate::{new_connection, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
     use netlink_packet_route::{
-        tc::nlas::Nla::{HwOffload, Kind},
-        LinkMessage, AF_UNSPEC,
+        link::LinkMessage, tc::TcAttribute, AddressFamily,
     };
 
     const TEST_NS: &str = "netlink_test_qdisc_ns";
@@ -106,7 +107,7 @@ mod test {
             // entry new ns
             let ns_path = Path::new(NETNS_PATH);
             let file = File::open(ns_path.join(path)).unwrap();
-            setns(file.as_raw_fd(), CloneFlags::CLONE_NEWNET).unwrap();
+            setns(file.as_fd(), CloneFlags::CLONE_NEWNET).unwrap();
 
             Self {
                 path: path.to_string(),
@@ -118,7 +119,7 @@ mod test {
     impl Drop for Netns {
         fn drop(&mut self) {
             println!("exit ns: {}", self.path);
-            setns(self.last.as_raw_fd(), CloneFlags::CLONE_NEWNET).unwrap();
+            setns(self.last.as_fd(), CloneFlags::CLONE_NEWNET).unwrap();
 
             let ns_path = Path::new(NETNS_PATH).join(&self.path);
             nix::mount::umount2(&ns_path, nix::mount::MntFlags::MNT_DETACH)
@@ -173,14 +174,17 @@ mod test {
         let mut found = false;
         while let Some(nl_msg) = qdiscs_iter.try_next().await.unwrap() {
             if nl_msg.header.index == test_link.header.index as i32
-                && nl_msg.header.handle == 0xffff0000
+                && nl_msg.header.handle == 0xffff0000.into()
             {
-                assert_eq!(nl_msg.header.family, AF_UNSPEC as u8);
-                assert_eq!(nl_msg.header.handle, 0xffff0000);
-                assert_eq!(nl_msg.header.parent, TC_H_INGRESS);
+                assert_eq!(nl_msg.header.family, AddressFamily::Unspec);
+                assert_eq!(nl_msg.header.handle, 0xffff0000.into());
+                assert_eq!(nl_msg.header.parent, TcHandle::INGRESS);
                 assert_eq!(nl_msg.header.info, 1); // refcount
-                assert_eq!(nl_msg.nlas[0], Kind("ingress".to_string()));
-                assert_eq!(nl_msg.nlas[2], HwOffload(0));
+                assert_eq!(
+                    nl_msg.attributes[0],
+                    TcAttribute::Kind("ingress".to_string())
+                );
+                assert_eq!(nl_msg.attributes[2], TcAttribute::HwOffload(0));
                 found = true;
                 break;
             }

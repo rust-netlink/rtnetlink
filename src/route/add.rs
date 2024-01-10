@@ -11,8 +11,11 @@ use netlink_packet_core::{
     NLM_F_REQUEST,
 };
 use netlink_packet_route::{
-    nlas::route::Nla, RouteMessage, RtnlMessage, AF_INET, AF_INET6,
-    RTN_UNICAST, RTPROT_STATIC, RT_SCOPE_UNIVERSE, RT_TABLE_MAIN,
+    route::{
+        RouteAddress, RouteAttribute, RouteHeader, RouteMessage, RouteProtocol,
+        RouteScope, RouteType,
+    },
+    AddressFamily, RouteNetlinkMessage,
 };
 
 use crate::{try_nl, Error, Handle};
@@ -30,10 +33,10 @@ impl<T> RouteAddRequest<T> {
     pub(crate) fn new(handle: Handle) -> Self {
         let mut message = RouteMessage::default();
 
-        message.header.table = RT_TABLE_MAIN;
-        message.header.protocol = RTPROT_STATIC;
-        message.header.scope = RT_SCOPE_UNIVERSE;
-        message.header.kind = RTN_UNICAST;
+        message.header.table = RouteHeader::RT_TABLE_MAIN;
+        message.header.protocol = RouteProtocol::Static;
+        message.header.scope = RouteScope::Universe;
+        message.header.kind = RouteType::Unicast;
 
         RouteAddRequest {
             handle,
@@ -45,13 +48,21 @@ impl<T> RouteAddRequest<T> {
 
     /// Sets the input interface index.
     pub fn input_interface(mut self, index: u32) -> Self {
-        self.message.nlas.push(Nla::Iif(index));
+        self.message.attributes.push(RouteAttribute::Iif(index));
         self
     }
 
     /// Sets the output interface index.
     pub fn output_interface(mut self, index: u32) -> Self {
-        self.message.nlas.push(Nla::Oif(index));
+        self.message.attributes.push(RouteAttribute::Oif(index));
+        self
+    }
+
+    /// Sets the route priority (metric)
+    pub fn priority(mut self, priority: u32) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::Priority(priority));
         self
     }
 
@@ -69,7 +80,7 @@ impl<T> RouteAddRequest<T> {
     /// Default is main route table.
     pub fn table_id(mut self, table: u32) -> Self {
         if table > 255 {
-            self.message.nlas.push(Nla::Table(table));
+            self.message.attributes.push(RouteAttribute::Table(table));
         } else {
             self.message.header.table = table as u8;
         }
@@ -79,7 +90,7 @@ impl<T> RouteAddRequest<T> {
     /// Sets the route protocol.
     ///
     /// Default is static route protocol.
-    pub fn protocol(mut self, protocol: u8) -> Self {
+    pub fn protocol(mut self, protocol: RouteProtocol) -> Self {
         self.message.header.protocol = protocol;
         self
     }
@@ -87,7 +98,7 @@ impl<T> RouteAddRequest<T> {
     /// Sets the route scope.
     ///
     /// Default is universe route scope.
-    pub fn scope(mut self, scope: u8) -> Self {
+    pub fn scope(mut self, scope: RouteScope) -> Self {
         self.message.header.scope = scope;
         self
     }
@@ -95,14 +106,14 @@ impl<T> RouteAddRequest<T> {
     /// Sets the route kind.
     ///
     /// Default is unicast route kind.
-    pub fn kind(mut self, kind: u8) -> Self {
+    pub fn kind(mut self, kind: RouteType) -> Self {
         self.message.header.kind = kind;
         self
     }
 
     /// Build an IP v4 route request
     pub fn v4(mut self) -> RouteAddRequest<Ipv4Addr> {
-        self.message.header.address_family = AF_INET as u8;
+        self.message.header.address_family = AddressFamily::Inet;
         RouteAddRequest {
             handle: self.handle,
             message: self.message,
@@ -113,7 +124,7 @@ impl<T> RouteAddRequest<T> {
 
     /// Build an IP v6 route request
     pub fn v6(mut self) -> RouteAddRequest<Ipv6Addr> {
-        self.message.header.address_family = AF_INET6 as u8;
+        self.message.header.address_family = AddressFamily::Inet6;
         RouteAddRequest {
             handle: self.handle,
             message: self.message,
@@ -138,7 +149,8 @@ impl<T> RouteAddRequest<T> {
             replace,
             ..
         } = self;
-        let mut req = NetlinkMessage::from(RtnlMessage::NewRoute(message));
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::NewRoute(message));
         let replace = if replace { NLM_F_REPLACE } else { NLM_F_EXCL };
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK | replace | NLM_F_CREATE;
 
@@ -159,15 +171,17 @@ impl RouteAddRequest<Ipv4Addr> {
     /// Sets the source address prefix.
     pub fn source_prefix(mut self, addr: Ipv4Addr, prefix_length: u8) -> Self {
         self.message.header.source_prefix_length = prefix_length;
-        let src = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Source(src));
+        self.message
+            .attributes
+            .push(RouteAttribute::Source(RouteAddress::Inet(addr)));
         self
     }
 
     /// Sets the preferred source address.
     pub fn pref_source(mut self, addr: Ipv4Addr) -> Self {
-        let src = addr.octets().to_vec();
-        self.message.nlas.push(Nla::PrefSource(src));
+        self.message
+            .attributes
+            .push(RouteAttribute::PrefSource(RouteAddress::Inet(addr)));
         self
     }
 
@@ -178,15 +192,17 @@ impl RouteAddRequest<Ipv4Addr> {
         prefix_length: u8,
     ) -> Self {
         self.message.header.destination_prefix_length = prefix_length;
-        let dst = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Destination(dst));
+        self.message
+            .attributes
+            .push(RouteAttribute::Destination(RouteAddress::Inet(addr)));
         self
     }
 
     /// Sets the gateway (via) address.
     pub fn gateway(mut self, addr: Ipv4Addr) -> Self {
-        let gtw = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Gateway(gtw));
+        self.message
+            .attributes
+            .push(RouteAttribute::Gateway(RouteAddress::Inet(addr)));
         self
     }
 }
@@ -195,15 +211,17 @@ impl RouteAddRequest<Ipv6Addr> {
     /// Sets the source address prefix.
     pub fn source_prefix(mut self, addr: Ipv6Addr, prefix_length: u8) -> Self {
         self.message.header.source_prefix_length = prefix_length;
-        let src = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Source(src));
+        self.message
+            .attributes
+            .push(RouteAttribute::Source(RouteAddress::Inet6(addr)));
         self
     }
 
     /// Sets the preferred source address.
     pub fn pref_source(mut self, addr: Ipv6Addr) -> Self {
-        let src = addr.octets().to_vec();
-        self.message.nlas.push(Nla::PrefSource(src));
+        self.message
+            .attributes
+            .push(RouteAttribute::PrefSource(RouteAddress::Inet6(addr)));
         self
     }
 
@@ -214,15 +232,17 @@ impl RouteAddRequest<Ipv6Addr> {
         prefix_length: u8,
     ) -> Self {
         self.message.header.destination_prefix_length = prefix_length;
-        let dst = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Destination(dst));
+        self.message
+            .attributes
+            .push(RouteAttribute::Destination(RouteAddress::Inet6(addr)));
         self
     }
 
     /// Sets the gateway (via) address.
     pub fn gateway(mut self, addr: Ipv6Addr) -> Self {
-        let gtw = addr.octets().to_vec();
-        self.message.nlas.push(Nla::Gateway(gtw));
+        self.message
+            .attributes
+            .push(RouteAttribute::Gateway(RouteAddress::Inet6(addr)));
         self
     }
 }

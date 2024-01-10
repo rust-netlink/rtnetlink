@@ -7,7 +7,7 @@ use rtnetlink::{new_connection, QosMapping};
 fn parse_mapping(parameter: &str) -> Result<QosMapping, Box<dyn StdError>> {
     let (from, to) = parameter
         .split_once(':')
-        .ok_or_else(|| "Failed to parse mapping..")?;
+        .ok_or("Failed to parse mapping..")?;
 
     Ok(QosMapping {
         from: u32::from_str(from)?,
@@ -15,11 +15,11 @@ fn parse_mapping(parameter: &str) -> Result<QosMapping, Box<dyn StdError>> {
     })
 }
 
-const ARG_BASE: &'static str = "--base";
-const ARG_NAME: &'static str = "--name";
-const ARG_ID: &'static str = "--id";
-const ARG_INGRESS_QOS: &'static str = "--ingress-qos-mapping";
-const ARG_EGRESS_QOS: &'static str = "--egress-qos-mapping";
+const ARG_BASE: &str = "--base";
+const ARG_NAME: &str = "--name";
+const ARG_ID: &str = "--id";
+const ARG_INGRESS_QOS: &str = "--ingress-qos-mapping";
+const ARG_EGRESS_QOS: &str = "--egress-qos-mapping";
 
 enum ParsingMode {
     None,
@@ -51,7 +51,7 @@ async fn main() -> Result<(), String> {
                 ARG_EGRESS_QOS => Ok(ParsingMode::Egress),
                 other => {
                     usage();
-                    return Err(format!("Unexpected argument: {other}"));
+                    Err(format!("Unexpected argument: {other}"))
                 }
             }
         }
