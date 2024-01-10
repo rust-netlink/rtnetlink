@@ -58,6 +58,14 @@ impl<T> RouteAddRequest<T> {
         self
     }
 
+    /// Sets the route priority (metric)
+    pub fn priority(mut self, priority: u32) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::Priority(priority));
+        self
+    }
+
     /// Sets the route table.
     ///
     /// Default is main route table.
