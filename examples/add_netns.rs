@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+#[cfg(not(target_os = "freebsd"))]
 use rtnetlink::NetworkNamespace;
 use std::env;
 
+#[cfg(target_os = "freebsd")]
+fn main() -> () {}
+
+#[cfg(not(target_os = "freebsd"))]
 #[tokio::main]
 async fn main() -> Result<(), String> {
     env_logger::init();

@@ -4,6 +4,10 @@ use std::env;
 
 use rtnetlink::new_connection;
 
+#[cfg(target_os = "freebsd")]
+fn main() -> () {}
+
+#[cfg(not(target_os = "freebsd"))]
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     env_logger::init();
