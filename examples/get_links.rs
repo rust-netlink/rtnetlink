@@ -7,6 +7,10 @@ use netlink_packet_route::{
 };
 use rtnetlink::{new_connection, Error, Handle};
 
+#[cfg(target_os = "freebsd")]
+fn main() -> () {}
+
+#[cfg(not(target_os = "freebsd"))]
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     env_logger::init();
@@ -90,6 +94,7 @@ async fn dump_links(handle: Handle) -> Result<(), Error> {
     Ok(())
 }
 
+#[cfg(not(target_os = "freebsd"))]
 async fn dump_bridge_filter_info(handle: Handle) -> Result<(), Error> {
     let mut links = handle
         .link()

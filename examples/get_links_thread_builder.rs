@@ -5,8 +5,11 @@ use netlink_packet_route::{
     link::{LinkAttribute, LinkExtentMask},
     AddressFamily,
 };
-use rtnetlink::{new_connection, Error, Handle};
+#[cfg(not(target_os = "freebsd"))]
+use rtnetlink::new_connection;
+use rtnetlink::{Error, Handle};
 
+#[cfg(not(target_os = "freebsd"))]
 async fn do_it(rt: &tokio::runtime::Runtime) -> Result<(), ()> {
     env_logger::init();
     let (connection, handle, _) = new_connection().unwrap();
@@ -89,6 +92,7 @@ async fn dump_links(handle: Handle) -> Result<(), Error> {
     Ok(())
 }
 
+#[cfg(not(target_os = "freebsd"))]
 async fn dump_bridge_filter_info(handle: Handle) -> Result<(), Error> {
     let mut links = handle
         .link()
@@ -109,6 +113,10 @@ async fn dump_bridge_filter_info(handle: Handle) -> Result<(), Error> {
     Ok(())
 }
 
+#[cfg(target_os = "freebsd")]
+fn main() -> () {}
+
+#[cfg(not(target_os = "freebsd"))]
 fn main() -> Result<(), String> {
     let rt = tokio::runtime::Builder::new_multi_thread()
         .enable_io()
