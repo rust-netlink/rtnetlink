@@ -795,6 +795,12 @@ impl LinkAddRequest {
         self
     }
 
+    /// Define the hardware address of the link when creating it (equivalent to
+    /// `ip link add NAME address ADDRESS`)
+    pub fn address(self, address: Vec<u8>) -> Self {
+        self.append_nla(LinkAttribute::Address(address))
+    }
+
     fn append_nla(mut self, nla: LinkAttribute) -> Self {
         self.message.attributes.push(nla);
         self
