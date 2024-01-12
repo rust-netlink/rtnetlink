@@ -790,9 +790,8 @@ impl LinkAddRequest {
         self.append_nla(LinkAttribute::LinkInfo(link_info_nlas))
     }
 
-    fn name(mut self, name: String) -> Self {
-        self.message.attributes.push(LinkAttribute::IfName(name));
-        self
+    pub fn name(self, name: String) -> Self {
+        self.append_nla(LinkAttribute::IfName(name))
     }
 
     /// Define the hardware address of the link when creating it (equivalent to
