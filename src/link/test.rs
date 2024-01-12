@@ -37,7 +37,8 @@ fn create_get_delete_macvlan() {
     let rt = Runtime::new().unwrap();
     let handle = rt.block_on(_create_macvlan(
         &MACVLAN_IFACE_NAME.to_owned(),
-        LOWER_DEVICE_IDX, // assuming there's always a network interface in the system ...
+        LOWER_DEVICE_IDX, /* assuming there's always a network interface in
+                           * the system ... */
         MACVLAN_MODE,
         mac_address.to_vec(),
     ));
