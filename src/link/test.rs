@@ -120,16 +120,11 @@ async fn _create_macvlan(
     let (conn, handle, _) = new_connection().unwrap();
     tokio::spawn(conn);
     let link_handle = handle.link();
-    let mut req =
-        link_handle
-            .add()
-            .macvlan(name.to_string(), lower_device_index, mode);
-    req.message_mut()
-        .attributes
-        .push(LinkAttribute::IfName(name.to_owned()));
-    req.message_mut()
-        .attributes
-        .push(LinkAttribute::Address(mac));
+    let req = link_handle
+        .add()
+        .macvlan(name.to_string(), lower_device_index, mode)
+        .name(name.to_owned())
+        .address(mac);
     req.execute().await?;
     Ok(link_handle)
 }
