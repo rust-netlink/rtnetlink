@@ -1,4 +1,17 @@
 # Changelog
+## [0.14.1] - 2024-02-01
+### Breaking changes
+ - N/A
+
+### New features
+ - FreeBSD support. (eb04e60)
+ - Support specifying MAC address in `LinkAddRequest`. (d76171c)
+ - Support creating wireguard link in `LinkAddRequest`. (24982ec)
+ - Support setting priority in `RouteAddRequest`. (c840e78)
+
+### Bug fixes
+ - Fixing docs of AddressGetRequest::set_address_filter. (006a348)
+
 ## [0.14.0] - 2023-12-05
 ### Breaking changes
  - Many `VxlanAddRequest` functions changed from u8 to bool. (ba4825a)
