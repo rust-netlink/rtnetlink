@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
+use netlink_packet_route::link::MacVtapMode;
 use rtnetlink::{new_connection, Error, Handle};
 use std::env;
 
@@ -27,11 +28,10 @@ async fn create_macvtap(
 ) -> Result<(), Error> {
     let mut links = handle.link().get().match_name(veth_name.clone()).execute();
     if let Some(link) = links.try_next().await? {
-        // hard code mode: 4u32 i.e bridge mode
         let request = handle.link().add().macvtap(
             "test_macvtap".into(),
             link.header.index,
-            4u32,
+            MacVtapMode::Bridge,
         );
         request.execute().await?
     } else {
