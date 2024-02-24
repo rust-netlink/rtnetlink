@@ -13,9 +13,10 @@ use netlink_packet_core::{
 
 use netlink_packet_route::{
     link::{
-        InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVeth,
-        InfoVlan, InfoVrf, InfoVxlan, InfoXfrm, LinkAttribute, LinkFlag,
-        LinkInfo, LinkMessage, VlanQosMapping,
+        BondMode, InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap,
+        InfoVeth, InfoVlan, InfoVrf, InfoVxlan, InfoXfrm, LinkAttribute,
+        LinkFlags, LinkInfo, LinkMessage, MacVlanMode, MacVtapMode,
+        VlanQosMapping,
     },
     RouteNetlinkMessage,
 };
@@ -45,7 +46,7 @@ impl BondAddRequest {
 
     /// Adds the `mode` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond mode MODE`.
-    pub fn mode(mut self, mode: u8) -> Self {
+    pub fn mode(mut self, mode: BondMode) -> Self {
         self.info_data.push(InfoBond::Mode(mode));
         self
     }
@@ -442,7 +443,7 @@ impl VxlanAddRequest {
 
     /// Adds the `learning` attribute to the VXLAN
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
-    /// [no]learning`. [no]learning - specifies if unknown source link layer
+    /// \[no\]learning`. \[no\]learning - specifies if unknown source link layer
     /// addresses and IP addresses are entered into the VXLAN
     /// device forwarding database.
     pub fn learning(mut self, learning: bool) -> Self {
@@ -480,15 +481,15 @@ impl VxlanAddRequest {
 
     /// Adds the `proxy` attribute to the VXLAN
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
-    /// [no]proxy`. [no]proxy - specifies ARP proxy is turned on.
+    /// [no]proxy`. \[no\]proxy - specifies ARP proxy is turned on.
     pub fn proxy(mut self, proxy: bool) -> Self {
         self.info_data.push(InfoVxlan::Proxy(proxy));
         self
     }
 
-    /// Adds the `rsc` attribute to the VXLAN
-    /// This is equivalent to `ip link add name NAME type vxlan id VNI [no]rsc`.
-    /// [no]rsc - specifies if route short circuit is turned on.
+    /// Adds the `rsc` attribute to the VXLAN This is equivalent to
+    /// `ip link add name NAME type vxlan id VNI [no]rsc`.
+    /// \[no\]rsc - specifies if route short circuit is turned on.
     pub fn rsc(mut self, rsc: bool) -> Self {
         self.info_data.push(InfoVxlan::Rsc(rsc));
         self
@@ -496,7 +497,7 @@ impl VxlanAddRequest {
 
     // Adds the `l2miss` attribute to the VXLAN
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
-    /// [no]l2miss`. [no]l2miss - specifies if netlink LLADDR miss
+    /// [no]l2miss`. \[no\]l2miss - specifies if netlink LLADDR miss
     /// notifications are generated.
     pub fn l2miss(mut self, l2miss: bool) -> Self {
         self.info_data.push(InfoVxlan::L2Miss(l2miss));
@@ -505,8 +506,8 @@ impl VxlanAddRequest {
 
     // Adds the `l3miss` attribute to the VXLAN
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
-    /// [no]l3miss`. [no]l3miss - specifies if netlink IP ADDR miss
-    /// notifications are generated.
+    /// [no]l3miss`. \[no\]l3miss - specifies if netlink IP ADDR
+    /// miss notifications are generated.
     pub fn l3miss(mut self, l3miss: bool) -> Self {
         self.info_data.push(InfoVxlan::L3Miss(l3miss));
         self
@@ -520,8 +521,8 @@ impl VxlanAddRequest {
 
     // Adds the `udp_csum` attribute to the VXLAN
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
-    /// [no]udp_csum`. [no]udpcsum - specifies if UDP checksum is calculated
-    /// for transmitted packets over IPv4.
+    /// [no]udp_csum`. \[no\]udpcsum - specifies if UDP checksum is
+    /// calculated for transmitted packets over IPv4.
     pub fn udp_csum(mut self, udp_csum: bool) -> Self {
         self.info_data.push(InfoVxlan::UDPCsum(udp_csum));
         self
@@ -588,13 +589,13 @@ impl LinkAddRequest {
     ///
     /// Let's say we want to create a vlan interface on a link with id 6. By
     /// default, the [`vlan()`](#method.vlan) method would create a request
-    /// with the `LinkFlag::Up` link set, so that the interface is up after
+    /// with the `LinkFlags::Up` link set, so that the interface is up after
     /// creation. If we want to create a interface that is down by default we
     /// could do:
     ///
     /// ```rust,no_run
     /// use futures::Future;
-    /// use netlink_packet_route::link::LinkFlag;
+    /// use netlink_packet_route::link::LinkFlags;
     /// use rtnetlink::{Handle, new_connection};
     ///
     /// async fn run(handle: Handle) -> Result<(), String> {
@@ -602,9 +603,8 @@ impl LinkAddRequest {
     ///     let link_id = 6;
     ///     let mut request = handle.link().add().vlan("my-vlan-itf".into(),
     ///         link_id, vlan_id);
-    ///     request.message_mut().header.flags.push(LinkFlag::Up);
-    ///     request.message_mut().header.change_mask.retain(
-    ///         |f| *f != LinkFlag::Up);
+    ///     request.message_mut().header.flags.remove(LinkFlags::Up);
+    ///     request.message_mut().header.change_mask.remove(LinkFlags::Up);
     ///     // send the request
     ///     request.execute().await.map_err(|e| format!("{}", e))
     /// }
@@ -628,8 +628,8 @@ impl LinkAddRequest {
 
         let mut peer = LinkMessage::default();
         // FIXME: we get a -107 (ENOTCONN) (???) when trying to set `name` up.
-        // peer.header.flags.push(LinkFlag::Up);
-        // peer.header.change_mask.push(LinkFlag::Up);
+        // peer.header.flags |= LinkFlags::Up;
+        // peer.header.change_mask |= LinkFlag::Up;
         peer.attributes.push(LinkAttribute::IfName(name));
         let link_info_data = InfoData::Veth(InfoVeth::Peer(peer));
         self.name(peer_name)
@@ -687,7 +687,7 @@ impl LinkAddRequest {
     /// flags from MACVLAN_MODE (netlink-packet-route/src/rtnl/constants.rs)
     ///   being: _PRIVATE, _VEPA, _BRIDGE, _PASSTHRU, _SOURCE, which can be
     /// *combined*.
-    pub fn macvlan(self, name: String, index: u32, mode: u32) -> Self {
+    pub fn macvlan(self, name: String, index: u32, mode: MacVlanMode) -> Self {
         self.name(name)
             .link_info(
                 InfoKind::MacVlan,
@@ -704,7 +704,7 @@ impl LinkAddRequest {
     /// flags from MACVTAP_MODE (netlink-packet-route/src/rtnl/constants.rs)
     ///   being: _PRIVATE, _VEPA, _BRIDGE, _PASSTHRU, _SOURCE, which can be
     /// *combined*.
-    pub fn macvtap(self, name: String, index: u32, mode: u32) -> Self {
+    pub fn macvtap(self, name: String, index: u32, mode: MacVtapMode) -> Self {
         self.name(name)
             .link_info(
                 InfoKind::MacVtap,
@@ -779,11 +779,7 @@ impl LinkAddRequest {
     /// This is equivalent to `ip link add NAME type wireguard`.
     pub fn wireguard(self, name: String) -> Self {
         let mut request = self.name(name).link_info(InfoKind::Wireguard, None);
-        request
-            .message_mut()
-            .header
-            .flags
-            .retain(|f| *f != LinkFlag::Up);
+        request.message_mut().header.flags.remove(LinkFlags::Up);
         request
     }
 
@@ -805,8 +801,8 @@ impl LinkAddRequest {
     }
 
     fn up(mut self) -> Self {
-        self.message.header.flags.push(LinkFlag::Up);
-        self.message.header.change_mask.push(LinkFlag::Up);
+        self.message.header.flags |= LinkFlags::Up;
+        self.message.header.change_mask |= LinkFlags::Up;
         self
     }
 

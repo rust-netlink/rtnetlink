@@ -3,7 +3,7 @@
 use futures::stream::TryStreamExt;
 use netlink_packet_route::link::{
     InfoData, InfoKind, InfoMacVlan, InfoVrf, LinkAttribute, LinkInfo,
-    LinkMessage,
+    LinkMessage, MacVlanMode,
 };
 use tokio::runtime::Runtime;
 
@@ -32,7 +32,7 @@ fn create_get_delete_wg() {
 fn create_get_delete_macvlan() {
     const MACVLAN_IFACE_NAME: &str = "mvlan1";
     const LOWER_DEVICE_IDX: u32 = 2;
-    const MACVLAN_MODE: u32 = 4; // bridge
+    const MACVLAN_MODE: MacVlanMode = MacVlanMode::Bridge;
     let mac_address = [2u8, 0, 0, 0, 0, 1];
 
     let rt = Runtime::new().unwrap();
@@ -142,7 +142,7 @@ async fn _del_iface(handle: &mut LinkHandle, index: u32) -> Result<(), Error> {
 async fn _create_macvlan(
     name: &String,
     lower_device_index: u32,
-    mode: u32,
+    mode: MacVlanMode,
     mac: Vec<u8>,
 ) -> Result<LinkHandle, Error> {
     let (conn, handle, _) = new_connection().unwrap();

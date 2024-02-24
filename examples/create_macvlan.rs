@@ -5,7 +5,7 @@ use macaddr::MacAddr;
 use rtnetlink::{new_connection, Error, Handle};
 use std::{env, str::FromStr};
 
-use netlink_packet_route::link::LinkAttribute;
+use netlink_packet_route::link::{LinkAttribute, MacVlanMode};
 
 #[tokio::main]
 async fn main() -> Result<(), String> {
@@ -42,7 +42,7 @@ async fn create_macvlan(
         let mut request = handle.link().add().macvlan(
             "test_macvlan".into(),
             link.header.index,
-            4u32, // bridge mode
+            MacVlanMode::Bridge,
         );
         if let Some(mac) = mac_address {
             request
