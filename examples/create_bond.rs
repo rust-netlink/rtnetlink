@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+use netlink_packet_route::link::BondMode;
 use rtnetlink::new_connection;
 use std::net::{Ipv4Addr, Ipv6Addr};
 
@@ -11,7 +12,7 @@ async fn main() -> Result<(), String> {
         .link()
         .add()
         .bond("my-bond".into())
-        .mode(1)
+        .mode(BondMode::ActiveBackup)
         .miimon(100)
         .updelay(100)
         .downdelay(100)

@@ -53,7 +53,7 @@ impl BondPortSetRequest {
         Ok(())
     }
 
-    /// Return a mutable reference to the Vec<InfoBondPort>
+    /// Return a mutable reference to the `Vec<InfoBondPort>`
     pub fn info_port_nlas_mut(&mut self) -> &mut Vec<InfoBondPort> {
         &mut self.port_nlas
     }
