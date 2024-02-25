@@ -4,6 +4,7 @@ use crate::{
     Handle, IpVersion, RouteAddRequest, RouteDelRequest, RouteGetRequest,
 };
 use netlink_packet_route::route::RouteMessage;
+use std::net::IpAddr;
 
 pub struct RouteHandle(Handle);
 
@@ -26,5 +27,9 @@ impl RouteHandle {
     /// Delete the given routing table entry (equivalent to `ip route del`)
     pub fn del(&self, route: RouteMessage) -> RouteDelRequest {
         RouteDelRequest::new(self.0.clone(), route)
+    }
+    
+    pub fn get_to(&self, destination: IpAddr) -> RouteGetRequest {
+        RouteGetRequest::new_to(self.0.clone(), destination)
     }
 }

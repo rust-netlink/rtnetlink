@@ -8,9 +8,12 @@ use futures::{
 
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
-    route::{RouteHeader, RouteMessage, RouteProtocol, RouteScope, RouteType},
-    AddressFamily, RouteNetlinkMessage,
+    route::{RouteHeader, RouteMessage, RouteProtocol, RouteScope, 
+            RouteType, RouteAddress, RouteAttribute},
+            AddressFamily, RouteNetlinkMessage,
 };
+
+use std::net::IpAddr;
 
 use crate::{try_rtnl, Error, Handle};
 
@@ -33,6 +36,19 @@ impl IpVersion {
         match self {
             IpVersion::V4 => AddressFamily::Inet,
             IpVersion::V6 => AddressFamily::Inet6,
+        }
+    }
+}
+
+trait IpAddrExt {
+    fn version(&self) -> IpVersion;
+}
+
+impl IpAddrExt for std::net::IpAddr {
+    fn version(&self) -> IpVersion {
+        match self {
+            std::net::IpAddr::V4(_) => IpVersion::V4,
+            std::net::IpAddr::V6(_) => IpVersion::V6,
         }
     }
 }
@@ -84,4 +100,45 @@ impl RouteGetRequest {
             ),
         }
     }
+
+    pub(crate) fn new_to(handle: Handle, destination: IpAddr) -> Self {
+        let mut message = RouteMessage::default();
+        message.header.address_family = destination.version().family();
+
+        message.header.source_prefix_length = 0;
+        message.header.scope = RouteScope::Universe;
+        message.header.kind = RouteType::Unspec;
+
+        message.header.table = RouteHeader::RT_TABLE_UNSPEC;
+        message.header.protocol = RouteProtocol::Unspec;
+        
+        let addr = match destination {
+            IpAddr::V4(v4_addr) => RouteAddress::from(v4_addr),
+            IpAddr::V6(v6_addr) => RouteAddress::from(v6_addr),
+        };
+                
+        message.attributes.push(RouteAttribute::Destination(addr));
+
+        RouteGetRequest { handle, message }
+    }
+    
+    pub fn execute_to(self) -> impl TryStream<Ok = RouteMessage, Error = Error> {
+        let RouteGetRequest {
+            mut handle,
+            message,
+        } = self;
+
+        let mut req =
+            NetlinkMessage::from(RouteNetlinkMessage::GetRoute(message));
+        req.header.flags = NLM_F_REQUEST;
+
+        match handle.request(req) {
+            Ok(response) => Either::Left(response.map(move |msg| {
+                Ok(try_rtnl!(msg, RouteNetlinkMessage::NewRoute))
+            })),
+            Err(e) => Either::Right(
+                future::err::<RouteMessage, Error>(e).into_stream(),
+            ),
+        }
+    }    
 }
