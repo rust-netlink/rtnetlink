@@ -3,7 +3,7 @@
 use futures::stream::StreamExt;
 use std::{
     marker::PhantomData,
-    net::{Ipv4Addr, Ipv6Addr},
+    net::{IpAddr, Ipv4Addr, Ipv6Addr},
 };
 
 use netlink_packet_core::{
@@ -22,7 +22,7 @@ use crate::{try_nl, Error, Handle};
 
 /// A request to create a new route. This is equivalent to the `ip route add`
 /// commands.
-pub struct RouteAddRequest<T = ()> {
+pub struct RouteAddRequest<T = IpAddr> {
     handle: Handle,
     message: RouteMessage,
     replace: bool,
@@ -244,5 +244,155 @@ impl RouteAddRequest<Ipv6Addr> {
             .attributes
             .push(RouteAttribute::Gateway(RouteAddress::Inet6(addr)));
         self
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum InvalidRequest {
+    #[error("invalid address family {:?}", _0)]
+    AddressFamily(AddressFamily),
+
+    #[error("invalid gateway {}", _0)]
+    Gateway(IpAddr),
+
+    #[error("invalid preferred source {}", _0)]
+    PrefSource(IpAddr),
+
+    #[error("invalid source prefix {}/{}", _0, _1)]
+    SourcePrefix(IpAddr, u8),
+
+    #[error("invalid destination prefix {}/{}", _0, _1)]
+    DestinationPrefix(IpAddr, u8),
+}
+
+impl RouteAddRequest<IpAddr> {
+    /// Sets the source address prefix.
+    pub fn source_prefix(
+        mut self,
+        addr: IpAddr,
+        prefix_length: u8,
+    ) -> Result<Self, InvalidRequest> {
+        self.set_address_family_from_ip_addr(addr);
+        match self.message.header.address_family {
+            AddressFamily::Inet => {
+                if addr.is_ipv6() || prefix_length > 32 {
+                    return Err(InvalidRequest::SourcePrefix(
+                        addr,
+                        prefix_length,
+                    ));
+                }
+            }
+            AddressFamily::Inet6 => {
+                if addr.is_ipv4() || prefix_length > 128 {
+                    return Err(InvalidRequest::SourcePrefix(
+                        addr,
+                        prefix_length,
+                    ));
+                }
+            }
+            af => return Err(InvalidRequest::AddressFamily(af)),
+        };
+        self.message
+            .attributes
+            .push(RouteAttribute::Source(addr.into()));
+        self.message.header.source_prefix_length = prefix_length;
+        Ok(self)
+    }
+
+    /// Sets the preferred source address.
+    pub fn pref_source(mut self, addr: IpAddr) -> Result<Self, InvalidRequest> {
+        self.set_address_family_from_ip_addr(addr);
+        match self.message.header.address_family {
+            AddressFamily::Inet => {
+                if addr.is_ipv6() {
+                    return Err(InvalidRequest::PrefSource(addr));
+                };
+            }
+            AddressFamily::Inet6 => {
+                if addr.is_ipv4() {
+                    return Err(InvalidRequest::PrefSource(addr));
+                };
+            }
+            af => {
+                return Err(InvalidRequest::AddressFamily(af));
+            }
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::PrefSource(addr.into()));
+        Ok(self)
+    }
+
+    /// Sets the destination address prefix.
+    pub fn destination_prefix(
+        mut self,
+        addr: IpAddr,
+        prefix_length: u8,
+    ) -> Result<Self, InvalidRequest> {
+        self.set_address_family_from_ip_addr(addr);
+        match self.message.header.address_family {
+            AddressFamily::Inet => {
+                if addr.is_ipv6() || prefix_length > 32 {
+                    return Err(InvalidRequest::DestinationPrefix(
+                        addr,
+                        prefix_length,
+                    ));
+                }
+            }
+            AddressFamily::Inet6 => {
+                if addr.is_ipv4() || prefix_length > 128 {
+                    return Err(InvalidRequest::DestinationPrefix(
+                        addr,
+                        prefix_length,
+                    ));
+                }
+            }
+            af => {
+                return Err(InvalidRequest::AddressFamily(af));
+            }
+        };
+        self.message.header.destination_prefix_length = prefix_length;
+        self.message
+            .attributes
+            .push(RouteAttribute::Destination(addr.into()));
+        Ok(self)
+    }
+
+    /// Sets the gateway (via) address.
+    pub fn gateway(mut self, addr: IpAddr) -> Result<Self, InvalidRequest> {
+        self.set_address_family_from_ip_addr(addr);
+        match self.message.header.address_family {
+            AddressFamily::Inet => {
+                if addr.is_ipv6() {
+                    return Err(InvalidRequest::Gateway(addr));
+                };
+            }
+            AddressFamily::Inet6 => {
+                if addr.is_ipv4() {
+                    return Err(InvalidRequest::Gateway(addr));
+                };
+            }
+            af => {
+                return Err(InvalidRequest::AddressFamily(af));
+            }
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::Gateway(addr.into()));
+        Ok(self)
+    }
+
+    /// If it is not set already, set the address family based on the
+    /// given IP address. This is a noop is the address family is
+    /// already set.
+    fn set_address_family_from_ip_addr(&mut self, addr: IpAddr) {
+        if self.message.header.address_family != AddressFamily::Unspec {
+            return;
+        }
+        if addr.is_ipv4() {
+            self.message.header.address_family = AddressFamily::Inet;
+        } else {
+            self.message.header.address_family = AddressFamily::Inet6;
+        }
     }
 }
