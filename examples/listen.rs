@@ -6,7 +6,10 @@
 use futures::stream::StreamExt;
 use netlink_sys::{AsyncSocket, SocketAddr};
 use rtnetlink::{
-    constants::{RTMGRP_IPV4_ROUTE, RTMGRP_IPV6_ROUTE},
+    constants::{
+        RTMGRP_IPV4_IFADDR, RTMGRP_IPV4_ROUTE, RTMGRP_IPV6_IFADDR,
+        RTMGRP_IPV6_ROUTE, RTMGRP_LINK,
+    },
     new_connection,
 };
 
@@ -18,7 +21,11 @@ async fn main() -> Result<(), String> {
 
     // These flags specify what kinds of broadcast messages we want to listen
     // for.
-    let mgroup_flags = RTMGRP_IPV4_ROUTE | RTMGRP_IPV6_ROUTE;
+    let mgroup_flags = RTMGRP_LINK
+        | RTMGRP_IPV4_IFADDR
+        | RTMGRP_IPV4_ROUTE
+        | RTMGRP_IPV6_IFADDR
+        | RTMGRP_IPV6_ROUTE;
 
     // A netlink socket address is created with said flags.
     let addr = SocketAddr::new(0, mgroup_flags);

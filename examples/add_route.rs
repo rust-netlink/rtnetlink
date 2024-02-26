@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-use std::env;
+use std::{env, net::Ipv4Addr};
 
 use ipnetwork::Ipv4Network;
-use rtnetlink::{new_connection, Error, Handle};
+use rtnetlink::{new_connection, Error, Handle, RouteMessageBuilder};
 
 const TEST_TABLE_ID: u32 = 299;
 
@@ -40,15 +40,12 @@ async fn add_route(
     gateway: &Ipv4Network,
     handle: Handle,
 ) -> Result<(), Error> {
-    let route = handle.route();
-    route
-        .add()
-        .v4()
+    let route = RouteMessageBuilder::<Ipv4Addr>::new()
         .destination_prefix(dest.ip(), dest.prefix())
         .gateway(gateway.ip())
         .table_id(TEST_TABLE_ID)
-        .execute()
-        .await?;
+        .build();
+    handle.route().add(route).execute().await?;
     Ok(())
 }
 
