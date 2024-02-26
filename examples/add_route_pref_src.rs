@@ -4,7 +4,7 @@ use futures::TryStreamExt;
 use std::{env, net::Ipv4Addr};
 
 use ipnetwork::Ipv4Network;
-use rtnetlink::{new_connection, Error, Handle};
+use rtnetlink::{new_connection, Error, Handle, RouteMessageBuilder};
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -53,15 +53,12 @@ async fn add_route(
         .header
         .index;
 
-    let route = handle.route();
-    route
-        .add()
-        .v4()
+    let route = RouteMessageBuilder::<Ipv4Addr>::new()
         .destination_prefix(dest.ip(), dest.prefix())
         .output_interface(iface_idx)
         .pref_source(source)
-        .execute()
-        .await?;
+        .build();
+    handle.route().add(route).execute().await?;
     Ok(())
 }
 
