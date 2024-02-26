@@ -19,8 +19,8 @@ impl RouteHandle {
     }
 
     /// Add an routing table entry (equivalent to `ip route add`)
-    pub fn add(&self) -> RouteAddRequest {
-        RouteAddRequest::new(self.0.clone())
+    pub fn add(&self, route: RouteMessage) -> RouteAddRequest {
+        RouteAddRequest::new(self.0.clone(), route)
     }
 
     /// Delete the given routing table entry (equivalent to `ip route del`)
