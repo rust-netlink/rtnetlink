@@ -15,7 +15,7 @@ use netlink_packet_route::{
     link::{
         InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVeth,
         InfoVlan, InfoVxlan, InfoXfrm, LinkAttribute, LinkFlag, LinkInfo,
-        LinkMessage, VlanQosMapping,
+        LinkMessage, VlanQosMapping, InfoIpVlan,
     },
     RouteNetlinkMessage,
 };
@@ -676,6 +676,21 @@ impl LinkAddRequest {
 
         self.name(name)
             .link_info(InfoKind::Vlan, Some(InfoData::Vlan(info)))
+            .append_nla(LinkAttribute::Link(index))
+            .up()
+    }
+
+    /// Create ipvlan on a link.
+    /// This is equivalent to `ip link add name NAME link LINK type ipvlan mode
+    /// IPVLAN_MODE`,   but instead of specifying a link name (`LINK`), we
+    /// specify a link index. The mode is an integer consisting of
+    /// ipvlan modes. 0 is L2, 1 is L3, 2 is L3S.
+    pub fn ipvlan(self, name: String, index: u32, mode: u16) -> Self {
+        self.name(name)
+            .link_info(
+                InfoKind::IpVlan,
+                Some(InfoData::IpVlan(vec![InfoIpVlan::Mode(mode)])),
+            )
             .append_nla(LinkAttribute::Link(index))
             .up()
     }
