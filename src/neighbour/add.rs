@@ -8,7 +8,7 @@ use netlink_packet_core::{
 };
 use netlink_packet_route::{
     neighbour::{
-        NeighbourAddress, NeighbourAttribute, NeighbourFlag, NeighbourMessage,
+        NeighbourAddress, NeighbourAttribute, NeighbourFlags, NeighbourMessage,
         NeighbourState,
     },
     route::RouteType,
@@ -80,7 +80,7 @@ impl NeighbourAddRequest {
 
     /// Set flags for the neighbor cache entry.
     /// It should be a combination of `NTF_*` constants.
-    pub fn flags(mut self, flags: Vec<NeighbourFlag>) -> Self {
+    pub fn flags(mut self, flags: NeighbourFlags) -> Self {
         self.message.header.flags = flags;
         self
     }
