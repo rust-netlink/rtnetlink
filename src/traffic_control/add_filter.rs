@@ -8,7 +8,7 @@ use netlink_packet_route::{
         TcActionMirrorOption, TcActionOption, TcActionType, TcAttribute,
         TcFilterU32, TcFilterU32Option, TcHandle, TcHeader, TcMessage,
         TcMirror, TcMirrorActionType, TcOption, TcU32Key, TcU32Selector,
-        TcU32SelectorFlag,
+        TcU32SelectorFlags,
     },
     RouteNetlinkMessage,
 };
@@ -149,7 +149,7 @@ impl TrafficFilterNewRequest {
     /// You need to set the `parent` and `protocol` before call redirect.
     pub fn redirect(self, dst_index: u32) -> Result<Self, Error> {
         let mut sel_na = TcU32Selector::default();
-        sel_na.flags = vec![TcU32SelectorFlag::Terminal];
+        sel_na.flags = TcU32SelectorFlags::Terminal;
         sel_na.nkeys = 1;
         sel_na.keys = vec![TcU32Key::default()];
         let mut tc_mirror_nla = TcMirror::default();
@@ -181,7 +181,7 @@ mod test {
         link::LinkMessage,
         tc::{
             TcAttribute, TcFilterU32, TcFilterU32Option, TcOption, TcU32Key,
-            TcU32SelectorFlag,
+            TcU32SelectorFlags,
         },
     };
     use nix::sched::{setns, CloneFlags};
@@ -343,7 +343,7 @@ mod test {
                 } else {
                     panic!("expect sel nla");
                 };
-                assert_eq!(sel.flags, vec![TcU32SelectorFlag::Terminal]);
+                assert_eq!(sel.flags, TcU32SelectorFlags::Terminal);
                 assert_eq!(sel.nkeys, 1);
                 assert_eq!(sel.keys.len(), 1);
                 assert_eq!(sel.keys[0], TcU32Key::default());

@@ -9,7 +9,7 @@ use netlink_packet_core::{
     NetlinkMessage, NetlinkPayload, NLM_F_DUMP, NLM_F_REQUEST,
 };
 use netlink_packet_route::{
-    neighbour::{NeighbourFlag, NeighbourMessage},
+    neighbour::{NeighbourFlags, NeighbourMessage},
     RouteNetlinkMessage,
 };
 
@@ -29,7 +29,7 @@ impl NeighbourGetRequest {
     /// List neighbor proxies in the system (equivalent to: `ip neighbor show
     /// proxy`).
     pub fn proxies(mut self) -> Self {
-        self.message.header.flags.push(NeighbourFlag::Proxy);
+        self.message.header.flags |= NeighbourFlags::Proxy;
         self
     }
 

@@ -7,7 +7,7 @@ use netlink_packet_core::{
     NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REQUEST,
 };
 use netlink_packet_route::{
-    link::{LinkAttribute, LinkFlag, LinkMessage},
+    link::{LinkAttribute, LinkFlags, LinkMessage},
     RouteNetlinkMessage,
 };
 
@@ -105,16 +105,16 @@ impl LinkSetRequest {
     /// Set the link with the given index up (equivalent to `ip link set dev DEV
     /// up`)
     pub fn up(mut self) -> Self {
-        self.message.header.flags.push(LinkFlag::Up);
-        self.message.header.change_mask.push(LinkFlag::Up);
+        self.message.header.flags |= LinkFlags::Up;
+        self.message.header.change_mask |= LinkFlags::Up;
         self
     }
 
     /// Set the link with the given index down (equivalent to `ip link set dev
     /// DEV down`)
     pub fn down(mut self) -> Self {
-        self.message.header.flags.retain(|f| *f != LinkFlag::Up);
-        self.message.header.change_mask.push(LinkFlag::Up);
+        self.message.header.flags.remove(LinkFlags::Up);
+        self.message.header.change_mask |= LinkFlags::Up;
         self
     }
 
@@ -122,14 +122,11 @@ impl LinkSetRequest {
     /// (equivalent to `ip link set dev DEV promisc on/off`)
     pub fn promiscuous(mut self, enable: bool) -> Self {
         if enable {
-            self.message.header.flags.push(LinkFlag::Promisc);
+            self.message.header.flags |= LinkFlags::Promisc;
         } else {
-            self.message
-                .header
-                .flags
-                .retain(|f| *f != LinkFlag::Promisc);
+            self.message.header.flags.remove(LinkFlags::Promisc);
         }
-        self.message.header.change_mask.push(LinkFlag::Promisc);
+        self.message.header.change_mask |= LinkFlags::Promisc;
         self
     }
 
@@ -137,11 +134,11 @@ impl LinkSetRequest {
     /// (equivalent to `ip link set dev DEV arp on/off`)
     pub fn arp(mut self, enable: bool) -> Self {
         if enable {
-            self.message.header.flags.retain(|f| *f != LinkFlag::Noarp);
+            self.message.header.flags.remove(LinkFlags::Noarp);
         } else {
-            self.message.header.flags.push(LinkFlag::Noarp);
+            self.message.header.flags |= LinkFlags::Noarp;
         }
-        self.message.header.change_mask.push(LinkFlag::Noarp);
+        self.message.header.change_mask |= LinkFlags::Noarp;
         self
     }
 

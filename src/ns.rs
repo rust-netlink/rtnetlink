@@ -10,7 +10,7 @@ use nix::{
     },
     unistd::{fork, ForkResult},
 };
-use std::{option::Option, os::fd::BorrowedFd, path::Path, process::exit};
+use std::{os::fd::BorrowedFd, path::Path, process::exit};
 
 // if "only" smol or smol+tokio were enabled, we use smol because
 // it doesn't require an active tokio runtime - just to be sure.
