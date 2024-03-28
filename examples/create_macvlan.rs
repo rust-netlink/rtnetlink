@@ -16,7 +16,7 @@ async fn main() -> Result<(), String> {
     }
     let link_name = &args[1];
     let mac: Option<Vec<u8>> = if args.len() == 3 {
-        let mac_address_arg = (&args[2]).to_string();
+        let mac_address_arg = args[2].to_string();
         let mac_address = MacAddr::from_str(mac_address_arg.as_str())
             .map_err(|e| format!("{e}"))?;
         Some(mac_address.as_bytes().into())

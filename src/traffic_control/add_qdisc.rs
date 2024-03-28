@@ -83,9 +83,7 @@ mod test {
 
     use super::*;
     use crate::{new_connection, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
-    use netlink_packet_route::{
-        link::LinkMessage, tc::TcAttribute, AddressFamily,
-    };
+    use netlink_packet_route::{link::LinkMessage, AddressFamily};
 
     const TEST_NS: &str = "netlink_test_qdisc_ns";
     const TEST_DUMMY: &str = "test_dummy";
