@@ -32,7 +32,7 @@ fn create_get_delete_macvlan() {
     const MACVLAN_IFACE_NAME: &str = "mvlan1";
     const LOWER_DEVICE_IDX: u32 = 2;
     const MACVLAN_MODE: u32 = 4; // bridge
-    let mac_address = &vec![2u8, 0, 0, 0, 0, 1];
+    let mac_address = [2u8, 0, 0, 0, 0, 1];
 
     let rt = Runtime::new().unwrap();
     let handle = rt.block_on(_create_macvlan(
@@ -49,7 +49,7 @@ fn create_get_delete_macvlan() {
         rt.block_on(_get_iface(&mut handle, MACVLAN_IFACE_NAME.to_owned()));
     assert!(msg.is_ok());
     assert!(has_nla(
-        &msg.as_ref().unwrap(),
+        msg.as_ref().unwrap(),
         &LinkAttribute::LinkInfo(vec![
             LinkInfo::Kind(InfoKind::MacVlan),
             LinkInfo::Data(InfoData::MacVlan(vec![
@@ -62,15 +62,15 @@ fn create_get_delete_macvlan() {
         ])
     ));
     assert!(has_nla(
-        &msg.as_ref().unwrap(),
+        msg.as_ref().unwrap(),
         &LinkAttribute::IfName(MACVLAN_IFACE_NAME.to_string())
     ));
     assert!(has_nla(
-        &msg.as_ref().unwrap(),
+        msg.as_ref().unwrap(),
         &LinkAttribute::Link(LOWER_DEVICE_IDX)
     ));
     assert!(has_nla(
-        &msg.as_ref().unwrap(),
+        msg.as_ref().unwrap(),
         &LinkAttribute::Address(mac_address.to_vec())
     ));
 
