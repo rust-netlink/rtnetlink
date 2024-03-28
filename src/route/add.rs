@@ -7,8 +7,8 @@ use std::{
 };
 
 use netlink_packet_core::{
-    NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE,
-    NLM_F_REQUEST,
+    NetlinkMessage, NLM_F_ACK, NLM_F_APPEND, NLM_F_CREATE, NLM_F_EXCL,
+    NLM_F_REPLACE, NLM_F_REQUEST,
 };
 use netlink_packet_route::{
     route::{
@@ -25,7 +25,7 @@ use crate::{try_nl, Error, Handle};
 pub struct RouteAddRequest<T = ()> {
     handle: Handle,
     message: RouteMessage,
-    replace: bool,
+    nl_msg_flags: u16,
     _phantom: PhantomData<T>,
 }
 
@@ -41,7 +41,7 @@ impl<T> RouteAddRequest<T> {
         RouteAddRequest {
             handle,
             message,
-            replace: false,
+            nl_msg_flags: 0,
             _phantom: Default::default(),
         }
     }
@@ -117,7 +117,7 @@ impl<T> RouteAddRequest<T> {
         RouteAddRequest {
             handle: self.handle,
             message: self.message,
-            replace: false,
+            nl_msg_flags: 0,
             _phantom: Default::default(),
         }
     }
@@ -128,7 +128,7 @@ impl<T> RouteAddRequest<T> {
         RouteAddRequest {
             handle: self.handle,
             message: self.message,
-            replace: false,
+            nl_msg_flags: 0,
             _phantom: Default::default(),
         }
     }
@@ -136,7 +136,14 @@ impl<T> RouteAddRequest<T> {
     /// Replace existing matching route.
     pub fn replace(self) -> Self {
         Self {
-            replace: true,
+            nl_msg_flags: NLM_F_REPLACE,
+            ..self
+        }
+    }
+
+    pub fn append(self) -> Self {
+        Self {
+            nl_msg_flags: NLM_F_APPEND,
             ..self
         }
     }
@@ -146,13 +153,16 @@ impl<T> RouteAddRequest<T> {
         let RouteAddRequest {
             mut handle,
             message,
-            replace,
+            mut nl_msg_flags,
             ..
         } = self;
         let mut req =
             NetlinkMessage::from(RouteNetlinkMessage::NewRoute(message));
-        let replace = if replace { NLM_F_REPLACE } else { NLM_F_EXCL };
-        req.header.flags = NLM_F_REQUEST | NLM_F_ACK | replace | NLM_F_CREATE;
+        if (nl_msg_flags & NLM_F_REPLACE) == 0 {
+            nl_msg_flags = NLM_F_EXCL;
+        }
+        req.header.flags =
+            nl_msg_flags | NLM_F_REQUEST | NLM_F_ACK | NLM_F_CREATE;
 
         let mut response = handle.request(req)?;
         while let Some(message) = response.next().await {
