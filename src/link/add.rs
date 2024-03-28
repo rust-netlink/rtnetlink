@@ -15,7 +15,7 @@ use netlink_packet_route::{
     link::{
         InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVeth,
         InfoVlan, InfoVxlan, InfoXfrm, LinkAttribute, LinkFlag, LinkInfo,
-        LinkMessage, VlanQosMapping,
+        LinkMessage, MacVlanMode, MacVtapMode, VlanQosMapping,
     },
     RouteNetlinkMessage,
 };
@@ -687,7 +687,7 @@ impl LinkAddRequest {
     /// flags from MACVLAN_MODE (netlink-packet-route/src/rtnl/constants.rs)
     ///   being: _PRIVATE, _VEPA, _BRIDGE, _PASSTHRU, _SOURCE, which can be
     /// *combined*.
-    pub fn macvlan(self, name: String, index: u32, mode: u32) -> Self {
+    pub fn macvlan(self, name: String, index: u32, mode: MacVlanMode) -> Self {
         self.name(name)
             .link_info(
                 InfoKind::MacVlan,
@@ -704,7 +704,7 @@ impl LinkAddRequest {
     /// flags from MACVTAP_MODE (netlink-packet-route/src/rtnl/constants.rs)
     ///   being: _PRIVATE, _VEPA, _BRIDGE, _PASSTHRU, _SOURCE, which can be
     /// *combined*.
-    pub fn macvtap(self, name: String, index: u32, mode: u32) -> Self {
+    pub fn macvtap(self, name: String, index: u32, mode: MacVtapMode) -> Self {
         self.name(name)
             .link_info(
                 InfoKind::MacVtap,

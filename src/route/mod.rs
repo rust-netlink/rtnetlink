@@ -11,3 +11,6 @@ pub use self::del::*;
 
 mod get;
 pub use self::get::*;
+
+mod builder;
+pub use self::builder::RouteMessageBuilder;
