@@ -14,8 +14,8 @@ use netlink_packet_core::{
 use netlink_packet_route::{
     link::{
         InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap, InfoVeth,
-        InfoVlan, InfoVxlan, InfoXfrm, LinkAttribute, LinkFlag, LinkInfo,
-        LinkMessage, VlanQosMapping,
+        InfoVlan, InfoVrf, InfoVxlan, InfoXfrm, LinkAttribute, LinkFlag,
+        LinkInfo, LinkMessage, VlanQosMapping,
     },
     RouteNetlinkMessage,
 };
@@ -785,6 +785,15 @@ impl LinkAddRequest {
             .flags
             .retain(|f| *f != LinkFlag::Up);
         request
+    }
+
+    pub fn vrf(self, name: String, table_id: u32) -> Self {
+        self.name(name.clone())
+            .link_info(
+                InfoKind::Vrf,
+                Some(InfoData::Vrf(vec![InfoVrf::TableId(table_id)])),
+            )
+            .append_nla(LinkAttribute::IfName(name))
     }
 
     /// Replace existing matching link.
