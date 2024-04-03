@@ -2,7 +2,8 @@
 
 use futures::stream::TryStreamExt;
 use netlink_packet_route::link::{
-    InfoData, InfoKind, InfoMacVlan, LinkAttribute, LinkInfo, LinkMessage,
+    InfoData, InfoKind, InfoMacVlan, InfoVrf, LinkAttribute, LinkInfo,
+    LinkMessage,
 };
 use tokio::runtime::Runtime;
 
@@ -78,6 +79,33 @@ fn create_get_delete_macvlan() {
         .unwrap();
 }
 
+#[test]
+fn create_delete_vrf() {
+    const VRF_IFACE_NAME: &str = "vrf2222";
+    const VRF_TABLE: u32 = 2222;
+    let rt = Runtime::new().unwrap();
+    let handle = rt.block_on(_create_vrf(VRF_IFACE_NAME, VRF_TABLE));
+    assert!(handle.is_ok());
+
+    let mut handle = handle.unwrap();
+    let msg = rt.block_on(_get_iface(&mut handle, VRF_IFACE_NAME.to_owned()));
+    assert!(msg.is_ok());
+    assert!(has_nla(
+        msg.as_ref().unwrap(),
+        &LinkAttribute::IfName(VRF_IFACE_NAME.to_string())
+    ));
+    assert!(has_nla(
+        msg.as_ref().unwrap(),
+        &LinkAttribute::LinkInfo(vec![
+            LinkInfo::Kind(InfoKind::Vrf),
+            LinkInfo::Data(InfoData::Vrf(vec![InfoVrf::TableId(VRF_TABLE),]))
+        ])
+    ));
+
+    rt.block_on(_del_iface(&mut handle, msg.unwrap().header.index))
+        .unwrap();
+}
+
 fn has_nla(msg: &LinkMessage, nla: &LinkAttribute) -> bool {
     msg.attributes.iter().any(|x| x == nla)
 }
@@ -125,6 +153,15 @@ async fn _create_macvlan(
         .macvlan(name.to_string(), lower_device_index, mode)
         .name(name.to_owned())
         .address(mac);
+    req.execute().await?;
+    Ok(link_handle)
+}
+
+async fn _create_vrf(name: &str, table: u32) -> Result<LinkHandle, Error> {
+    let (conn, handle, _) = new_connection().unwrap();
+    tokio::spawn(conn);
+    let link_handle = handle.link();
+    let req = link_handle.add().vrf(name.to_string(), table);
     req.execute().await?;
     Ok(link_handle)
 }

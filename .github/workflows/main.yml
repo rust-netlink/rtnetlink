@@ -15,6 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install necessary dependencies
+        run: |
+          sudo apt update
+          sudo apt install "linux-modules-extra-$(uname -r)"
+          sudo modprobe vrf
+
       - name: Install Rust Stable
         run: |
           rustup override set stable
