@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
 
+use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
+use netlink_packet_route::tc::TcMessage;
+
+use crate::{
+    Handle, TrafficActionDelRequest, TrafficActionGetRequest,
+    TrafficActionNewRequest,
+};
+
 use super::{
     QDiscDelRequest, QDiscGetRequest, QDiscNewRequest, TrafficChainGetRequest,
     TrafficClassGetRequest, TrafficFilterGetRequest, TrafficFilterNewRequest,
 };
-
-use crate::Handle;
-use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
-use netlink_packet_route::tc::TcMessage;
 
 pub struct QDiscHandle(Handle);
 
@@ -132,5 +136,48 @@ impl TrafficChainHandle {
     /// `tc chain show dev <iface_name>`)
     pub fn get(&mut self) -> TrafficChainGetRequest {
         TrafficChainGetRequest::new(self.handle.clone(), self.ifindex)
+    }
+}
+
+#[non_exhaustive]
+pub struct TrafficActionHandle {
+    handle: Handle,
+}
+
+impl TrafficActionHandle {
+    /// Create a new traffic action manipulation handle.
+    pub fn new(handle: Handle) -> Self {
+        TrafficActionHandle { handle }
+    }
+
+    /// Retrieve the list of actions.
+    ///
+    /// Equivalent to
+    ///
+    /// ```bash
+    /// tc action list actions $act_type
+    /// ```
+    pub fn get(&mut self) -> TrafficActionGetRequest {
+        TrafficActionGetRequest::new(self.handle.clone())
+    }
+
+    /// Add a new action.
+    ///
+    /// Equivalent to
+    /// ```bash
+    /// tc action add action $act_type $act_options index $index
+    /// ```    
+    pub fn add(&mut self) -> TrafficActionNewRequest {
+        TrafficActionNewRequest::new(self.handle.clone())
+    }
+
+    /// Delete an action.
+    ///
+    /// Equivalent to
+    /// ```bash
+    /// tc action del action $act_type index $index
+    /// ```
+    pub fn del(&mut self) -> TrafficActionDelRequest {
+        TrafficActionDelRequest::new(self.handle.clone())
     }
 }

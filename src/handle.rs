@@ -7,6 +7,7 @@ use netlink_proto::{sys::SocketAddr, ConnectionHandle};
 
 use crate::{
     AddressHandle, Error, LinkHandle, NeighbourHandle, RouteHandle, RuleHandle,
+    TrafficActionHandle,
 };
 #[cfg(not(target_os = "freebsd"))]
 use crate::{
@@ -97,5 +98,12 @@ impl Handle {
     #[cfg(not(target_os = "freebsd"))]
     pub fn traffic_chain(&self, ifindex: i32) -> TrafficChainHandle {
         TrafficChainHandle::new(self.clone(), ifindex)
+    }
+
+    /// Create a new handle, specifically for traffic control action requests
+    /// (equivalent to `tc actions list action <action_name>` commands)
+    #[cfg(not(target_os = "freebsd"))]
+    pub fn traffic_action(&self) -> TrafficActionHandle {
+        TrafficActionHandle::new(self.clone())
     }
 }
