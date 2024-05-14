@@ -2,12 +2,12 @@
 
 use futures::stream::TryStreamExt;
 use rtnetlink::{new_connection, Error, Handle};
-use std::{env, net::IpAddr};
+use std::{convert::TryFrom, env, net::IpAddr};
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 3 {
+    if args.len() != 4 {
         usage();
         return Ok(());
     }
@@ -18,10 +18,25 @@ async fn main() -> Result<(), ()> {
         std::process::exit(1);
     });
 
+    let link_local_parts: Vec<u8> = args[3]
+        .split(':')
+        .map(|b| {
+            u8::from_str_radix(b, 16).unwrap_or_else(|e| {
+                eprintln!("invalid part of mac {}: {}", b, e);
+                std::process::exit(1);
+            })
+        })
+        .collect();
+
+    let link_local_address = <[u8; 6]>::try_from(link_local_parts).unwrap_or_else(|_| {
+        eprintln!("invalid mac address, please give it in the format of 56:78:90:ab:cd:ef");
+        std::process::exit(1);
+    });
+
     let (connection, handle, _) = new_connection().unwrap();
     tokio::spawn(connection);
 
-    if let Err(e) = add_neighbour(link_name, ip, handle.clone()).await {
+    if let Err(e) = add_neighbour(link_name, ip, link_local_address, handle.clone()).await {
         eprintln!("{e}");
     }
     Ok(())
@@ -30,6 +45,7 @@ async fn main() -> Result<(), ()> {
 async fn add_neighbour(
     link_name: &str,
     ip: IpAddr,
+    link_local_address: [u8; 6],
     handle: Handle,
 ) -> Result<(), Error> {
     let mut links = handle
@@ -41,6 +57,7 @@ async fn add_neighbour(
         handle
             .neighbours()
             .add(link.header.index, ip)
+            .link_local_address(&link_local_address)
             .execute()
             .await?;
         println!("Done");
@@ -52,7 +69,7 @@ async fn add_neighbour(
 fn usage() {
     eprintln!(
         "usage:
-    cargo run --example add_neighbour -- <link_name> <ip_address>
+    cargo run --example add_neighbour -- <link_name> <ip_address> <mac>
 
 Note that you need to run this program as root. Instead of running cargo as root,
 build the example normally:
