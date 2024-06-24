@@ -36,7 +36,9 @@ async fn main() -> Result<(), ()> {
     let (connection, handle, _) = new_connection().unwrap();
     tokio::spawn(connection);
 
-    if let Err(e) = add_neighbour(link_name, ip, link_local_address, handle.clone()).await {
+    if let Err(e) =
+        add_neighbour(link_name, ip, link_local_address, handle.clone()).await
+    {
         eprintln!("{e}");
     }
     Ok(())
