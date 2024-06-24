@@ -80,6 +80,7 @@ build the example normally:
 
 Then find the binary in the target directory:
 
-    cd ../target/debug/example ; sudo ./add_neighbour <link_name> <ip_address>"
+    cd ../target/debug/example ;
+    sudo ./add_neighbour <link_name> <ip_address> <mac>"
     );
 }
