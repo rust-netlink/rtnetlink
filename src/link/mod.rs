@@ -1,28 +1,24 @@
 // SPDX-License-Identifier: MIT
 
-mod handle;
-pub use self::handle::*;
-
 mod add;
-pub use self::add::*;
-
 mod del;
-pub use self::del::*;
-
 mod get;
-pub use self::get::*;
-
-mod set;
-pub use self::set::*;
-
-mod set_bond_port;
-pub use self::set_bond_port::*;
-
+mod handle;
 mod property_add;
-pub use self::property_add::*;
-
 mod property_del;
-pub use self::property_del::*;
+mod set;
+mod set_bond_port;
+
+pub use self::add::{
+    BondAddRequest, LinkAddRequest, QosMapping, VxlanAddRequest,
+};
+pub use self::del::LinkDelRequest;
+pub use self::get::LinkGetRequest;
+pub use self::handle::LinkHandle;
+pub use self::property_add::LinkNewPropRequest;
+pub use self::property_del::LinkDelPropRequest;
+pub use self::set::LinkSetRequest;
+pub use self::set_bond_port::BondPortSetRequest;
 
 #[cfg(test)]
 mod test;
