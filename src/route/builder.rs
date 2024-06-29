@@ -19,6 +19,14 @@ pub struct RouteMessageBuilder<T = IpAddr> {
 }
 
 impl<T> RouteMessageBuilder<T> {
+    /// Create default RouteMessage with header set to:
+    ///  * route: [RouteHeader::RT_TABLE_MAIN]
+    ///  * protocol: [RouteProtocol::Static]
+    ///  * scope: [RouteScope::Universe]
+    ///  * kind: [RouteType::Unicast]
+    ///
+    /// For using this message in querying routes, these settings
+    /// are ignored unless `NETLINK_GET_STRICT_CHK` been enabled.
     fn new_no_address_family() -> Self {
         let mut message = RouteMessage::default();
         message.header.table = RouteHeader::RT_TABLE_MAIN;
@@ -98,6 +106,15 @@ impl<T> RouteMessageBuilder<T> {
 }
 
 impl RouteMessageBuilder<Ipv4Addr> {
+    /// Create default RouteMessage with header set to:
+    ///  * route: [RouteHeader::RT_TABLE_MAIN]
+    ///  * protocol: [RouteProtocol::Static]
+    ///  * scope: [RouteScope::Universe]
+    ///  * kind: [RouteType::Unicast]
+    ///  * address_family: [AddressFamily::Inet4]
+    ///
+    /// For using this message in querying routes, these settings
+    /// are ignored unless `NETLINK_GET_STRICT_CHK` been enabled.
     pub fn new() -> Self {
         let mut builder = Self::new_no_address_family();
         builder.get_mut().header.address_family = AddressFamily::Inet;
@@ -150,6 +167,15 @@ impl Default for RouteMessageBuilder<Ipv4Addr> {
 }
 
 impl RouteMessageBuilder<Ipv6Addr> {
+    /// Create default RouteMessage with header set to:
+    ///  * route: [RouteHeader::RT_TABLE_MAIN]
+    ///  * protocol: [RouteProtocol::Static]
+    ///  * scope: [RouteScope::Universe]
+    ///  * kind: [RouteType::Unicast]
+    ///  * address_family: [AddressFamily::Inet6]
+    ///
+    /// For using this message in querying routes, these settings
+    /// are ignored unless `NETLINK_GET_STRICT_CHK` been enabled.
     pub fn new() -> Self {
         let mut builder = Self::new_no_address_family();
         builder.get_mut().header.address_family = AddressFamily::Inet6;

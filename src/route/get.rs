@@ -8,8 +8,7 @@ use futures::{
 
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
-    route::{RouteHeader, RouteMessage, RouteProtocol, RouteScope, RouteType},
-    AddressFamily, RouteNetlinkMessage,
+    route::RouteMessage, AddressFamily, RouteNetlinkMessage,
 };
 
 use crate::{try_rtnl, Error, Handle};
@@ -38,26 +37,7 @@ impl IpVersion {
 }
 
 impl RouteGetRequest {
-    pub(crate) fn new(handle: Handle, ip_version: IpVersion) -> Self {
-        let mut message = RouteMessage::default();
-        message.header.address_family = ip_version.family();
-
-        // As per rtnetlink(7) documentation, setting the following
-        // fields to 0 gets us all the routes from all the tables
-        //
-        // > For RTM_GETROUTE, setting rtm_dst_len and rtm_src_len to 0
-        // > means you get all entries for the specified routing table.
-        // > For the other fields, except rtm_table and rtm_protocol, 0
-        // > is the wildcard.
-        message.header.destination_prefix_length = 0;
-        message.header.source_prefix_length = 0;
-        message.header.scope = RouteScope::Universe;
-        message.header.kind = RouteType::Unspec;
-
-        // I don't know if these two fields matter
-        message.header.table = RouteHeader::RT_TABLE_UNSPEC;
-        message.header.protocol = RouteProtocol::Unspec;
-
+    pub(crate) fn new(handle: Handle, message: RouteMessage) -> Self {
         RouteGetRequest { handle, message }
     }
 
