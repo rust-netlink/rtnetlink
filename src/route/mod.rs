@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-mod handle;
-pub use self::handle::*;
-
 mod add;
-pub use self::add::*;
-
-mod del;
-pub use self::del::*;
-
-mod get;
-pub use self::get::*;
-
 mod builder;
+mod del;
+mod get;
+mod handle;
+
+pub use self::add::RouteAddRequest;
 pub use self::builder::RouteMessageBuilder;
+pub use self::del::RouteDelRequest;
+pub use self::get::{IpVersion, RouteGetRequest};
+pub use self::handle::RouteHandle;
