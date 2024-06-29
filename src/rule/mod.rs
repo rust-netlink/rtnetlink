@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-mod handle;
-pub use self::handle::*;
-
 mod add;
-pub use self::add::*;
-
 mod del;
-pub use self::del::*;
-
 mod get;
-pub use self::get::*;
+mod handle;
+
+pub use self::add::RuleAddRequest;
+pub use self::del::RuleDelRequest;
+pub use self::get::RuleGetRequest;
+pub use self::handle::RuleHandle;
