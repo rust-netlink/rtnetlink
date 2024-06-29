@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 
+use std::net::{Ipv4Addr, Ipv6Addr};
+
 use futures::stream::TryStreamExt;
-use rtnetlink::{new_connection, Error, Handle, IpVersion};
+use rtnetlink::{
+    new_connection, Error, Handle, IpVersion, RouteMessageBuilder,
+};
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -27,7 +31,11 @@ async fn dump_addresses(
     handle: Handle,
     ip_version: IpVersion,
 ) -> Result<(), Error> {
-    let mut routes = handle.route().get(ip_version).execute();
+    let route = match ip_version {
+        IpVersion::V4 => RouteMessageBuilder::<Ipv4Addr>::new().build(),
+        IpVersion::V6 => RouteMessageBuilder::<Ipv6Addr>::new().build(),
+    };
+    let mut routes = handle.route().get(route).execute();
     while let Some(route) = routes.try_next().await? {
         println!("{route:?}");
     }
