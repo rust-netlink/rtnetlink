@@ -538,7 +538,7 @@ impl VxlanAddRequest {
 pub struct LinkAddRequest {
     handle: Handle,
     message: LinkMessage,
-    replace: bool,
+    extra_flags: u16,
 }
 
 /// A quality-of-service mapping between the internal priority `from` to the
@@ -560,7 +560,7 @@ impl LinkAddRequest {
         LinkAddRequest {
             handle,
             message: LinkMessage::default(),
-            replace: false,
+            extra_flags: NLM_F_EXCL | NLM_F_CREATE,
         }
     }
 
@@ -569,12 +569,11 @@ impl LinkAddRequest {
         let LinkAddRequest {
             mut handle,
             message,
-            replace,
+            extra_flags,
         } = self;
         let mut req =
             NetlinkMessage::from(RouteNetlinkMessage::NewLink(message));
-        let replace = if replace { NLM_F_REPLACE } else { NLM_F_EXCL };
-        req.header.flags = NLM_F_REQUEST | NLM_F_ACK | replace | NLM_F_CREATE;
+        req.header.flags = NLM_F_REQUEST | NLM_F_ACK | extra_flags;
 
         let mut response = handle.request(req)?;
         while let Some(message) = response.next().await {
@@ -795,7 +794,15 @@ impl LinkAddRequest {
     /// Replace existing matching link.
     pub fn replace(self) -> Self {
         Self {
-            replace: true,
+            extra_flags: NLM_F_REPLACE | (self.extra_flags & (!NLM_F_EXCL)),
+            ..self
+        }
+    }
+
+    /// Overrides the flags used on request execution
+    pub fn flags(self, flags: u16) -> Self {
+        Self {
+            extra_flags: flags,
             ..self
         }
     }
