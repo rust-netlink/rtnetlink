@@ -13,10 +13,10 @@ use netlink_packet_core::{
 
 use netlink_packet_route::{
     link::{
-        BondMode, InfoBond, InfoData, InfoKind, InfoMacVlan, InfoMacVtap,
-        InfoVeth, InfoVlan, InfoVrf, InfoVxlan, InfoXfrm, LinkAttribute,
-        LinkFlags, LinkInfo, LinkMessage, MacVlanMode, MacVtapMode,
-        VlanQosMapping,
+        BondMode, InfoBond, InfoData, InfoIpVlan, InfoIpVtap, InfoKind,
+        InfoMacVlan, InfoMacVtap, InfoVeth, InfoVlan, InfoVrf, InfoVxlan,
+        InfoXfrm, IpVlanMode, IpVtapMode, LinkAttribute, LinkFlags, LinkInfo,
+        LinkMessage, MacVlanMode, MacVtapMode, VlanQosMapping,
     },
     RouteNetlinkMessage,
 };
@@ -709,6 +709,36 @@ impl LinkAddRequest {
             .link_info(
                 InfoKind::MacVtap,
                 Some(InfoData::MacVtap(vec![InfoMacVtap::Mode(mode)])),
+            )
+            .append_nla(LinkAttribute::Link(index))
+            .up()
+    }
+
+    /// Create ipvlan on a link.
+    /// This is equivalent to `ip link add name NAME link LINK type ipvlan mode
+    /// IPVLAN_MODE`,   but instead of specifying a link name (`LINK`), we
+    /// specify a link index. The mode is an integer consisting of
+    /// ipvlan modes. 0 is L2, 1 is L3, 2 is L3S.
+    pub fn ipvlan(self, name: String, index: u32, mode: IpVlanMode) -> Self {
+        self.name(name)
+            .link_info(
+                InfoKind::IpVlan,
+                Some(InfoData::IpVlan(vec![InfoIpVlan::Mode(mode)])),
+            )
+            .append_nla(LinkAttribute::Link(index))
+            .up()
+    }
+
+    /// Create ipvtap on a link.
+    /// This is equivalent to `ip link add name NAME link LINK type ipvtap mode
+    /// IPVTAP_MODE`,   but instead of specifying a link name (`LINK`), we
+    /// specify a link index. The mode is an integer consisting of
+    /// ipvtap modes. 0 is L2, 1 is L3, 2 is L3S.
+    pub fn ipvtap(self, name: String, index: u32, mode: IpVtapMode) -> Self {
+        self.name(name)
+            .link_info(
+                InfoKind::IpVtap,
+                Some(InfoData::IpVtap(vec![InfoIpVtap::Mode(mode)])),
             )
             .append_nla(LinkAttribute::Link(index))
             .up()
