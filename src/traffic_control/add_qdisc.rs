@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
-use netlink_packet_route::{
-    tc::{TcAttribute, TcHandle, TcMessage},
-    RouteNetlinkMessage,
-};
 
-use crate::{try_nl, Error, Handle};
+use crate::{
+    packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST},
+    packet_route::{
+        tc::{TcAttribute, TcHandle, TcMessage},
+        RouteNetlinkMessage,
+    },
+    try_nl, Error, Handle,
+};
 
 pub struct QDiscNewRequest {
     handle: Handle,
@@ -82,8 +84,11 @@ mod test {
     use tokio::runtime::Runtime;
 
     use super::*;
-    use crate::{new_connection, NetworkNamespace, NETNS_PATH, SELF_NS_PATH};
-    use netlink_packet_route::{link::LinkMessage, AddressFamily};
+    use crate::{
+        new_connection,
+        packet_route::{link::LinkMessage, AddressFamily},
+        LinkDummy, NetworkNamespace, NETNS_PATH, SELF_NS_PATH,
+    };
 
     const TEST_NS: &str = "netlink_test_qdisc_ns";
     const TEST_DUMMY: &str = "test_dummy";
@@ -139,8 +144,7 @@ mod test {
         tokio::spawn(connection);
         handle
             .link()
-            .add()
-            .dummy(TEST_DUMMY.to_string())
+            .add(LinkDummy::new(TEST_DUMMY).up().build())
             .execute()
             .await
             .unwrap();

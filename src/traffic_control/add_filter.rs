@@ -1,19 +1,21 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
-use netlink_packet_route::{
-    tc::{
-        TcAction, TcActionAttribute, TcActionGeneric, TcActionMirror,
-        TcActionMirrorOption, TcActionOption, TcActionType, TcAttribute,
-        TcFilterU32, TcFilterU32Option, TcHandle, TcHeader, TcMessage,
-        TcMirror, TcMirrorActionType, TcOption, TcU32Key, TcU32Selector,
-        TcU32SelectorFlags,
-    },
-    RouteNetlinkMessage,
-};
 
-use crate::{try_nl, Error, Handle};
+use crate::{
+    packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST},
+    packet_route::{
+        tc::{
+            TcAction, TcActionAttribute, TcActionGeneric, TcActionMirror,
+            TcActionMirrorOption, TcActionOption, TcActionType, TcAttribute,
+            TcFilterU32, TcFilterU32Option, TcHandle, TcHeader, TcMessage,
+            TcMirror, TcMirrorActionType, TcOption, TcU32Key, TcU32Selector,
+            TcU32SelectorFlags,
+        },
+        RouteNetlinkMessage,
+    },
+    try_nl, Error, Handle,
+};
 
 pub struct TrafficFilterNewRequest {
     handle: Handle,
@@ -177,18 +179,19 @@ mod test {
     use std::{fs::File, os::fd::AsFd, path::Path};
 
     use futures::stream::TryStreamExt;
-    use netlink_packet_route::{
-        link::LinkMessage,
-        tc::{
-            TcAttribute, TcFilterU32, TcFilterU32Option, TcOption, TcU32Key,
-            TcU32SelectorFlags,
-        },
-    };
     use nix::sched::{setns, CloneFlags};
     use tokio::runtime::Runtime;
 
     use crate::{
-        new_connection, Handle, NetworkNamespace, NETNS_PATH, SELF_NS_PATH,
+        new_connection,
+        packet_route::{
+            link::LinkMessage,
+            tc::{
+                TcAttribute, TcFilterU32, TcFilterU32Option, TcOption,
+                TcU32Key, TcU32SelectorFlags,
+            },
+        },
+        Handle, LinkVeth, NetworkNamespace, NETNS_PATH, SELF_NS_PATH,
     };
 
     const TEST_NS: &str = "netlink_test_filter_ns";
@@ -246,8 +249,7 @@ mod test {
         tokio::spawn(connection);
         handle
             .link()
-            .add()
-            .veth(TEST_VETH_1.to_string(), TEST_VETH_2.to_string())
+            .add(LinkVeth::new(TEST_VETH_1, TEST_VETH_2).build())
             .execute()
             .await
             .unwrap();

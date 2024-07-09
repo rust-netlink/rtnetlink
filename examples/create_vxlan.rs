@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
-use rtnetlink::{new_connection, Error, Handle};
+use rtnetlink::{new_connection, Error, Handle, LinkVxlan};
 use std::env;
 
 #[tokio::main]
@@ -24,15 +24,13 @@ async fn main() -> Result<(), String> {
 async fn create_vxlan(handle: Handle, name: String) -> Result<(), Error> {
     let mut links = handle.link().get().match_name(name.clone()).execute();
     if let Some(link) = links.try_next().await? {
-        handle
-            .link()
-            .add()
-            .vxlan("vxlan0".into(), 10u32)
-            .link(link.header.index)
-            .port(4789)
+        let message = LinkVxlan::new("vxlan0", 10)
+            .dev(link.header.index)
             .up()
-            .execute()
-            .await?
+            .port(4789)
+            .build();
+
+        handle.link().add(message).execute().await?
     } else {
         println!("no link link {name} found");
     }

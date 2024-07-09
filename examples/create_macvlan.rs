@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 
-use futures::stream::TryStreamExt;
-use macaddr::MacAddr;
-use rtnetlink::{new_connection, Error, Handle};
 use std::{env, str::FromStr};
 
-use netlink_packet_route::link::{LinkAttribute, MacVlanMode};
+use futures::stream::TryStreamExt;
+use macaddr::MacAddr;
+use rtnetlink::{
+    new_connection, packet_route::link::MacVlanMode, Error, Handle, LinkMacVlan,
+};
 
 #[tokio::main]
 async fn main() -> Result<(), String> {
@@ -37,19 +38,20 @@ async fn create_macvlan(
     link_name: String,
     mac_address: Option<Vec<u8>>,
 ) -> Result<(), Error> {
-    let mut links = handle.link().get().match_name(link_name.clone()).execute();
-    if let Some(link) = links.try_next().await? {
-        let mut request = handle.link().add().macvlan(
-            "test_macvlan".into(),
-            link.header.index,
+    let mut parent_links =
+        handle.link().get().match_name(link_name.clone()).execute();
+    if let Some(parent) = parent_links.try_next().await? {
+        let mut builder = LinkMacVlan::new(
+            "my-macvlan",
+            parent.header.index,
             MacVlanMode::Bridge,
         );
         if let Some(mac) = mac_address {
-            request
-                .message_mut()
-                .attributes
-                .push(LinkAttribute::Address(mac));
+            builder = builder.address(mac);
         }
+        let message = builder.build();
+        let request = handle.link().add(message);
+
         request.execute().await?
     } else {
         println!("no link {link_name} found");
