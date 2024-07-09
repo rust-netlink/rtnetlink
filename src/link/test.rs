@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
-use netlink_packet_route::link::{
-    InfoData, InfoKind, InfoMacVlan, InfoVrf, LinkAttribute, LinkInfo,
-    LinkMessage, MacVlanMode,
-};
 use tokio::runtime::Runtime;
 
-use crate::{new_connection, Error, LinkHandle};
+use crate::{
+    new_connection,
+    packet_route::link::{
+        InfoData, InfoKind, InfoMacVlan, InfoVrf, LinkAttribute, LinkInfo,
+        LinkMessage, MacVlanMode,
+    },
+    Error, LinkHandle, LinkMacVlan, LinkVrf, LinkWireguard,
+};
 
 const IFACE_NAME: &str = "wg142"; // rand?
 
@@ -37,7 +40,7 @@ fn create_get_delete_macvlan() {
 
     let rt = Runtime::new().unwrap();
     let handle = rt.block_on(_create_macvlan(
-        &MACVLAN_IFACE_NAME.to_owned(),
+        MACVLAN_IFACE_NAME,
         LOWER_DEVICE_IDX, /* assuming there's always a network interface in
                            * the system ... */
         MACVLAN_MODE,
@@ -114,15 +117,10 @@ async fn _create_wg() -> Result<LinkHandle, Error> {
     let (conn, handle, _) = new_connection().unwrap();
     tokio::spawn(conn);
     let link_handle = handle.link();
-    let mut req = link_handle.add();
-    let mutator = req.message_mut();
-    let info =
-        LinkAttribute::LinkInfo(vec![LinkInfo::Kind(InfoKind::Wireguard)]);
-    mutator.attributes.push(info);
-    mutator
-        .attributes
-        .push(LinkAttribute::IfName(IFACE_NAME.to_owned()));
-    req.execute().await?;
+    link_handle
+        .add(LinkWireguard::new(IFACE_NAME).build())
+        .execute()
+        .await?;
     Ok(link_handle)
 }
 
@@ -140,7 +138,7 @@ async fn _del_iface(handle: &mut LinkHandle, index: u32) -> Result<(), Error> {
 }
 
 async fn _create_macvlan(
-    name: &String,
+    name: &str,
     lower_device_index: u32,
     mode: MacVlanMode,
     mac: Vec<u8>,
@@ -148,11 +146,11 @@ async fn _create_macvlan(
     let (conn, handle, _) = new_connection().unwrap();
     tokio::spawn(conn);
     let link_handle = handle.link();
-    let req = link_handle
-        .add()
-        .macvlan(name.to_string(), lower_device_index, mode)
-        .name(name.to_owned())
-        .address(mac);
+    let req = link_handle.add(
+        LinkMacVlan::new(name, lower_device_index, mode)
+            .address(mac)
+            .build(),
+    );
     req.execute().await?;
     Ok(link_handle)
 }
@@ -161,7 +159,7 @@ async fn _create_vrf(name: &str, table: u32) -> Result<LinkHandle, Error> {
     let (conn, handle, _) = new_connection().unwrap();
     tokio::spawn(conn);
     let link_handle = handle.link();
-    let req = link_handle.add().vrf(name.to_string(), table);
+    let req = link_handle.add(LinkVrf::new(name, table).build());
     req.execute().await?;
     Ok(link_handle)
 }

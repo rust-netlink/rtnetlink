@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
-use rtnetlink::{new_connection, Error, Handle};
+use rtnetlink::{new_connection, Error, Handle, LinkUnspec};
 use std::env;
 
 #[tokio::main]
@@ -26,8 +26,7 @@ async fn set_link_down(handle: Handle, name: String) -> Result<(), Error> {
     if let Some(link) = links.try_next().await? {
         handle
             .link()
-            .set(link.header.index)
-            .down()
+            .set(LinkUnspec::new_with_index(link.header.index).down().build())
             .execute()
             .await?
     } else {

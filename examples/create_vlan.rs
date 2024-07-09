@@ -2,7 +2,7 @@
 
 use std::{env, error::Error as StdError, str::FromStr};
 
-use rtnetlink::{new_connection, QosMapping};
+use rtnetlink::{new_connection, LinkVlan, QosMapping};
 
 fn parse_mapping(parameter: &str) -> Result<QosMapping, Box<dyn StdError>> {
     let (from, to) = parameter
@@ -109,10 +109,14 @@ async fn main() -> Result<(), String> {
     let (connection, handle, _) = new_connection().unwrap();
     tokio::spawn(connection);
 
+    let message = LinkVlan::new(&name, base, id)
+        .up()
+        .qos(ingress, egress)
+        .build();
+
     handle
         .link()
-        .add()
-        .vlan_with_qos(name, base, id, ingress, egress)
+        .add(message)
         .execute()
         .await
         .map_err(|err| format!("Netlink request failed: {err}"))

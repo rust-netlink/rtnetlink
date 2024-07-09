@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: MIT
 
-use netlink_packet_route::link::BondMode;
-use rtnetlink::new_connection;
 use std::net::{Ipv4Addr, Ipv6Addr};
+
+use rtnetlink::{new_connection, packet_route::link::BondMode, LinkBond};
 
 #[tokio::main]
 async fn main() -> Result<(), String> {
     let (connection, handle, _) = new_connection().unwrap();
     tokio::spawn(connection);
-    handle
-        .link()
-        .add()
-        .bond("my-bond".into())
+
+    let message = LinkBond::new("my-bond")
         .mode(BondMode::ActiveBackup)
         .miimon(100)
         .updelay(100)
@@ -26,6 +24,11 @@ async fn main() -> Result<(), String> {
             Ipv6Addr::new(0xfd02, 0, 0, 0, 0, 0, 0, 2),
         ])
         .up()
+        .build();
+
+    handle
+        .link()
+        .add(message)
         .execute()
         .await
         .map_err(|e| format!("{e}"))

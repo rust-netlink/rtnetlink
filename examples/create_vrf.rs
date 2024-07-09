@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-use rtnetlink::{new_connection, LinkVeth};
+use rtnetlink::{new_connection, LinkVrf};
+
 #[tokio::main]
 async fn main() -> Result<(), String> {
     let (connection, handle, _) = new_connection().unwrap();
@@ -8,7 +9,7 @@ async fn main() -> Result<(), String> {
 
     handle
         .link()
-        .add(LinkVeth::new("veth1", "veth1-peer").build())
+        .add(LinkVrf::new("my-vrf", 101).build())
         .execute()
         .await
         .map_err(|e| format!("{e}"))

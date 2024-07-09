@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::TryStreamExt;
-use rtnetlink::{new_connection, Error, Handle};
+use rtnetlink::{
+    new_connection, packet_route::link::LinkAttribute, Error, Handle,
+};
 use std::env;
 
 #[tokio::main]
@@ -35,7 +37,11 @@ async fn dump_bond_port_settings(
         let mut link_messgage =
             handle.link().get().match_name(linkname).execute();
         while let Some(msg) = link_messgage.try_next().await? {
-            println!("{msg:?}");
+            for nla in msg.attributes {
+                if let LinkAttribute::LinkInfo(i) = &nla {
+                    println!("{:?}", i);
+                }
+            }
         }
         Ok(())
     } else {
