@@ -25,8 +25,15 @@ impl AddressHandle {
         index: u32,
         address: IpAddr,
         prefix_len: u8,
+        peer_address: Option<IpAddr>,
     ) -> AddressAddRequest {
-        AddressAddRequest::new(self.0.clone(), index, address, prefix_len)
+        AddressAddRequest::new(
+            self.0.clone(),
+            index,
+            address,
+            prefix_len,
+            peer_address,
+        )
     }
 
     /// Delete the given address

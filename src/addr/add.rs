@@ -29,6 +29,7 @@ impl AddressAddRequest {
         index: u32,
         address: IpAddr,
         prefix_len: u8,
+        peer_address: Option<IpAddr>,
     ) -> Self {
         let mut message = AddressMessage::default();
 
@@ -45,14 +46,18 @@ impl AddressAddRequest {
                 message.attributes.push(AddressAttribute::Multicast(a));
             }
         } else {
-            message.attributes.push(AddressAttribute::Address(address));
+            // If peer_address is provided, use it as IFA_ADDRESS
+            if let Some(peer) = peer_address {
+                message.attributes.push(AddressAttribute::Address(peer));
+                message.attributes.push(AddressAttribute::Local(address));
+            } else {
+                message.attributes.push(AddressAttribute::Address(address));
+                // for IPv4 the IFA_LOCAL address can be set to the same value as
+                // IFA_ADDRESS when no peer is specified
+                message.attributes.push(AddressAttribute::Local(address));
+            }
 
-            // for IPv4 the IFA_LOCAL address can be set to the same value as
-            // IFA_ADDRESS
-            message.attributes.push(AddressAttribute::Local(address));
-
-            // set the IFA_BROADCAST address as well (IPv6 does not support
-            // broadcast)
+            // set the IFA_BROADCAST address as well (IPv6 does not support broadcast)
             if let IpAddr::V4(a) = address {
                 if prefix_len == 32 {
                     message.attributes.push(AddressAttribute::Broadcast(a));
