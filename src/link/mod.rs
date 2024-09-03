@@ -42,6 +42,7 @@ pub use self::vrf::LinkVrf;
 pub use self::vxlan::LinkVxlan;
 pub use self::wireguard::LinkWireguard;
 pub use self::xfrm::LinkXfrm;
+pub use self::macsec::LinkMacSec;
 
 #[cfg(test)]
 mod test;
