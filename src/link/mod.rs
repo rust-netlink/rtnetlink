@@ -20,6 +20,7 @@ mod vrf;
 mod vxlan;
 mod wireguard;
 mod xfrm;
+mod macsec;
 
 pub use self::add::LinkAddRequest;
 pub use self::bond::LinkBond;
