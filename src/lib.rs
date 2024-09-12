@@ -37,9 +37,10 @@ pub use crate::errors::Error;
 pub use crate::handle::Handle;
 pub use crate::link::{
     LinkAddRequest, LinkBond, LinkBondPort, LinkBridge, LinkDelPropRequest,
-    LinkDelRequest, LinkDummy, LinkGetRequest, LinkHandle, LinkMacVlan,
-    LinkMacVtap, LinkMessageBuilder, LinkSetRequest, LinkUnspec, LinkVeth,
-    LinkVlan, LinkVrf, LinkVxlan, LinkWireguard, LinkXfrm, LinkMacSec, QosMapping,
+    LinkDelRequest, LinkDummy, LinkGetRequest, LinkHandle, LinkMacSec,
+    LinkMacVlan, LinkMacVtap, LinkMessageBuilder, LinkSetRequest, LinkUnspec,
+    LinkVeth, LinkVlan, LinkVrf, LinkVxlan, LinkWireguard, LinkXfrm,
+    QosMapping,
 };
 pub use crate::neighbour::{
     NeighbourAddRequest, NeighbourDelRequest, NeighbourGetRequest,
