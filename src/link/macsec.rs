@@ -2,15 +2,14 @@
 
 use netlink_packet_route::link::InfoMacSec;
 pub use netlink_packet_route::link::MacSecCipherId;
-pub use netlink_packet_route::link::MacSecValidate;
 pub use netlink_packet_route::link::MacSecOffload;
+pub use netlink_packet_route::link::MacSecValidate;
 pub use netlink_packet_utils::nla::DefaultNla;
 
 use crate::{
     link::LinkMessageBuilder,
     packet_route::link::{InfoData, InfoKind},
 };
-
 
 /// Represent MACsec interface.
 /// Example code on creating a MACsec interface
@@ -42,13 +41,8 @@ pub struct LinkMacSec;
 
 impl LinkMacSec {
     /// Wrapper of `LinkMessageBuilder::<LinkMacSec>::new().link().mode()`
-    pub fn new(
-        name: &str,
-        base_iface_index: u32,
-    ) -> LinkMessageBuilder<Self> {
-        LinkMessageBuilder::<LinkMacSec>::new(name)
-            .link(base_iface_index)
-            
+    pub fn new(name: &str, base_iface_index: u32) -> LinkMessageBuilder<Self> {
+        LinkMessageBuilder::<LinkMacSec>::new(name).link(base_iface_index)
     }
 }
 
@@ -114,7 +108,11 @@ impl LinkMessageBuilder<LinkMacSec> {
     }
 
     pub fn replay_protect(self, replay_protect: bool) -> Self {
-        self.append_info_data(InfoMacSec::ReplayProtect(if replay_protect { 1 } else { 0 }))
+        self.append_info_data(InfoMacSec::ReplayProtect(if replay_protect {
+            1
+        } else {
+            0
+        }))
     }
 
     pub fn validation(self, validation: MacSecValidate) -> Self {

@@ -11,6 +11,7 @@ mod get;
 mod handle;
 mod mac_vlan;
 mod mac_vtap;
+mod macsec;
 mod property_add;
 mod property_del;
 mod set;
@@ -20,7 +21,6 @@ mod vrf;
 mod vxlan;
 mod wireguard;
 mod xfrm;
-mod macsec;
 
 pub use self::add::LinkAddRequest;
 pub use self::bond::LinkBond;
@@ -33,6 +33,7 @@ pub use self::get::LinkGetRequest;
 pub use self::handle::LinkHandle;
 pub use self::mac_vlan::LinkMacVlan;
 pub use self::mac_vtap::LinkMacVtap;
+pub use self::macsec::LinkMacSec;
 pub use self::property_add::LinkNewPropRequest;
 pub use self::property_del::LinkDelPropRequest;
 pub use self::set::LinkSetRequest;
@@ -42,7 +43,6 @@ pub use self::vrf::LinkVrf;
 pub use self::vxlan::LinkVxlan;
 pub use self::wireguard::LinkWireguard;
 pub use self::xfrm::LinkXfrm;
-pub use self::macsec::LinkMacSec;
 
 #[cfg(test)]
 mod test;
