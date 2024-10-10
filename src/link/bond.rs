@@ -4,7 +4,9 @@ use std::net::{Ipv4Addr, Ipv6Addr};
 
 use crate::{
     link::LinkMessageBuilder,
-    packet_route::link::{BondMode, InfoBond, InfoData, InfoKind},
+    packet_route::link::{
+        BondArpValidate, BondMode, InfoBond, InfoData, InfoKind,
+    },
 };
 
 ///
@@ -116,7 +118,7 @@ impl LinkMessageBuilder<LinkBond> {
     /// Adds the `arp_validate` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond arp_validate
     /// ARP_VALIDATE`.
-    pub fn arp_validate(self, arp_validate: u32) -> Self {
+    pub fn arp_validate(self, arp_validate: BondArpValidate) -> Self {
         self.append_info_data(InfoBond::ArpValidate(arp_validate))
     }
 

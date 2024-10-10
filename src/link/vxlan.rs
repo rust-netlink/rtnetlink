@@ -87,7 +87,7 @@ impl LinkMessageBuilder<LinkVxlan> {
     /// This function takes an IPv4 address
     /// WARNING: only one between `remote` and `group` can be present.
     pub fn group(self, addr: std::net::Ipv4Addr) -> Self {
-        self.append_info_data(InfoVxlan::Group(addr.octets().to_vec()))
+        self.append_info_data(InfoVxlan::Group(addr))
     }
 
     /// Adds the `group` attribute to the VXLAN
@@ -96,7 +96,7 @@ impl LinkMessageBuilder<LinkVxlan> {
     /// This function takes an IPv6 address
     /// WARNING: only one between `remote` and `group` can be present.
     pub fn group6(self, addr: std::net::Ipv6Addr) -> Self {
-        self.append_info_data(InfoVxlan::Group6(addr.octets().to_vec()))
+        self.append_info_data(InfoVxlan::Group6(addr))
     }
 
     /// Adds the `remote` attribute to the VXLAN
@@ -128,7 +128,7 @@ impl LinkMessageBuilder<LinkVxlan> {
     /// IPADDR`, local IPADDR - specifies the source IP address to use in
     /// outgoing packets. This function takes an IPv4 address.
     pub fn local(self, addr: std::net::Ipv4Addr) -> Self {
-        self.append_info_data(InfoVxlan::Local(addr.octets().to_vec()))
+        self.append_info_data(InfoVxlan::Local(addr))
     }
 
     /// Adds the `local` attribute to the VXLAN
@@ -136,7 +136,7 @@ impl LinkMessageBuilder<LinkVxlan> {
     /// IPADDR`, local IPADDR - specifies the source IP address to use in
     /// outgoing packets. This function takes an IPv6 address.
     pub fn local6(self, addr: std::net::Ipv6Addr) -> Self {
-        self.append_info_data(InfoVxlan::Local6(addr.octets().to_vec()))
+        self.append_info_data(InfoVxlan::Local6(addr))
     }
 
     /// Adds the `tos` attribute to the VXLAN
