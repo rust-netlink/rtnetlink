@@ -2,7 +2,7 @@
 
 use futures::{
     future::{self, Either},
-    stream::{StreamExt, TryStream},
+    stream::{Stream, StreamExt},
     FutureExt,
 };
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
@@ -48,7 +48,7 @@ impl LinkGetRequest {
     }
 
     /// Execute the request
-    pub fn execute(self) -> impl TryStream<Ok = LinkMessage, Error = Error> {
+    pub fn execute(self) -> impl Stream<Item = Result<LinkMessage, Error>> {
         let LinkGetRequest {
             mut handle,
             message,

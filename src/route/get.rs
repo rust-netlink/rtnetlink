@@ -2,7 +2,7 @@
 
 use futures::{
     future::{self, Either},
-    stream::{StreamExt, TryStream},
+    stream::{Stream, StreamExt},
     FutureExt,
 };
 
@@ -46,7 +46,7 @@ impl RouteGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl TryStream<Ok = RouteMessage, Error = Error> {
+    pub fn execute(self) -> impl Stream<Item = Result<RouteMessage, Error>> {
         let RouteGetRequest {
             mut handle,
             message,

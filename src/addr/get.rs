@@ -2,7 +2,7 @@
 
 use futures::{
     future::{self, Either},
-    stream::{StreamExt, TryStream, TryStreamExt},
+    stream::{Stream, StreamExt, TryStreamExt},
     FutureExt,
 };
 use std::net::IpAddr;
@@ -34,7 +34,7 @@ impl AddressGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl TryStream<Ok = AddressMessage, Error = Error> {
+    pub fn execute(self) -> impl Stream<Item = Result<AddressMessage, Error>> {
         let AddressGetRequest {
             mut handle,
             message,
