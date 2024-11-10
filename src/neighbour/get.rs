@@ -2,7 +2,7 @@
 
 use futures::{
     future::{self, Either},
-    stream::{StreamExt, TryStream},
+    stream::{Stream, StreamExt},
     FutureExt,
 };
 use netlink_packet_core::{
@@ -41,7 +41,7 @@ impl NeighbourGetRequest {
     /// Execute the request
     pub fn execute(
         self,
-    ) -> impl TryStream<Ok = NeighbourMessage, Error = Error> {
+    ) -> impl Stream<Item = Result<NeighbourMessage, Error>> {
         let NeighbourGetRequest {
             mut handle,
             message,
