@@ -11,6 +11,7 @@ use crate::{
     try_nl, Error, Handle,
 };
 
+#[derive(Debug, Clone)]
 pub struct QDiscNewRequest {
     handle: Handle,
     message: TcMessage,

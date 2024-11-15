@@ -9,6 +9,7 @@ use crate::Handle;
 use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
 use netlink_packet_route::tc::TcMessage;
 
+#[derive(Debug, Clone)]
 pub struct QDiscHandle(Handle);
 
 impl QDiscHandle {
@@ -57,6 +58,7 @@ impl QDiscHandle {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct TrafficClassHandle {
     handle: Handle,
     ifindex: i32,
@@ -74,6 +76,7 @@ impl TrafficClassHandle {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct TrafficFilterHandle {
     handle: Handle,
     ifindex: i32,
@@ -118,6 +121,7 @@ impl TrafficFilterHandle {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct TrafficChainHandle {
     handle: Handle,
     ifindex: i32,

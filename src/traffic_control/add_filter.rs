@@ -17,6 +17,7 @@ use crate::{
     try_nl, Error, Handle,
 };
 
+#[derive(Debug, Clone)]
 pub struct TrafficFilterNewRequest {
     handle: Handle,
     message: TcMessage,

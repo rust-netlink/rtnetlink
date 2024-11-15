@@ -5,6 +5,7 @@ use crate::{
 };
 use netlink_packet_route::rule::RuleMessage;
 
+#[derive(Debug, Clone)]
 pub struct RuleHandle(Handle);
 
 impl RuleHandle {

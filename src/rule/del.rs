@@ -6,6 +6,7 @@ use netlink_packet_route::{rule::RuleMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct RuleDelRequest {
     handle: Handle,
     message: RuleMessage,
