@@ -6,6 +6,7 @@ use netlink_packet_route::{tc::TcMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct QDiscDelRequest {
     handle: Handle,
     message: TcMessage,

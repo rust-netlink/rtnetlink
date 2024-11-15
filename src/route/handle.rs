@@ -3,6 +3,7 @@
 use crate::{Handle, RouteAddRequest, RouteDelRequest, RouteGetRequest};
 use netlink_packet_route::route::RouteMessage;
 
+#[derive(Debug, Clone)]
 pub struct RouteHandle(Handle);
 
 impl RouteHandle {

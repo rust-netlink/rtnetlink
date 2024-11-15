@@ -14,6 +14,7 @@ use netlink_packet_route::{
 
 use crate::{try_rtnl, Error, Handle, IpVersion};
 
+#[derive(Debug, Clone)]
 pub struct RuleGetRequest {
     handle: Handle,
     message: RuleMessage,

@@ -13,6 +13,7 @@ use netlink_packet_route::{
 
 use crate::{try_rtnl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct RouteGetRequest {
     handle: Handle,
     message: RouteMessage,

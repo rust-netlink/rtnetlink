@@ -21,6 +21,7 @@ use crate::{try_nl, Error, Handle};
 
 /// A request to create a new rule. This is equivalent to the `ip rule add`
 /// command.
+#[derive(Debug, Clone)]
 pub struct RuleAddRequest<T = ()> {
     handle: Handle,
     message: RuleMessage,

@@ -13,6 +13,7 @@ use netlink_packet_route::{
     AddressFamily,
 };
 
+#[derive(Debug, Clone)]
 pub struct RouteMessageBuilder<T = IpAddr> {
     message: RouteMessage,
     _phantom: PhantomData<T>,

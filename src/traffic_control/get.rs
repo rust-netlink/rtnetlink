@@ -13,6 +13,7 @@ use netlink_packet_route::{
 
 use crate::{try_rtnl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct QDiscGetRequest {
     handle: Handle,
     message: TcMessage,
@@ -60,6 +61,7 @@ impl QDiscGetRequest {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct TrafficClassGetRequest {
     handle: Handle,
     message: TcMessage,
@@ -94,6 +96,7 @@ impl TrafficClassGetRequest {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct TrafficFilterGetRequest {
     handle: Handle,
     message: TcMessage,
@@ -135,6 +138,7 @@ impl TrafficFilterGetRequest {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct TrafficChainGetRequest {
     handle: Handle,
     message: TcMessage,

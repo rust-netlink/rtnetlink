@@ -13,6 +13,7 @@ use crate::{try_nl, Error, Handle};
 
 /// A request to create a new route. This is equivalent to the `ip route add`
 /// commands.
+#[derive(Debug, Clone)]
 pub struct RouteAddRequest<T = IpAddr> {
     handle: Handle,
     message: RouteMessage,

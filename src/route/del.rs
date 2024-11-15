@@ -8,6 +8,7 @@ use netlink_packet_route::{route::RouteMessage, RouteNetlinkMessage};
 
 use crate::{Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct RouteDelRequest {
     handle: Handle,
     message: RouteMessage,
