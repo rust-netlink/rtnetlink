@@ -211,6 +211,14 @@ impl RouteMessageBuilder<Ipv4Addr> {
             .push(RouteAttribute::Gateway(RouteAddress::Inet(addr)));
         self
     }
+
+    /// Sets the IPv6 gateway (via) address.
+    pub fn via(mut self, addr: Ipv6Addr) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::Via(RouteVia::Inet6(addr)));
+        self
+    }
 }
 
 impl Default for RouteMessageBuilder<Ipv4Addr> {
@@ -403,25 +411,17 @@ impl RouteMessageBuilder<IpAddr> {
         mut self,
         addr: IpAddr,
     ) -> Result<Self, InvalidRouteMessage> {
-        self.set_address_family_from_ip_addr(addr);
-        match self.message.header.address_family {
-            AddressFamily::Inet => {
-                if addr.is_ipv6() {
-                    return Err(InvalidRouteMessage::Gateway(addr));
-                };
+        let attr = match (self.message.header.address_family, addr) {
+            (AddressFamily::Inet, addr @ IpAddr::V4(_))
+            | (AddressFamily::Inet6, addr @ IpAddr::V6(_)) => {
+                RouteAttribute::Gateway(addr.into())
             }
-            AddressFamily::Inet6 => {
-                if addr.is_ipv4() {
-                    return Err(InvalidRouteMessage::Gateway(addr));
-                };
+            (AddressFamily::Inet, IpAddr::V6(v6)) => {
+                RouteAttribute::Via(RouteVia::Inet6(v6))
             }
-            af => {
-                return Err(InvalidRouteMessage::AddressFamily(af));
-            }
-        }
-        self.message
-            .attributes
-            .push(RouteAttribute::Gateway(addr.into()));
+            (af, _) => return Err(InvalidRouteMessage::AddressFamily(af)),
+        };
+        self.message.attributes.push(attr);
         Ok(self)
     }
 
