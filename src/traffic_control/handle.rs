@@ -2,7 +2,8 @@
 
 use super::{
     QDiscDelRequest, QDiscGetRequest, QDiscNewRequest, TrafficChainGetRequest,
-    TrafficClassGetRequest, TrafficFilterGetRequest, TrafficFilterNewRequest,
+    TrafficClassGetRequest, TrafficFilterDelRequest, TrafficFilterGetRequest,
+    TrafficFilterNewRequest,
 };
 
 use crate::Handle;
@@ -101,6 +102,12 @@ impl TrafficFilterHandle {
             self.ifindex,
             NLM_F_EXCL | NLM_F_CREATE,
         )
+    }
+
+    /// Delete a filter from a node, don't replace if the object already exists.
+    /// ( equivalent to `tc filter del dev STRING`)
+    pub fn del(&mut self) -> TrafficFilterDelRequest {
+        TrafficFilterDelRequest::new(self.handle.clone(), self.ifindex)
     }
 
     /// Change the filter, the handle cannot be changed and neither can the
