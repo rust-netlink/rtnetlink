@@ -8,7 +8,7 @@ use std::{
 use netlink_packet_route::{
     route::{
         RouteAddress, RouteAttribute, RouteHeader, RouteMessage, RouteProtocol,
-        RouteScope, RouteType,
+        RouteScope, RouteType, RouteVia,
     },
     AddressFamily,
 };
@@ -153,10 +153,12 @@ impl RouteMessageBuilder<Ipv4Addr> {
     }
 
     /// Sets the gateway (via) address.
-    pub fn gateway(mut self, addr: Ipv4Addr) -> Self {
-        self.message
-            .attributes
-            .push(RouteAttribute::Gateway(RouteAddress::Inet(addr)));
+    pub fn gateway(mut self, addr: IpAddr) -> Self {
+        let attr = match addr {
+            IpAddr::V4(v4) => RouteAttribute::Gateway(RouteAddress::Inet(v4)),
+            IpAddr::V6(v6) => RouteAttribute::Via(RouteVia::Inet6(v6)),
+        };
+        self.message.attributes.push(attr);
         self
     }
 }
@@ -351,25 +353,15 @@ impl RouteMessageBuilder<IpAddr> {
         mut self,
         addr: IpAddr,
     ) -> Result<Self, InvalidRouteMessage> {
-        self.set_address_family_from_ip_addr(addr);
-        match self.message.header.address_family {
-            AddressFamily::Inet => {
-                if addr.is_ipv6() {
-                    return Err(InvalidRouteMessage::Gateway(addr));
-                };
+        use AddressFamily::*;
+        let attr = match (self.message.header.address_family, addr) {
+            (Inet, addr @ IpAddr::V4(_)) | (Inet6, addr @ IpAddr::V6(_)) => {
+                RouteAttribute::Gateway(addr.into())
             }
-            AddressFamily::Inet6 => {
-                if addr.is_ipv4() {
-                    return Err(InvalidRouteMessage::Gateway(addr));
-                };
-            }
-            af => {
-                return Err(InvalidRouteMessage::AddressFamily(af));
-            }
-        }
-        self.message
-            .attributes
-            .push(RouteAttribute::Gateway(addr.into()));
+            (Inet, IpAddr::V6(v6)) => RouteAttribute::Via(RouteVia::Inet6(v6)),
+            (af, _) => return Err(InvalidRouteMessage::AddressFamily(af)),
+        };
+        self.message.attributes.push(attr);
         Ok(self)
     }
 
