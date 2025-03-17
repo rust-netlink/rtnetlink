@@ -1,4 +1,14 @@
 # Changelog
+## [0.16.0] - 2025-03-10
+### Breaking changes
+ - N/A
+
+### New features
+ - Add support of tc filter del command. (51cfceb)
+
+### Bug fixes
+ - Fix error on decoding empty `IFLA_VFINFO_LIST`. (581b4ac)
+
 ## [0.15.0] - 2025-03-10
 ### Breaking changes
  - Deprecated `LinkAddRequest::xfrmtun()` in the favor of
