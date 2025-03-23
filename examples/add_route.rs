@@ -42,7 +42,7 @@ async fn add_route(
 ) -> Result<(), Error> {
     let route = RouteMessageBuilder::<Ipv4Addr>::new()
         .destination_prefix(dest.ip(), dest.prefix())
-        .gateway(gateway.ip())
+        .gateway(gateway.ip().into())
         .table_id(TEST_TABLE_ID)
         .build();
     handle.route().add(route).execute().await?;
