@@ -7,8 +7,8 @@ use std::{
 
 use netlink_packet_route::{
     route::{
-        RouteAddress, RouteAttribute, RouteHeader, RouteMessage, RouteProtocol,
-        RouteScope, RouteType,
+        RouteAddress, RouteAttribute, RouteFlags, RouteHeader, RouteMessage,
+        RouteProtocol, RouteScope, RouteType,
     },
     AddressFamily,
 };
@@ -93,6 +93,15 @@ impl<T> RouteMessageBuilder<T> {
     /// Default is unicast route kind.
     pub fn kind(mut self, kind: RouteType) -> Self {
         self.message.header.kind = kind;
+        self
+    }
+
+    /// Marks the next hop as directly reachable (on-link).
+    ///
+    /// Indicates that the next hop is reachable without passing through a
+    /// connected subnet.
+    pub fn onlink(mut self) -> Self {
+        self.message.header.flags.insert(RouteFlags::Onlink);
         self
     }
 
