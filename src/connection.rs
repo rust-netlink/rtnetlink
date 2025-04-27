@@ -33,3 +33,19 @@ where
         netlink_proto::new_connection_with_socket(NETLINK_ROUTE)?;
     Ok((conn, Handle::new(handle), messages))
 }
+
+#[allow(clippy::type_complexity)]
+pub fn from_socket<S>(
+    socket: S,
+) -> (
+    Connection<RouteNetlinkMessage, S>,
+    Handle,
+    UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+)
+where
+    S: AsyncSocket,
+{
+    let (conn, handle, messages) =
+        netlink_proto::from_socket_with_codec(socket);
+    (conn, Handle::new(handle), messages)
+}
