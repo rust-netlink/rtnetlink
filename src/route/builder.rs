@@ -8,7 +8,7 @@ use std::{
 use netlink_packet_route::{
     route::{
         RouteAddress, RouteAttribute, RouteFlags, RouteHeader, RouteMessage,
-        RouteProtocol, RouteScope, RouteType,
+        RouteProtocol, RouteScope, RouteType, RouteVia,
     },
     AddressFamily,
 };
@@ -166,6 +166,14 @@ impl RouteMessageBuilder<Ipv4Addr> {
         self.message
             .attributes
             .push(RouteAttribute::Gateway(RouteAddress::Inet(addr)));
+        self
+    }
+
+    /// Sets the IPv6 gateway (via) address.
+    pub fn via(mut self, addr: Ipv6Addr) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::Via(RouteVia::Inet6(addr)));
         self
     }
 }
@@ -360,25 +368,15 @@ impl RouteMessageBuilder<IpAddr> {
         mut self,
         addr: IpAddr,
     ) -> Result<Self, InvalidRouteMessage> {
-        self.set_address_family_from_ip_addr(addr);
-        match self.message.header.address_family {
-            AddressFamily::Inet => {
-                if addr.is_ipv6() {
-                    return Err(InvalidRouteMessage::Gateway(addr));
-                };
+        use AddressFamily::*;
+        let attr = match (self.message.header.address_family, addr) {
+            (Inet, addr @ IpAddr::V4(_)) | (Inet6, addr @ IpAddr::V6(_)) => {
+                RouteAttribute::Gateway(addr.into())
             }
-            AddressFamily::Inet6 => {
-                if addr.is_ipv4() {
-                    return Err(InvalidRouteMessage::Gateway(addr));
-                };
-            }
-            af => {
-                return Err(InvalidRouteMessage::AddressFamily(af));
-            }
-        }
-        self.message
-            .attributes
-            .push(RouteAttribute::Gateway(addr.into()));
+            (Inet, IpAddr::V6(v6)) => RouteAttribute::Via(RouteVia::Inet6(v6)),
+            (af, _) => return Err(InvalidRouteMessage::AddressFamily(af)),
+        };
+        self.message.attributes.push(attr);
         Ok(self)
     }
 
