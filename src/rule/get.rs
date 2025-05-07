@@ -2,7 +2,7 @@
 
 use futures::{
     future::{self, Either},
-    stream::{StreamExt, TryStream},
+    stream::{Stream, StreamExt},
     FutureExt,
 };
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
@@ -38,7 +38,7 @@ impl RuleGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl TryStream<Ok = RuleMessage, Error = Error> {
+    pub fn execute(self) -> impl Stream<Item = Result<RuleMessage, Error>> {
         let RuleGetRequest {
             mut handle,
             message,
