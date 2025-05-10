@@ -5,7 +5,8 @@ use std::net::{Ipv4Addr, Ipv6Addr};
 use crate::{
     link::LinkMessageBuilder,
     packet_route::link::{
-        BondArpValidate, BondMode, InfoBond, InfoData, InfoKind,
+        BondArpAllTargets, BondArpValidate, BondFailOverMac, BondMode,
+        BondPrimaryReselect, BondXmitHashPolicy, InfoBond, InfoData, InfoKind,
     },
 };
 
@@ -125,7 +126,7 @@ impl LinkMessageBuilder<LinkBond> {
     /// Adds the `arp_all_targets` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond arp_all_targets
     /// ARP_ALL_TARGETS`
-    pub fn arp_all_targets(self, arp_all_targets: u32) -> Self {
+    pub fn arp_all_targets(self, arp_all_targets: BondArpAllTargets) -> Self {
         self.append_info_data(InfoBond::ArpAllTargets(arp_all_targets))
     }
 
@@ -140,21 +141,27 @@ impl LinkMessageBuilder<LinkBond> {
     /// Adds the `primary_reselect` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond primary_reselect
     /// PRIMARY_RESELECT`.
-    pub fn primary_reselect(self, primary_reselect: u8) -> Self {
+    pub fn primary_reselect(
+        self,
+        primary_reselect: BondPrimaryReselect,
+    ) -> Self {
         self.append_info_data(InfoBond::PrimaryReselect(primary_reselect))
     }
 
     /// Adds the `fail_over_mac` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond fail_over_mac
     /// FAIL_OVER_MAC`.
-    pub fn fail_over_mac(self, fail_over_mac: u8) -> Self {
+    pub fn fail_over_mac(self, fail_over_mac: BondFailOverMac) -> Self {
         self.append_info_data(InfoBond::FailOverMac(fail_over_mac))
     }
 
     /// Adds the `xmit_hash_policy` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond xmit_hash_policy
     /// XMIT_HASH_POLICY`.
-    pub fn xmit_hash_policy(self, xmit_hash_policy: u8) -> Self {
+    pub fn xmit_hash_policy(
+        self,
+        xmit_hash_policy: BondXmitHashPolicy,
+    ) -> Self {
         self.append_info_data(InfoBond::XmitHashPolicy(xmit_hash_policy))
     }
 
