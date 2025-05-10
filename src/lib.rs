@@ -48,7 +48,7 @@ pub use crate::neighbour::{
 pub use crate::ns::{NetworkNamespace, NETNS_PATH, NONE_FS, SELF_NS_PATH};
 pub use crate::route::{
     IpVersion, RouteAddRequest, RouteDelRequest, RouteGetRequest, RouteHandle,
-    RouteMessageBuilder,
+    RouteMessageBuilder, RouteNextHopBuilder,
 };
 pub use crate::rule::{
     RuleAddRequest, RuleDelRequest, RuleGetRequest, RuleHandle,
