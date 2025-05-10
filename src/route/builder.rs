@@ -7,7 +7,8 @@ use std::{
 
 use netlink_packet_route::{
     route::{
-        RouteAddress, RouteAttribute, RouteFlags, RouteHeader, RouteMessage,
+        MplsLabel, RouteAddress, RouteAttribute, RouteFlags, RouteHeader,
+        RouteLwEnCapType, RouteLwTunnelEncap, RouteMessage, RouteMplsIpTunnel,
         RouteProtocol, RouteScope, RouteType,
     },
     AddressFamily,
@@ -49,6 +50,29 @@ impl<T> RouteMessageBuilder<T> {
     /// Sets the output interface index.
     pub fn output_interface(mut self, index: u32) -> Self {
         self.message.attributes.push(RouteAttribute::Oif(index));
+        self
+    }
+
+    /// Sets the output MPLS encapsulation labels.
+    pub fn output_mpls(mut self, labels: Vec<MplsLabel>) -> Self {
+        if labels.is_empty() {
+            return self;
+        }
+        if self.message.header.address_family == AddressFamily::Mpls {
+            self.message
+                .attributes
+                .push(RouteAttribute::NewDestination(labels));
+        } else {
+            self.message
+                .attributes
+                .push(RouteAttribute::EncapType(RouteLwEnCapType::Mpls));
+            let encap = RouteLwTunnelEncap::Mpls(
+                RouteMplsIpTunnel::Destination(labels),
+            );
+            self.message
+                .attributes
+                .push(RouteAttribute::Encap(vec![encap]));
+        }
         self
     }
 
@@ -398,6 +422,47 @@ impl RouteMessageBuilder<IpAddr> {
 }
 
 impl Default for RouteMessageBuilder<IpAddr> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl RouteMessageBuilder<MplsLabel> {
+    /// Create default RouteMessage with header set to:
+    ///  * route: [RouteHeader::RT_TABLE_MAIN]
+    ///  * protocol: [RouteProtocol::Static]
+    ///  * scope: [RouteScope::Universe]
+    ///  * kind: [RouteType::Unicast]
+    ///  * address_family: [AddressFamily::Mpls]
+    ///
+    /// For using this message in querying routes, these settings
+    /// are ignored unless `NETLINK_GET_STRICT_CHK` been enabled.
+    pub fn new() -> Self {
+        let mut builder = Self::new_no_address_family();
+        builder.get_mut().header.address_family = AddressFamily::Mpls;
+        builder
+    }
+
+    /// Sets the destination MPLS label.
+    pub fn label(mut self, label: MplsLabel) -> Self {
+        self.message.header.address_family = AddressFamily::Mpls;
+        self.message.header.destination_prefix_length = 20;
+        self.message
+            .attributes
+            .push(RouteAttribute::Destination(RouteAddress::Mpls(label)));
+        self
+    }
+
+    /// Sets the gateway (via) address.
+    pub fn via(mut self, addr: IpAddr) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::Via(addr.into()));
+        self
+    }
+}
+
+impl Default for RouteMessageBuilder<MplsLabel> {
     fn default() -> Self {
         Self::new()
     }
