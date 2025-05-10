@@ -9,7 +9,8 @@ use netlink_packet_route::{
     route::{
         MplsLabel, RouteAddress, RouteAttribute, RouteFlags, RouteHeader,
         RouteLwEnCapType, RouteLwTunnelEncap, RouteMessage, RouteMplsIpTunnel,
-        RouteProtocol, RouteScope, RouteType,
+        RouteNextHop, RouteNextHopFlags, RouteProtocol, RouteScope, RouteType,
+        RouteVia,
     },
     AddressFamily,
 };
@@ -18,6 +19,12 @@ use netlink_packet_route::{
 pub struct RouteMessageBuilder<T = IpAddr> {
     message: RouteMessage,
     _phantom: PhantomData<T>,
+}
+
+#[derive(Debug, Clone)]
+pub struct RouteNextHopBuilder {
+    address_family: AddressFamily,
+    nexthop: RouteNextHop,
 }
 
 impl<T> RouteMessageBuilder<T> {
@@ -73,6 +80,14 @@ impl<T> RouteMessageBuilder<T> {
                 .attributes
                 .push(RouteAttribute::Encap(vec![encap]));
         }
+        self
+    }
+
+    /// Sets multiple nexthop entries for the route.
+    pub fn multipath(mut self, nexthops: Vec<RouteNextHop>) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::MultiPath(nexthops));
         self
     }
 
@@ -465,5 +480,72 @@ impl RouteMessageBuilder<MplsLabel> {
 impl Default for RouteMessageBuilder<MplsLabel> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl RouteNextHopBuilder {
+    /// Create default RouteNexthop for a route with the given address family.
+    pub fn new(address_family: AddressFamily) -> Self {
+        Self {
+            address_family,
+            nexthop: Default::default(),
+        }
+    }
+
+    /// Sets the nexthop interface index.
+    pub fn interface(mut self, index: u32) -> Self {
+        self.nexthop.interface_index = index;
+        self
+    }
+
+    /// Sets the nexthop (via) address.
+    pub fn via(mut self, addr: IpAddr) -> Result<Self, InvalidRouteMessage> {
+        use AddressFamily::*;
+        let attr = match (self.address_family, addr) {
+            (Inet, addr @ IpAddr::V4(_)) | (Inet6, addr @ IpAddr::V6(_)) => {
+                RouteAttribute::Gateway(addr.into())
+            }
+            (Inet, IpAddr::V6(v6)) => RouteAttribute::Via(RouteVia::Inet6(v6)),
+            (Mpls, _) => RouteAttribute::Via(addr.into()),
+            (af, _) => return Err(InvalidRouteMessage::AddressFamily(af)),
+        };
+        self.nexthop.attributes.push(attr);
+        Ok(self)
+    }
+
+    /// Marks the nexthop as directly reachable (on-link).
+    ///
+    /// Indicates that the nexthop is reachable without passing through a
+    /// connected subnet.
+    pub fn onlink(mut self) -> Self {
+        self.nexthop.flags.insert(RouteNextHopFlags::Onlink);
+        self
+    }
+
+    /// Sets the nexthop MPLS encapsulation labels.
+    pub fn mpls(mut self, labels: Vec<MplsLabel>) -> Self {
+        if labels.is_empty() {
+            return self;
+        }
+        if self.address_family == AddressFamily::Mpls {
+            self.nexthop
+                .attributes
+                .push(RouteAttribute::NewDestination(labels));
+        } else {
+            self.nexthop
+                .attributes
+                .push(RouteAttribute::EncapType(RouteLwEnCapType::Mpls));
+            let encap = RouteLwTunnelEncap::Mpls(
+                RouteMplsIpTunnel::Destination(labels),
+            );
+            self.nexthop
+                .attributes
+                .push(RouteAttribute::Encap(vec![encap]));
+        }
+        self
+    }
+
+    pub fn build(self) -> RouteNextHop {
+        self.nexthop
     }
 }
