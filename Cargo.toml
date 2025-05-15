@@ -23,7 +23,7 @@ log = "0.4.8"
 thiserror = "1"
 netlink-sys = { version = "0.8" }
 netlink-packet-utils = { version = "0.5" }
-netlink-packet-route = { version = "0.22" }
+netlink-packet-route = { version = "0.23" }
 netlink-packet-core = { version = "0.7" }
 netlink-proto = { default-features = false, version = "0.11" }
 nix = { version = "0.29.0", default-features = false, features = ["fs", "mount", "sched", "signal"] }
