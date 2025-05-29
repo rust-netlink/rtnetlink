@@ -1,4 +1,16 @@
 # Changelog
+## [0.17.0] - 2025-05-29
+### Breaking changes
+ - Please check `netlink-packet-route` 0.24.0 breaking changes.
+
+### New features
+ - route: Implement support for the ONLINK flag. (30aa30f)
+ - route: Support for MPLS routes and nexthop label stacks. (e7e7344)
+ - route: Support for multipath routes. (0236751)
+
+### Bug fixes
+ - N/A
+
 ## [0.16.0] - 2025-03-10
 ### Breaking changes
  - N/A
