@@ -61,6 +61,7 @@ impl<T> RouteMessageBuilder<T> {
     }
 
     /// Sets the output MPLS encapsulation labels.
+    #[cfg(not(target_os = "android"))]
     pub fn output_mpls(mut self, labels: Vec<MplsLabel>) -> Self {
         if labels.is_empty() {
             return self;
@@ -442,6 +443,7 @@ impl Default for RouteMessageBuilder<IpAddr> {
     }
 }
 
+#[cfg(not(target_os = "android"))]
 impl RouteMessageBuilder<MplsLabel> {
     /// Create default RouteMessage with header set to:
     ///  * route: [RouteHeader::RT_TABLE_MAIN]
@@ -458,6 +460,7 @@ impl RouteMessageBuilder<MplsLabel> {
         builder
     }
 
+    #[cfg(not(target_os = "android"))]
     /// Sets the destination MPLS label.
     pub fn label(mut self, label: MplsLabel) -> Self {
         self.message.header.address_family = AddressFamily::Mpls;
@@ -476,7 +479,7 @@ impl RouteMessageBuilder<MplsLabel> {
         self
     }
 }
-
+#[cfg(not(target_os = "android"))]
 impl Default for RouteMessageBuilder<MplsLabel> {
     fn default() -> Self {
         Self::new()
@@ -523,6 +526,7 @@ impl RouteNextHopBuilder {
     }
 
     /// Sets the nexthop MPLS encapsulation labels.
+    #[cfg(not(target_os = "android"))]
     pub fn mpls(mut self, labels: Vec<MplsLabel>) -> Self {
         if labels.is_empty() {
             return self;
