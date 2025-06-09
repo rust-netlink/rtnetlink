@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-use std::net::{IpAddr, Ipv4Addr};
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 use netlink_packet_core::{
     NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE,
     NLM_F_REQUEST,
 };
 
-use netlink_packet_route::{
-    address::{AddressAttribute, AddressMessage},
-    AddressFamily, RouteNetlinkMessage,
-};
+use netlink_packet_route::{address::AddressMessage, RouteNetlinkMessage};
 
-use crate::{try_nl, Error, Handle};
+use crate::{addr::AddressMessageBuilder, try_nl, Error, Handle};
 
 /// A request to create a new address. This is equivalent to the `ip address
 /// add` commands.
@@ -30,41 +27,17 @@ impl AddressAddRequest {
         address: IpAddr,
         prefix_len: u8,
     ) -> Self {
-        let mut message = AddressMessage::default();
-
-        message.header.prefix_len = prefix_len;
-        message.header.index = index;
-
-        message.header.family = match address {
-            IpAddr::V4(_) => AddressFamily::Inet,
-            IpAddr::V6(_) => AddressFamily::Inet6,
+        let message = match address {
+            IpAddr::V4(address) => AddressMessageBuilder::<Ipv4Addr>::new()
+                .index(index)
+                .address(address, prefix_len)
+                .build(),
+            IpAddr::V6(address) => AddressMessageBuilder::<Ipv6Addr>::new()
+                .index(index)
+                .address(address, prefix_len)
+                .build(),
         };
 
-        if address.is_multicast() {
-            if let IpAddr::V6(a) = address {
-                message.attributes.push(AddressAttribute::Multicast(a));
-            }
-        } else {
-            message.attributes.push(AddressAttribute::Address(address));
-
-            // for IPv4 the IFA_LOCAL address can be set to the same value as
-            // IFA_ADDRESS
-            message.attributes.push(AddressAttribute::Local(address));
-
-            // set the IFA_BROADCAST address as well (IPv6 does not support
-            // broadcast)
-            if let IpAddr::V4(a) = address {
-                if prefix_len == 32 {
-                    message.attributes.push(AddressAttribute::Broadcast(a));
-                } else {
-                    let ip_addr = u32::from(a);
-                    let brd = Ipv4Addr::from(
-                        (0xffff_ffff_u32) >> u32::from(prefix_len) | ip_addr,
-                    );
-                    message.attributes.push(AddressAttribute::Broadcast(brd));
-                };
-            }
-        }
         AddressAddRequest {
             handle,
             message,
