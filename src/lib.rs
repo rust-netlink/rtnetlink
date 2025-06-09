@@ -28,6 +28,7 @@ mod traffic_control;
 
 pub use crate::addr::{
     AddressAddRequest, AddressDelRequest, AddressGetRequest, AddressHandle,
+    AddressMessageBuilder,
 };
 pub use crate::connection::from_socket;
 #[cfg(feature = "tokio_socket")]
