@@ -2,13 +2,14 @@
 
 use futures::{
     future::{self, Either},
-    stream::{StreamExt, TryStream},
+    stream::{Stream, StreamExt},
     FutureExt,
 };
 
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
-    route::RouteMessage, AddressFamily, RouteNetlinkMessage,
+    route::{RouteAttribute, RouteMessage},
+    AddressFamily, RouteNetlinkMessage,
 };
 
 use crate::{try_rtnl, Error, Handle};
@@ -46,15 +47,24 @@ impl RouteGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl TryStream<Ok = RouteMessage, Error = Error> {
+    pub fn execute(self) -> impl Stream<Item = Result<RouteMessage, Error>> {
         let RouteGetRequest {
             mut handle,
             message,
         } = self;
 
+        let has_dest = message
+            .attributes
+            .iter()
+            .any(|attr| matches!(attr, RouteAttribute::Destination(_)));
+
         let mut req =
             NetlinkMessage::from(RouteNetlinkMessage::GetRoute(message));
-        req.header.flags = NLM_F_REQUEST | NLM_F_DUMP;
+        req.header.flags = NLM_F_REQUEST;
+
+        if !has_dest {
+            req.header.flags |= NLM_F_DUMP;
+        }
 
         match handle.request(req) {
             Ok(response) => Either::Left(response.map(move |msg| {
