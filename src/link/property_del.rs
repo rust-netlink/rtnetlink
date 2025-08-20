@@ -31,7 +31,7 @@ impl LinkDelPropRequest {
         } = self;
         let mut req =
             NetlinkMessage::from(RouteNetlinkMessage::DelLinkProp(message));
-        req.header.flags = NLM_F_REQUEST | NLM_F_ACK | NLM_F_EXCL;
+        req.header.flags = NLM_F_REQUEST | NLM_F_ACK;
 
         let mut response = handle.request(req)?;
         while let Some(message) = response.next().await {
