@@ -2,7 +2,7 @@
 
 use futures::stream::StreamExt;
 use netlink_packet_core::{
-    NetlinkMessage, NetlinkPayload, NLM_F_ACK, NLM_F_EXCL, NLM_F_REQUEST,
+    NetlinkMessage, NetlinkPayload, NLM_F_ACK, NLM_F_REQUEST,
 };
 use netlink_packet_route::{
     link::{LinkAttribute, LinkMessage, Prop},
