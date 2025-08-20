@@ -5,10 +5,13 @@ use std::{
     net::{IpAddr, Ipv4Addr, Ipv6Addr},
 };
 
+#[cfg(not(target_os = "android"))]
+use netlink_packet_route::route::{
+    MplsLabel, RouteLwEnCapType, RouteLwTunnelEncap, RouteMplsIpTunnel,
+};
 use netlink_packet_route::{
     route::{
-        MplsLabel, RouteAddress, RouteAttribute, RouteFlags, RouteHeader,
-        RouteLwEnCapType, RouteLwTunnelEncap, RouteMessage, RouteMplsIpTunnel,
+        RouteAddress, RouteAttribute, RouteFlags, RouteHeader, RouteMessage,
         RouteNextHop, RouteNextHopFlags, RouteProtocol, RouteScope, RouteType,
         RouteVia,
     },
@@ -503,13 +506,16 @@ impl RouteNextHopBuilder {
 
     /// Sets the nexthop (via) address.
     pub fn via(mut self, addr: IpAddr) -> Result<Self, InvalidRouteMessage> {
-        use AddressFamily::*;
         let attr = match (self.address_family, addr) {
-            (Inet, addr @ IpAddr::V4(_)) | (Inet6, addr @ IpAddr::V6(_)) => {
+            (AddressFamily::Inet, addr @ IpAddr::V4(_))
+            | (AddressFamily::Inet6, addr @ IpAddr::V6(_)) => {
                 RouteAttribute::Gateway(addr.into())
             }
-            (Inet, IpAddr::V6(v6)) => RouteAttribute::Via(RouteVia::Inet6(v6)),
-            (Mpls, _) => RouteAttribute::Via(addr.into()),
+            (AddressFamily::Inet, IpAddr::V6(v6)) => {
+                RouteAttribute::Via(RouteVia::Inet6(v6))
+            }
+            #[cfg(not(target_os = "android"))]
+            (AddressFamily::Mpls, _) => RouteAttribute::Via(addr.into()),
             (af, _) => return Err(InvalidRouteMessage::AddressFamily(af)),
         };
         self.nexthop.attributes.push(attr);
