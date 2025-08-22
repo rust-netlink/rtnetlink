@@ -14,8 +14,7 @@ use crate::{
 /// Represent MACsec interface.
 /// Example code on creating a MACsec interface
 /// ```no_run
-/// use rtnetlink::{new_connection, packet_route::link::LinkMacSec,
-///                 LinkMacSec};
+/// use rtnetlink::{new_connection, LinkMacSec};
 ///
 /// #[tokio::main]
 /// async fn main() -> Result<(), String> {
