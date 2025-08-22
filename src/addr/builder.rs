@@ -18,7 +18,8 @@ pub struct AddressMessageBuilder<T> {
 }
 
 impl<T> AddressMessageBuilder<T> {
-    /// Create a new [AddressMessageBuilder] without specifying the address family.
+    /// Create a new [AddressMessageBuilder] without specifying the address
+    /// family.
     fn new_no_address_family() -> Self {
         AddressMessageBuilder {
             message: AddressMessage::default(),
@@ -35,6 +36,12 @@ impl<T> AddressMessageBuilder<T> {
     /// Builds [AddressMessage].
     pub fn build(self) -> AddressMessage {
         self.message
+    }
+}
+
+impl Default for AddressMessageBuilder<Ipv4Addr> {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -55,7 +62,8 @@ impl AddressMessageBuilder<Ipv4Addr> {
                 .attributes
                 .push(AddressAttribute::Address(address.into()));
 
-            // The IFA_LOCAL address can be set to the same value as IFA_ADDRESS.
+            // The IFA_LOCAL address can be set to the same value as
+            // IFA_ADDRESS.
             self.message
                 .attributes
                 .push(AddressAttribute::Local(address.into()));
@@ -80,6 +88,12 @@ impl AddressMessageBuilder<Ipv4Addr> {
     }
 }
 
+impl Default for AddressMessageBuilder<Ipv6Addr> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AddressMessageBuilder<Ipv6Addr> {
     /// Create a new [AddressMessageBuilder] for IPv6 addresses.
     pub fn new() -> Self {
@@ -101,7 +115,8 @@ impl AddressMessageBuilder<Ipv6Addr> {
                 .attributes
                 .push(AddressAttribute::Address(address.into()));
 
-            // The IFA_LOCAL address can be set to the same value as IFA_ADDRESS.
+            // The IFA_LOCAL address can be set to the same value as
+            // IFA_ADDRESS.
             self.message
                 .attributes
                 .push(AddressAttribute::Local(address.into()));
