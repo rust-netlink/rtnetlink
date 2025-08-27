@@ -22,27 +22,29 @@ mod vxlan;
 mod wireguard;
 mod xfrm;
 
-pub use self::add::LinkAddRequest;
-pub use self::bond::LinkBond;
-pub use self::bond_port::LinkBondPort;
-pub use self::bridge::LinkBridge;
-pub use self::builder::{LinkMessageBuilder, LinkUnspec};
-pub use self::del::LinkDelRequest;
-pub use self::dummy::LinkDummy;
-pub use self::get::LinkGetRequest;
-pub use self::handle::LinkHandle;
-pub use self::mac_vlan::LinkMacVlan;
-pub use self::mac_vtap::LinkMacVtap;
-pub use self::macsec::LinkMacSec;
-pub use self::property_add::LinkNewPropRequest;
-pub use self::property_del::LinkDelPropRequest;
-pub use self::set::LinkSetRequest;
-pub use self::veth::LinkVeth;
-pub use self::vlan::{LinkVlan, QosMapping};
-pub use self::vrf::LinkVrf;
-pub use self::vxlan::LinkVxlan;
-pub use self::wireguard::LinkWireguard;
-pub use self::xfrm::LinkXfrm;
+pub use self::{
+    add::LinkAddRequest,
+    bond::LinkBond,
+    bond_port::LinkBondPort,
+    bridge::LinkBridge,
+    builder::{LinkMessageBuilder, LinkUnspec},
+    del::LinkDelRequest,
+    dummy::LinkDummy,
+    get::LinkGetRequest,
+    handle::LinkHandle,
+    mac_vlan::LinkMacVlan,
+    mac_vtap::LinkMacVtap,
+    macsec::LinkMacSec,
+    property_add::LinkNewPropRequest,
+    property_del::LinkDelPropRequest,
+    set::LinkSetRequest,
+    veth::LinkVeth,
+    vlan::{LinkVlan, QosMapping},
+    vrf::LinkVrf,
+    vxlan::LinkVxlan,
+    wireguard::LinkWireguard,
+    xfrm::LinkXfrm,
+};
 
 #[cfg(test)]
 mod test;

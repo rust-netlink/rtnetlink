@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-use crate::{Handle, RouteAddRequest, RouteDelRequest, RouteGetRequest};
 use netlink_packet_route::route::RouteMessage;
+
+use crate::{Handle, RouteAddRequest, RouteDelRequest, RouteGetRequest};
 
 #[derive(Debug, Clone)]
 pub struct RouteHandle(Handle);

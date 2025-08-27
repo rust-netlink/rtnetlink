@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use std::marker::PhantomData;
-use std::os::fd::RawFd;
+use std::{marker::PhantomData, os::fd::RawFd};
 
 use crate::packet_route::link::{
     InfoData, InfoKind, InfoPortData, InfoPortKind, LinkAttribute, LinkFlags,

@@ -6,8 +6,7 @@ mod del;
 mod get;
 mod handle;
 
-pub use self::add::AddressAddRequest;
-pub use self::builder::AddressMessageBuilder;
-pub use self::del::AddressDelRequest;
-pub use self::get::AddressGetRequest;
-pub use self::handle::AddressHandle;
+pub use self::{
+    add::AddressAddRequest, builder::AddressMessageBuilder,
+    del::AddressDelRequest, get::AddressGetRequest, handle::AddressHandle,
+};

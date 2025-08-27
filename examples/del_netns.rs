@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 
+use std::env;
+
 #[cfg(not(target_os = "freebsd"))]
 use rtnetlink::NetworkNamespace;
-use std::env;
 
 #[cfg(target_os = "freebsd")]
 fn main() -> () {}

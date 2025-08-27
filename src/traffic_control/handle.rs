@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 
+use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
+use netlink_packet_route::tc::TcMessage;
+
 use super::{
     QDiscDelRequest, QDiscGetRequest, QDiscNewRequest, TrafficChainGetRequest,
     TrafficClassGetRequest, TrafficFilterDelRequest, TrafficFilterGetRequest,
     TrafficFilterNewRequest,
 };
-
 use crate::Handle;
-use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
-use netlink_packet_route::tc::TcMessage;
 
 #[derive(Debug, Clone)]
 pub struct QDiscHandle(Handle);

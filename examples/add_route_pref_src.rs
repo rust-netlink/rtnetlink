@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-use futures::TryStreamExt;
 use std::{env, net::Ipv4Addr};
 
+use futures::TryStreamExt;
 use ipnetwork::Ipv4Network;
 use rtnetlink::{new_connection, Error, Handle, RouteMessageBuilder};
 

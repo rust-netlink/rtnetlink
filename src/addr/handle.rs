@@ -2,10 +2,10 @@
 
 use std::net::IpAddr;
 
+use netlink_packet_route::address::AddressMessage;
+
 use super::{AddressAddRequest, AddressDelRequest, AddressGetRequest};
 use crate::Handle;
-
-use netlink_packet_route::address::AddressMessage;
 
 pub struct AddressHandle(Handle);
 
