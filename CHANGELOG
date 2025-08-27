@@ -1,4 +1,22 @@
 # Changelog
+## [0.18.0] - 2025-08-27
+### Breaking changes
+ - Please check `netlink-packet-route` 0.25.0 breaking changes.
+ - Please check `netlink-packet-core` 0.8.0 breaking changes.
+ - Please check `netlink-proto` 0.12.0 breaking changes.
+ - Removed `rtnetlink::packet_utils`. (9373d77)
+
+### New features
+ - ip: Introduced `AddressMessageBuilder`. (1fe2569)
+ - macsec: Introduced `LinkMacSec`. (b9dd9d9)
+ - Allow the user to specify their own socket. (6547f22)
+ - Allow `TrafficGetFilterRequest` to get ingress or egress filters. (45f9206)
+
+### Bug fixes
+ - Replace `impl TryStream` with `impl Stream`. (513e8c3)
+ - Fix android build. (3e270c6)
+ - Should not set `NLM_F_EXCL` when deleting alt-name. (7dd58dd)
+
 ## [0.17.0] - 2025-05-29
 ### Breaking changes
  - Please check `netlink-packet-route` 0.24.0 breaking changes.
