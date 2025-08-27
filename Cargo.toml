@@ -22,12 +22,16 @@ futures = "0.3.11"
 log = "0.4.8"
 thiserror = "1"
 netlink-sys = { version = "0.8" }
-netlink-packet-route = { version = "0.25" }
 netlink-packet-core = { version = "0.8" }
+netlink-packet-route = { version = "0.25" }
 netlink-proto = { default-features = false, version = "0.12.0" }
 nix = { version = "0.29.0", default-features = false, features = ["fs", "mount", "sched", "signal"] }
 tokio = { version = "1.0.1", features = ["rt"], optional = true}
 async-global-executor = { version = "2.0.2", optional = true }
+
+[patch.crates-io.netlink-packet-route]
+git = "https://github.com/rust-netlink/netlink-packet-route"
+branch = "main"
 
 [dev-dependencies]
 env_logger = "0.11.0"
