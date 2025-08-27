@@ -1,8 +1,8 @@
 [package]
 name = "rtnetlink"
-version = "0.17.0"
+version = "0.18.0"
 authors = ["Corentin Henry <corentinhenry@gmail.com>"]
-edition = "2018"
+edition = "2021"
 homepage = "https://github.com/rust-netlink/rtnetlink"
 keywords = ["netlink", "ip", "linux"]
 license = "MIT"
