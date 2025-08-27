@@ -6,9 +6,10 @@ mod del;
 mod get;
 mod handle;
 
-pub use self::add::RouteAddRequest;
-pub use self::builder::RouteMessageBuilder;
-pub use self::builder::RouteNextHopBuilder;
-pub use self::del::RouteDelRequest;
-pub use self::get::{IpVersion, RouteGetRequest};
-pub use self::handle::RouteHandle;
+pub use self::{
+    add::RouteAddRequest,
+    builder::{RouteMessageBuilder, RouteNextHopBuilder},
+    del::RouteDelRequest,
+    get::{IpVersion, RouteGetRequest},
+    handle::RouteHandle,
+};

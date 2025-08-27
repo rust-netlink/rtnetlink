@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-use futures::stream::StreamExt;
 use std::{marker::PhantomData, net::IpAddr};
 
+use futures::stream::StreamExt;
 use netlink_packet_core::{
     NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE,
     NLM_F_REQUEST,

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 
+use std::{convert::TryFrom, env, net::IpAddr};
+
 use futures::stream::TryStreamExt;
 use rtnetlink::{new_connection, Error, Handle};
-use std::{convert::TryFrom, env, net::IpAddr};
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {

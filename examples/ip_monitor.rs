@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 use futures::stream::StreamExt;
-
 use netlink_sys::{AsyncSocket, SocketAddr};
 use rtnetlink::new_connection;
 

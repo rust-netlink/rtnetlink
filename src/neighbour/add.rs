@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-use futures::stream::StreamExt;
+use std::net::IpAddr;
 
+use futures::stream::StreamExt;
 use netlink_packet_core::{
     NetlinkMessage, NetlinkPayload, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL,
     NLM_F_REPLACE, NLM_F_REQUEST,
@@ -16,7 +17,6 @@ use netlink_packet_route::{
 };
 
 use crate::{Error, Handle};
-use std::net::IpAddr;
 
 pub struct NeighbourAddRequest {
     handle: Handle,

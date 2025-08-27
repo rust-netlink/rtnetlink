@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-use netlink_packet_route::link::InfoMacSec;
-pub use netlink_packet_route::link::MacSecCipherId;
-pub use netlink_packet_route::link::MacSecOffload;
-pub use netlink_packet_route::link::MacSecValidate;
-pub use netlink_packet_utils::nla::DefaultNla;
+use netlink_packet_core::DefaultNla;
+use netlink_packet_route::link::{
+    InfoMacSec, MacSecCipherId, MacSecOffload, MacSecValidate,
+};
 
 use crate::{
     link::LinkMessageBuilder,

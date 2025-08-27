@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 
+use std::env;
+
 use futures::stream::TryStreamExt;
 use rtnetlink::{
     new_connection, packet_route::link::LinkAttribute, Error, Handle,
 };
-use std::env;
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {

@@ -5,7 +5,7 @@ mod del;
 mod get;
 mod handle;
 
-pub use self::add::NeighbourAddRequest;
-pub use self::del::NeighbourDelRequest;
-pub use self::get::NeighbourGetRequest;
-pub use self::handle::NeighbourHandle;
+pub use self::{
+    add::NeighbourAddRequest, del::NeighbourDelRequest,
+    get::NeighbourGetRequest, handle::NeighbourHandle,
+};

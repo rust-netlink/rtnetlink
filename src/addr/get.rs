@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 
+use std::net::IpAddr;
+
 use futures::{
     future::{self, Either},
     stream::{Stream, StreamExt, TryStreamExt},
     FutureExt,
 };
-use std::net::IpAddr;
-
 use netlink_packet_core::{NetlinkMessage, NLM_F_DUMP, NLM_F_REQUEST};
 use netlink_packet_route::{
     address::{AddressAttribute, AddressMessage},

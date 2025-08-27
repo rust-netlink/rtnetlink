@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-use crate::Error;
+use std::{os::fd::BorrowedFd, path::Path, process::exit};
+
 use nix::{
     fcntl::OFlag,
     sched::CloneFlags,
@@ -10,7 +11,8 @@ use nix::{
     },
     unistd::{fork, ForkResult},
 };
-use std::{os::fd::BorrowedFd, path::Path, process::exit};
+
+use crate::Error;
 
 // if "only" smol or smol+tokio were enabled, we use smol because
 // it doesn't require an active tokio runtime - just to be sure.
