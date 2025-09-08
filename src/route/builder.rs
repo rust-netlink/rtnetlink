@@ -498,6 +498,22 @@ impl RouteNextHopBuilder {
         }
     }
 
+    /// Create IPv4 RouteNexthop
+    pub fn new_ipv4() -> Self {
+        Self {
+            address_family: AddressFamily::Inet,
+            nexthop: Default::default(),
+        }
+    }
+
+    /// Create IPv6 RouteNexthop
+    pub fn new_ipv6() -> Self {
+        Self {
+            address_family: AddressFamily::Inet6,
+            nexthop: Default::default(),
+        }
+    }
+
     /// Sets the nexthop interface index.
     pub fn interface(mut self, index: u32) -> Self {
         self.nexthop.interface_index = index;
@@ -552,6 +568,17 @@ impl RouteNextHopBuilder {
                 .attributes
                 .push(RouteAttribute::Encap(vec![encap]));
         }
+        self
+    }
+
+    /// Set the nexthop weight
+    ///
+    /// Equal to `weight` property in `ip route`, but please be advised the
+    /// number shown in `ip route` command has plus 1. Meaning kernel has
+    /// `weight 0`, but `ip route` shows as `weight 1`. This function is using
+    /// kernel number from range of 0 to 255.
+    pub fn weight(mut self, weight: u8) -> Self {
+        self.nexthop.hops = weight;
         self
     }
 
