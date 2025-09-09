@@ -582,6 +582,12 @@ impl RouteNextHopBuilder {
         self
     }
 
+    /// Set flags for next hop
+    pub fn flags(mut self, flags: RouteNextHopFlags) -> Self {
+        self.nexthop.flags = flags;
+        self
+    }
+
     pub fn build(self) -> RouteNextHop {
         self.nexthop
     }
