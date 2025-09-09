@@ -1,4 +1,16 @@
 # Changelog
+## [0.18.1] - 2025-09-09
+### Breaking changes
+ - N/A
+
+### New features
+ - route: Support defining ECMP weight. (7fcba62)
+ - route: Support defining ECMP flags. (18c4331)
+ - route: allow IPv6 gateway in IPv4 route. (e1784a3)
+
+### Bug fixes
+ - N/A
+
 ## [0.18.0] - 2025-08-27
 ### Breaking changes
  - Please check `netlink-packet-route` 0.25.0 breaking changes.
