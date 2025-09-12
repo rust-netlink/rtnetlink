@@ -115,6 +115,13 @@ impl<T> RouteMessageBuilder<T> {
         self
     }
 
+    #[cfg(not(target_os = "android"))]
+    /// Sets mark value on route.
+    pub fn mark(mut self, mark: u32) -> Self {
+        self.message.attributes.push(RouteAttribute::Mark(mark));
+        self
+    }
+
     /// Sets the route protocol.
     ///
     /// Default is static route protocol.
