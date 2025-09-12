@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use std::{os::fd::BorrowedFd, path::Path, process::exit};
+use std::{path::Path, process::exit};
 
 use nix::{
     fcntl::OFlag,
@@ -331,10 +331,7 @@ impl NetworkNamespace {
         }
 
         setns_flags.insert(CloneFlags::CLONE_NEWNET);
-        if let Err(e) = nix::sched::setns(
-            unsafe { BorrowedFd::borrow_raw(fd) },
-            setns_flags,
-        ) {
+        if let Err(e) = nix::sched::setns(fd, setns_flags) {
             log::error!("setns error: {}", e);
             let err_msg = format!("setns error: {e}");
             let _ = nix::unistd::unlink(ns_path);
