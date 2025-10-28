@@ -17,6 +17,7 @@ mod errors;
 mod handle;
 mod link;
 mod macros;
+mod multicast;
 mod neighbour;
 #[cfg(not(target_os = "freebsd"))]
 mod ns;
@@ -26,7 +27,7 @@ mod rule;
 mod traffic_control;
 
 #[cfg(feature = "tokio_socket")]
-pub use crate::connection::new_connection;
+pub use crate::connection::{new_connection, new_multicast_connection};
 #[cfg(not(target_os = "freebsd"))]
 pub use crate::ns::{NetworkNamespace, NETNS_PATH, NONE_FS, SELF_NS_PATH};
 #[cfg(not(target_os = "freebsd"))]
@@ -41,7 +42,10 @@ pub use crate::{
         AddressAddRequest, AddressDelRequest, AddressGetRequest, AddressHandle,
         AddressMessageBuilder,
     },
-    connection::{from_socket, new_connection_with_socket},
+    connection::{
+        from_socket, new_connection_with_socket,
+        new_multicast_connection_with_socket,
+    },
     errors::Error,
     handle::Handle,
     link::{
@@ -51,6 +55,7 @@ pub use crate::{
         LinkUnspec, LinkVeth, LinkVlan, LinkVrf, LinkVxlan, LinkWireguard,
         LinkXfrm, QosMapping,
     },
+    multicast::MulticastGroup,
     neighbour::{
         NeighbourAddRequest, NeighbourDelRequest, NeighbourGetRequest,
         NeighbourHandle,
