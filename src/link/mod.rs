@@ -12,6 +12,8 @@ mod del;
 mod dummy;
 mod get;
 mod handle;
+mod ip_vlan;
+mod ip_vtap;
 mod mac_vlan;
 mod mac_vtap;
 mod macsec;
@@ -37,6 +39,8 @@ pub use self::{
     dummy::LinkDummy,
     get::LinkGetRequest,
     handle::LinkHandle,
+    ip_vlan::LinkIpVlan,
+    ip_vtap::LinkIpVtap,
     mac_vlan::LinkMacVlan,
     mac_vtap::LinkMacVtap,
     macsec::LinkMacSec,
