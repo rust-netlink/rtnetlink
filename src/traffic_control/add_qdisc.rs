@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use futures::stream::StreamExt;
+use futures_util::stream::StreamExt;
 
 use crate::{
     packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST},
@@ -80,7 +80,7 @@ impl QDiscNewRequest {
 mod test {
     use std::{fs::File, os::fd::AsFd, path::Path};
 
-    use futures::stream::TryStreamExt;
+    use futures_util::stream::TryStreamExt;
     use nix::sched::{setns, CloneFlags};
     use tokio::runtime::Runtime;
 

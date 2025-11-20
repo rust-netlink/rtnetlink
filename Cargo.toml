@@ -18,7 +18,8 @@ tokio_socket = ["netlink-proto/tokio_socket", "tokio"]
 smol_socket = ["netlink-proto/smol_socket", "async-global-executor"]
 
 [dependencies]
-futures = "0.3.11"
+futures-util = "0.3.11"
+futures-channel = "0.3.11"
 log = "0.4.8"
 thiserror = "1"
 netlink-sys = { version = "0.8" }

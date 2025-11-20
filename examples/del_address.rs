@@ -5,7 +5,7 @@ use std::{
     net::{IpAddr, Ipv4Addr, Ipv6Addr},
 };
 
-use futures::stream::TryStreamExt;
+use futures_util::stream::TryStreamExt;
 use ipnetwork::IpNetwork;
 use rtnetlink::{new_connection, AddressMessageBuilder, Error, Handle};
 

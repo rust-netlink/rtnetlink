@@ -2,7 +2,7 @@
 
 use std::{env, str::FromStr};
 
-use futures::stream::TryStreamExt;
+use futures_util::stream::TryStreamExt;
 use macaddr::MacAddr;
 use rtnetlink::{
     new_connection, packet_route::link::MacVlanMode, Error, Handle, LinkMacVlan,

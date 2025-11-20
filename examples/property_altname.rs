@@ -2,7 +2,7 @@
 
 use std::env;
 
-use futures::stream::TryStreamExt;
+use futures_util::stream::TryStreamExt;
 use netlink_packet_route::link::{LinkAttribute, LinkMessage, Prop};
 use rtnetlink::{new_connection, Error, Handle};
 

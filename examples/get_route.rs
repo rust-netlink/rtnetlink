@@ -2,7 +2,7 @@
 
 use std::net::{Ipv4Addr, Ipv6Addr};
 
-use futures::stream::TryStreamExt;
+use futures_util::stream::TryStreamExt;
 use rtnetlink::{
     new_connection, Error, Handle, IpVersion, RouteMessageBuilder,
 };
