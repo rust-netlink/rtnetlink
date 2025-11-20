@@ -3,7 +3,7 @@
 //! This example opens a netlink socket, registers for IPv4 and IPv6 routing
 //! changes, listens for said changes and prints the received messages.
 
-use futures::stream::StreamExt;
+use futures_util::stream::StreamExt;
 use netlink_sys::{AsyncSocket, SocketAddr};
 use rtnetlink::{
     constants::{

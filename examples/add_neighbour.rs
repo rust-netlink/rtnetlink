@@ -2,7 +2,7 @@
 
 use std::{convert::TryFrom, env, net::IpAddr};
 
-use futures::stream::TryStreamExt;
+use futures_util::stream::TryStreamExt;
 use rtnetlink::{new_connection, Error, Handle};
 
 #[tokio::main]

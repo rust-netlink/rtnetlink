@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use futures::stream::TryStreamExt;
+use futures_util::stream::TryStreamExt;
 use netlink_packet_route::{
     link::{LinkAttribute, LinkExtentMask},
     AddressFamily,

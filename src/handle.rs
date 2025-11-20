@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use futures::Stream;
+use futures_util::stream::Stream;
 use netlink_packet_core::NetlinkMessage;
 use netlink_packet_route::RouteNetlinkMessage;
 use netlink_proto::{sys::SocketAddr, ConnectionHandle};

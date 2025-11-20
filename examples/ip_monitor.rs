@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use futures::stream::StreamExt;
+use futures_util::stream::StreamExt;
 use rtnetlink::{new_multicast_connection, MulticastGroup};
 
 #[tokio::main]

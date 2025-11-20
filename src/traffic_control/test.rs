@@ -2,7 +2,7 @@
 
 use std::process::Command;
 
-use futures::stream::TryStreamExt;
+use futures_util::stream::TryStreamExt;
 use netlink_packet_core::ErrorMessage;
 use netlink_packet_route::{
     tc::{TcAttribute, TcMessage},
