@@ -12,6 +12,7 @@ mod handle;
 mod mac_vlan;
 mod mac_vtap;
 mod macsec;
+mod netkit;
 mod property_add;
 mod property_del;
 mod set;
@@ -35,6 +36,7 @@ pub use self::{
     mac_vlan::LinkMacVlan,
     mac_vtap::LinkMacVtap,
     macsec::LinkMacSec,
+    netkit::LinkNetkit,
     property_add::LinkNewPropRequest,
     property_del::LinkDelPropRequest,
     set::LinkSetRequest,
