@@ -23,7 +23,7 @@ futures-channel = "0.3.11"
 log = "0.4.8"
 thiserror = "1"
 netlink-sys = { version = "0.8" }
-netlink-packet-route = { version = "0.25" }
+netlink-packet-route = { version = "0.26" }
 netlink-packet-core = { version = "0.8" }
 netlink-proto = { default-features = false, version = "0.12.0" }
 nix = { version = "0.30.0", default-features = false, features = ["fs", "mount", "sched", "signal"] }
