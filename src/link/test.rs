@@ -6,10 +6,10 @@ use tokio::runtime::Runtime;
 use crate::{
     new_connection,
     packet_route::link::{
-        InfoData, InfoKind, InfoMacVlan, InfoVrf, LinkAttribute, LinkInfo,
-        LinkMessage, MacVlanMode,
+        InfoData, InfoKind, InfoMacVlan, InfoNetkit, InfoVrf, LinkAttribute,
+        LinkInfo, LinkMessage, MacVlanMode, NetkitMode,
     },
-    Error, LinkHandle, LinkMacVlan, LinkVrf, LinkWireguard,
+    Error, LinkHandle, LinkMacVlan, LinkNetkit, LinkVrf, LinkWireguard,
 };
 
 const IFACE_NAME: &str = "wg142"; // rand?
@@ -160,6 +160,61 @@ async fn _create_vrf(name: &str, table: u32) -> Result<LinkHandle, Error> {
     tokio::spawn(conn);
     let link_handle = handle.link();
     let req = link_handle.add(LinkVrf::new(name, table).build());
+    req.execute().await?;
+    Ok(link_handle)
+}
+
+#[test]
+#[cfg_attr(not(feature = "test_as_root"), ignore)]
+fn create_get_delete_netkit() {
+    const NETKIT_IFACE_NAME: &str = "nk0";
+    const NETKIT_PEER_NAME: &str = "nk0-peer";
+    const NETKIT_MODE: NetkitMode = NetkitMode::L3;
+
+    let rt = Runtime::new().unwrap();
+    let handle = rt.block_on(_create_netkit(
+        NETKIT_IFACE_NAME,
+        NETKIT_PEER_NAME,
+        NETKIT_MODE,
+    ));
+    assert!(handle.is_ok());
+
+    let mut handle = handle.unwrap();
+    let msg =
+        rt.block_on(_get_iface(&mut handle, NETKIT_IFACE_NAME.to_owned()));
+    assert!(msg.is_ok());
+    let msg = msg.unwrap();
+
+    assert!(has_nla(
+        &msg,
+        &LinkAttribute::IfName(NETKIT_IFACE_NAME.to_string())
+    ));
+
+    // Check that it has netkit kind
+    let has_netkit_kind = msg.attributes.iter().any(|attr| {
+        if let LinkAttribute::LinkInfo(infos) = attr {
+            infos
+                .iter()
+                .any(|info| matches!(info, LinkInfo::Kind(InfoKind::Netkit)))
+        } else {
+            false
+        }
+    });
+    assert!(has_netkit_kind);
+
+    rt.block_on(_del_iface(&mut handle, msg.header.index))
+        .unwrap();
+}
+
+async fn _create_netkit(
+    name: &str,
+    peer: &str,
+    mode: NetkitMode,
+) -> Result<LinkHandle, Error> {
+    let (conn, handle, _) = new_connection().unwrap();
+    tokio::spawn(conn);
+    let link_handle = handle.link();
+    let req = link_handle.add(LinkNetkit::new(name, peer, mode).build());
     req.execute().await?;
     Ok(link_handle)
 }
