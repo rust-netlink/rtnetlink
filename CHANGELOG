@@ -1,4 +1,16 @@
 # Changelog
+## [0.19.0] - 2025-12-09
+### Breaking changes
+ - Please check breaking changes of netlink-packet-route 0.19.0
+
+### New features
+ - vlan: Add wrapper for setting VLAN protocol and flags. (50fbcb3)
+ - Add function on RouteMessageBuilder for setting route mark. (c0edfbf)
+ - Support creating multicast netlink connection. (84dfe67)
+
+### Bug fixes
+ - Swap 'futures' dependency for 'futures-util' and 'futures-channel'. (26eda64)
+
 ## [0.18.1] - 2025-09-09
 ### Breaking changes
  - N/A
