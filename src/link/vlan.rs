@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 use crate::{
-    packet_route::link::{InfoData, InfoKind, InfoVlan, VlanQosMapping},
+    packet_route::link::{
+        InfoData, InfoKind, InfoVlan, VlanFlags, VlanProtocol, VlanQosMapping,
+    },
     LinkMessageBuilder,
 };
 
@@ -78,6 +80,16 @@ impl LinkMessageBuilder<LinkVlan> {
     /// VLAN ID
     pub fn id(self, vlan_id: u16) -> Self {
         self.append_info_data(InfoVlan::Id(vlan_id))
+    }
+
+    /// VLAN protocol
+    pub fn protocol(self, protocol: VlanProtocol) -> Self {
+        self.append_info_data(InfoVlan::Protocol(protocol))
+    }
+
+    /// VLAN flags
+    pub fn flags(self, flags: VlanFlags, mask: VlanFlags) -> Self {
+        self.append_info_data(InfoVlan::Flags((flags, mask)))
     }
 
     /// ingress QoS and egress QoS
