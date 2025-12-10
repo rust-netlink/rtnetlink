@@ -17,12 +17,22 @@ impl LinkHandle {
         LinkHandle(handle)
     }
 
+    /// Using `RTM_SETLINK`. Currently this is only used for bridge commands
+    /// like `bridge vlan` and `bridge vlan`.
+    /// For changing existing network interface, please use
+    /// [LinkHandle::add()]
     pub fn set(&self, message: LinkMessage) -> LinkSetRequest {
         LinkSetRequest::new(self.0.clone(), message)
     }
 
     pub fn add(&self, message: LinkMessage) -> LinkAddRequest {
         LinkAddRequest::new(self.0.clone(), message)
+    }
+
+    /// Equal to `ip link set` command.
+    pub fn change(&self, message: LinkMessage) -> LinkAddRequest {
+        LinkAddRequest::new(self.0.clone(), message)
+            .set_flags(NLM_F_REQUEST | NLM_F_ACK)
     }
 
     pub fn property_add(&self, index: u32) -> LinkNewPropRequest {
