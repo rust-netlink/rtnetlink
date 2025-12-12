@@ -5,7 +5,7 @@ use std::net::IpAddr;
 use futures_util::stream::StreamExt;
 use netlink_packet_core::{
     NetlinkMessage, NetlinkPayload, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL,
-    NLM_F_REPLACE, NLM_F_REQUEST,
+    NLM_F_REPLACE, NLM_F_REQUEST, NLM_F_APPEND,
 };
 use netlink_packet_route::{
     neighbour::{
@@ -22,6 +22,7 @@ pub struct NeighbourAddRequest {
     handle: Handle,
     message: NeighbourMessage,
     replace: bool,
+    append: bool,
 }
 
 impl NeighbourAddRequest {
@@ -48,6 +49,7 @@ impl NeighbourAddRequest {
             handle,
             message,
             replace: false,
+            append: false
         }
     }
 
@@ -68,6 +70,7 @@ impl NeighbourAddRequest {
             handle,
             message,
             replace: false,
+            append: false
         }
     }
 
@@ -150,18 +153,42 @@ impl NeighbourAddRequest {
         }
     }
 
+    /// Append a new neighbor, useful with `add_bridge` to instruct it to
+    /// forward frames for broadcast/multicast destination MACs to multiple 
+    /// destinations.
+    pub fn append(self) -> Self {
+        Self {
+            append: true,
+            ..self
+        }
+    }
+
     /// Execute the request.
     pub async fn execute(self) -> Result<(), Error> {
         let NeighbourAddRequest {
             mut handle,
             message,
             replace,
+            append,
         } = self;
 
         let mut req =
             NetlinkMessage::from(RouteNetlinkMessage::NewNeighbour(message));
-        let replace = if replace { NLM_F_REPLACE } else { NLM_F_EXCL };
-        req.header.flags = NLM_F_REQUEST | NLM_F_ACK | replace | NLM_F_CREATE;
+
+        let nl_msg_flags: u16;
+        // Append and replace are mutually exclusive here and based on my
+        // reading of thge kernel sources, NLM_F_EXCL is nonsensical to use
+        // with either NLM_F_REPLACE or NLM_F_APPEND. If both replace and
+        // append are set, replace instead.
+        if replace {
+            nl_msg_flags = NLM_F_REPLACE;
+        } else if append {
+            nl_msg_flags = NLM_F_APPEND;
+        } else {
+            nl_msg_flags = NLM_F_EXCL;
+        }
+
+        req.header.flags = NLM_F_REQUEST | NLM_F_ACK | nl_msg_flags | NLM_F_CREATE;
 
         let mut response = handle.request(req)?;
         while let Some(message) = response.next().await {
