@@ -5,8 +5,9 @@ use std::net::{Ipv4Addr, Ipv6Addr};
 use crate::{
     link::LinkMessageBuilder,
     packet_route::link::{
-        BondArpAllTargets, BondArpValidate, BondFailOverMac, BondMode,
-        BondPrimaryReselect, BondXmitHashPolicy, InfoBond, InfoData, InfoKind,
+        BondAllPortActive, BondArpAllTargets, BondArpValidate, BondFailOverMac,
+        BondLacpRate, BondMode, BondPrimaryReselect, BondXmitHashPolicy,
+        InfoBond, InfoData, InfoKind,
     },
 };
 
@@ -105,7 +106,7 @@ impl LinkMessageBuilder<LinkBond> {
     /// Adds the `use_carrier` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond use_carrier
     /// USE_CARRIER`.
-    pub fn use_carrier(self, use_carrier: u8) -> Self {
+    pub fn use_carrier(self, use_carrier: bool) -> Self {
         self.append_info_data(InfoBond::UseCarrier(use_carrier))
     }
 
@@ -182,7 +183,7 @@ impl LinkMessageBuilder<LinkBond> {
     /// Adds the `all_ports_active` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond all_slaves_active
     /// ALL_PORTS_ACTIVE`.
-    pub fn all_ports_active(self, all_ports_active: u8) -> Self {
+    pub fn all_ports_active(self, all_ports_active: BondAllPortActive) -> Self {
         self.append_info_data(InfoBond::AllPortsActive(all_ports_active))
     }
 
@@ -210,7 +211,7 @@ impl LinkMessageBuilder<LinkBond> {
     /// Adds the `ad_lacp_rate` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond ad_lacp_rate
     /// AD_LACP_RATE`.
-    pub fn ad_lacp_rate(self, ad_lacp_rate: u8) -> Self {
+    pub fn ad_lacp_rate(self, ad_lacp_rate: BondLacpRate) -> Self {
         self.append_info_data(InfoBond::AdLacpRate(ad_lacp_rate))
     }
 
@@ -245,7 +246,7 @@ impl LinkMessageBuilder<LinkBond> {
     /// Adds the `tlb_dynamic_lb` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond tlb_dynamic_lb
     /// TLB_DYNAMIC_LB`.
-    pub fn tlb_dynamic_lb(self, tlb_dynamic_lb: u8) -> Self {
+    pub fn tlb_dynamic_lb(self, tlb_dynamic_lb: bool) -> Self {
         self.append_info_data(InfoBond::TlbDynamicLb(tlb_dynamic_lb))
     }
 
@@ -259,7 +260,7 @@ impl LinkMessageBuilder<LinkBond> {
     /// Adds the `ad_lacp_active` attribute to the bond
     /// This is equivalent to `ip link add name NAME type bond ad_lacp_active
     /// AD_LACP_ACTIVE`.
-    pub fn ad_lacp_active(self, ad_lacp_active: u8) -> Self {
+    pub fn ad_lacp_active(self, ad_lacp_active: bool) -> Self {
         self.append_info_data(InfoBond::AdLacpActive(ad_lacp_active))
     }
 
