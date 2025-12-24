@@ -9,7 +9,7 @@ use crate::{
     },
 };
 
-/// Represent dummy interface.
+/// Represent Linux Bridge interface.
 /// Example code on creating a linux bridge interface
 /// ```no_run
 /// use rtnetlink::{new_connection, LinkBridge};
