@@ -50,8 +50,8 @@ pub use crate::{
     handle::Handle,
     link::{
         LinkAddRequest, LinkBond, LinkBondPort, LinkBridge, LinkDelPropRequest,
-        LinkDelRequest, LinkDummy, LinkGetRequest, LinkHandle, LinkMacSec,
-        LinkMacVlan, LinkMacVtap, LinkMessageBuilder, LinkNetkit,
+        LinkDelRequest, LinkDummy, LinkGetRequest, LinkHandle, LinkIpVlan,
+        LinkMacSec, LinkMacVlan, LinkMacVtap, LinkMessageBuilder, LinkNetkit,
         LinkSetRequest, LinkUnspec, LinkVeth, LinkVlan, LinkVrf, LinkVxlan,
         LinkWireguard, LinkXfrm, QosMapping,
     },
