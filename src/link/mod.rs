@@ -4,6 +4,7 @@ mod add;
 mod bond;
 mod bond_port;
 mod bridge;
+mod bridge_port;
 mod builder;
 mod del;
 mod dummy;
@@ -28,6 +29,7 @@ pub use self::{
     bond::LinkBond,
     bond_port::LinkBondPort,
     bridge::LinkBridge,
+    bridge_port::LinkBridgePort,
     builder::{LinkMessageBuilder, LinkUnspec},
     del::LinkDelRequest,
     dummy::LinkDummy,
