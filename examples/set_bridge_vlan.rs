@@ -72,6 +72,7 @@ async fn create_dummy_and_attach_to_bridge(
 
 async fn set_bridge_vlan(
     handle: &Handle,
+    bridge_index: u32,
     port_index: u32,
 ) -> Result<(), rtnetlink::Error> {
     let message = LinkBridgeVlan::new(port_index)
@@ -81,6 +82,16 @@ async fn set_bridge_vlan(
         .build();
 
     handle.link().set(message).execute().await?;
+
+    let message = LinkBridgeVlan::new(bridge_index)
+        .bridge_self()
+        .vlan(40, BridgeVlanInfoFlags::Pvid)
+        .vlan_range_start(50, BridgeVlanInfoFlags::empty())
+        .vlan_range_end(60, BridgeVlanInfoFlags::empty())
+        .build();
+
+    handle.link().set(message).execute().await?;
+
     Ok(())
 }
 
@@ -93,7 +104,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let port_index =
         create_dummy_and_attach_to_bridge(&handle, bridge_index).await?;
-    set_bridge_vlan(&handle, port_index).await?;
+    set_bridge_vlan(&handle, bridge_index, port_index).await?;
 
     let mut dump_link = handle
         .link()
@@ -106,17 +117,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     while let Some(link_msg) = dump_link.try_next().await? {
         // With set_filter_mask(), we cannot use match_name to filter due to
         // linux kernel limitation.
-        if !link_msg.attributes.as_slice().iter().any(
-            |a| matches!(a, LinkAttribute::IfName(name) if name == "my-dummy0"),
-        ) {
+        let iface_name = if let Some(name) =
+            link_msg.attributes.iter().find_map(|attr| match attr {
+                LinkAttribute::IfName(name)
+                    if name == "my-dummy0" || name == "my-bridge0" =>
+                {
+                    Some(name)
+                }
+                _ => None,
+            }) {
+            name
+        } else {
             continue;
-        }
-        for nla in link_msg.attributes {
+        };
+        for nla in &link_msg.attributes {
             if let LinkAttribute::AfSpecBridge(i) = &nla {
-                println!("{:?}", i);
-                return Ok(());
+                println!("Interface {iface_name}: {i:?}");
             }
         }
     }
-    Err("failed to find bridge vlan info for my-dummy0".into())
+    Ok(())
 }
