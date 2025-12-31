@@ -3,7 +3,8 @@
 use crate::{
     packet_route::{
         link::{
-            AfSpecBridge, BridgeVlanInfo, BridgeVlanInfoFlags, LinkAttribute,
+            AfSpecBridge, BridgeFlag, BridgeVlanInfo, BridgeVlanInfoFlags,
+            LinkAttribute,
         },
         AddressFamily,
     },
@@ -57,5 +58,11 @@ impl LinkMessageBuilder<LinkBridgeVlan> {
     /// automatically to `flags`
     pub fn vlan_range_end(self, vid: u16, flags: BridgeVlanInfoFlags) -> Self {
         self.vlan(vid, flags | BridgeVlanInfoFlags::RangeEnd)
+    }
+
+    /// Change VLAN of bridge itself
+    /// Equal to the `self` argument in `bridge vlan add dev br0 vid 11 self`
+    pub fn bridge_self(self) -> Self {
+        self.append_af_spec(AfSpecBridge::Flags(BridgeFlag::LowerDev))
     }
 }
