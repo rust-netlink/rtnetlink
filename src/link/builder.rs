@@ -2,9 +2,12 @@
 
 use std::{marker::PhantomData, os::fd::RawFd};
 
-use crate::packet_route::link::{
-    InfoData, InfoKind, InfoPortData, InfoPortKind, LinkAttribute, LinkFlags,
-    LinkHeader, LinkInfo, LinkMessage,
+use crate::packet_route::{
+    link::{
+        InfoData, InfoKind, InfoPortData, InfoPortKind, LinkAttribute,
+        LinkFlags, LinkHeader, LinkInfo, LinkMessage,
+    },
+    AddressFamily,
 };
 
 /// Generic interface without interface type
@@ -57,7 +60,7 @@ pub struct LinkMessageBuilder<T> {
     pub(crate) info_data: Option<InfoData>,
     pub(crate) port_kind: Option<InfoPortKind>,
     pub(crate) port_data: Option<InfoPortData>,
-    extra_attriutes: Vec<LinkAttribute>,
+    pub(crate) extra_attriutes: Vec<LinkAttribute>,
     _phantom: PhantomData<T>,
 }
 
@@ -161,6 +164,12 @@ impl<T> LinkMessageBuilder<T> {
     pub fn index(self, index: u32) -> Self {
         let mut ret = self;
         ret.header.index = index;
+        ret
+    }
+
+    pub fn interface_family(self, family: AddressFamily) -> Self {
+        let mut ret = self;
+        ret.header.interface_family = family;
         ret
     }
 

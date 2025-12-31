@@ -5,6 +5,8 @@ mod bond;
 mod bond_port;
 mod bridge;
 mod bridge_port;
+#[cfg(any(target_os = "linux", target_os = "fuchsia", target_os = "android"))]
+mod bridge_vlan;
 mod builder;
 mod del;
 mod dummy;
@@ -52,3 +54,10 @@ pub use self::{
 
 #[cfg(test)]
 mod test;
+
+#[cfg(any(
+    target_os = "linux",
+    target_os = "fuchsia",
+    target_os = "android"
+))]
+pub use self::bridge_vlan::LinkBridgeVlan;
