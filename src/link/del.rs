@@ -18,6 +18,10 @@ impl LinkDelRequest {
         LinkDelRequest { handle, message }
     }
 
+    pub fn new_with_message(handle: Handle, message: LinkMessage) -> Self {
+        LinkDelRequest { handle, message }
+    }
+
     /// Execute the request
     pub async fn execute(self) -> Result<(), Error> {
         let LinkDelRequest {

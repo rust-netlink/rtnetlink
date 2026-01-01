@@ -43,12 +43,19 @@ impl LinkHandle {
         LinkDelPropRequest::new(self.0.clone(), index)
     }
 
-    pub fn del(&mut self, index: u32) -> LinkDelRequest {
+    pub fn del(&self, index: u32) -> LinkDelRequest {
         LinkDelRequest::new(self.0.clone(), index)
     }
 
+    /// Delete specified information from interface.
+    /// For example: To delete bridge VLANs, it is required to include
+    /// LinkMessage of VLAN information to delete.
+    pub fn del_with_message(&self, message: LinkMessage) -> LinkDelRequest {
+        LinkDelRequest::new_with_message(self.0.clone(), message)
+    }
+
     /// Retrieve the list of links (equivalent to `ip link show`)
-    pub fn get(&mut self) -> LinkGetRequest {
+    pub fn get(&self) -> LinkGetRequest {
         LinkGetRequest::new(self.0.clone())
     }
 
