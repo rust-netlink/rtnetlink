@@ -1,4 +1,22 @@
 # Changelog
+## [0.20.0] - 2026-01-01
+### Breaking changes
+ - Please check breaking changes in netlink-packet-route 0.28.0 and 0.27.0.
+ - Use netlink-packet-route 0.28.0. (0486ff7)
+ - Change `LinkBond` to align with rust-netlink-route 0.27.0. (563f95d)
+
+### New features
+ - link: Support specifying arbitrary LinkMessage for `RTM_DELLINK`. (d4d5a4b)
+ - link: Support changing VLAN filter of bridge itself. (1f8b7da)
+ - link: Support changing bridge VLAN filtering. (e520140)
+ - link: Add `LinkBridgePort` for modifying bridge port properties. (86dd67d)
+ - link: Expand LinkBridge to support all bridge options. (c85d988)
+ - link: Add support for `netkit` devices. (2f18ca4)
+ - link: Add `LinkHandle::change()` to changing existing interface. (2d1a6cc)
+
+### Bug fixes
+ - link bridge: Fix typo of document. (a994f72)
+
 ## [0.19.0] - 2025-12-09
 ### Breaking changes
  - Please check breaking changes of netlink-packet-route 0.19.0
