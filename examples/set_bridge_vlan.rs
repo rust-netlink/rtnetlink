@@ -95,17 +95,9 @@ async fn set_bridge_vlan(
     Ok(())
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (connection, handle, _) = new_connection().unwrap();
-    tokio::spawn(connection);
-
-    let bridge_index = create_bridge_and_get_index(&handle).await?;
-
-    let port_index =
-        create_dummy_and_attach_to_bridge(&handle, bridge_index).await?;
-    set_bridge_vlan(&handle, bridge_index, port_index).await?;
-
+async fn dump_bridge_vlan(
+    handle: &rtnetlink::Handle,
+) -> Result<(), rtnetlink::Error> {
     let mut dump_link = handle
         .link()
         .get()
@@ -136,5 +128,69 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     }
+    Ok(())
+}
+
+async fn del_bridge_vlan(
+    handle: &Handle,
+    bridge_index: u32,
+    port_index: u32,
+) -> Result<(), rtnetlink::Error> {
+    let message = LinkBridgeVlan::new(port_index)
+        .vlan(10, BridgeVlanInfoFlags::Pvid)
+        .vlan_range_start(20, BridgeVlanInfoFlags::empty())
+        .vlan_range_end(30, BridgeVlanInfoFlags::empty())
+        .build();
+
+    handle.link().del_with_message(message).execute().await?;
+
+    let message = LinkBridgeVlan::new(bridge_index)
+        .bridge_self()
+        .vlan(40, BridgeVlanInfoFlags::Pvid)
+        .vlan_range_start(50, BridgeVlanInfoFlags::empty())
+        .vlan_range_end(60, BridgeVlanInfoFlags::empty())
+        .build();
+
+    handle.link().del_with_message(message).execute().await?;
+
+    Ok(())
+}
+
+async fn cleanup(
+    handle: &Handle,
+    bridge_index: u32,
+    port_index: u32,
+) -> Result<(), rtnetlink::Error> {
+    handle.link().del(bridge_index).execute().await?;
+    handle.link().del(port_index).execute().await?;
+
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let (connection, handle, _) = new_connection().unwrap();
+    tokio::spawn(connection);
+
+    let bridge_index = create_bridge_and_get_index(&handle).await?;
+
+    let port_index =
+        create_dummy_and_attach_to_bridge(&handle, bridge_index).await?;
+
+    println!("Setting Bridge VLAN");
+    set_bridge_vlan(&handle, bridge_index, port_index).await?;
+
+    dump_bridge_vlan(&handle).await?;
+
+    println!("Removing Bridge VLAN");
+
+    del_bridge_vlan(&handle, bridge_index, port_index).await?;
+
+    dump_bridge_vlan(&handle).await?;
+
+    println!("Cleaning up");
+
+    cleanup(&handle, bridge_index, port_index).await?;
+
     Ok(())
 }
