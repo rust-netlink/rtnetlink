@@ -67,7 +67,7 @@ async fn add_route_mpls(
 ) -> Result<(), Error> {
     let route = RouteMessageBuilder::<MplsLabel>::new()
         .label(input_label)
-        .via(gateway.ip().into())
+        .via(gateway.ip())
         .output_mpls(vec![output_label])
         .build();
     handle.route().add(route).execute().await?;
