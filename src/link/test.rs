@@ -6,8 +6,8 @@ use tokio::runtime::Runtime;
 use crate::{
     new_connection,
     packet_route::link::{
-        InfoData, InfoKind, InfoMacVlan, InfoNetkit, InfoVrf, LinkAttribute,
-        LinkInfo, LinkMessage, MacVlanFlags, MacVlanMode, NetkitMode,
+        InfoData, InfoKind, InfoMacVlan, InfoVrf, LinkAttribute, LinkInfo,
+        LinkMessage, MacVlanFlags, MacVlanMode, NetkitMode,
     },
     Error, LinkHandle, LinkMacVlan, LinkNetkit, LinkVrf, LinkWireguard,
 };

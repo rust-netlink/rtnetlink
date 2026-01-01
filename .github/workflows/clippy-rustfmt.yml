@@ -28,7 +28,7 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: clippy-tokio-socket
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --all-targets -- -D warnings
 
       - name: clippy-smol-socket
         run: >
