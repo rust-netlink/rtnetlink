@@ -7,7 +7,7 @@ use crate::{
     new_connection,
     packet_route::link::{
         InfoData, InfoKind, InfoMacVlan, InfoNetkit, InfoVrf, LinkAttribute,
-        LinkInfo, LinkMessage, MacVlanMode, NetkitMode,
+        LinkInfo, LinkMessage, MacVlanFlags, MacVlanMode, NetkitMode,
     },
     Error, LinkHandle, LinkMacVlan, LinkNetkit, LinkVrf, LinkWireguard,
 };
@@ -58,7 +58,8 @@ fn create_get_delete_macvlan() {
             LinkInfo::Kind(InfoKind::MacVlan),
             LinkInfo::Data(InfoData::MacVlan(vec![
                 InfoMacVlan::Mode(MACVLAN_MODE),
-                InfoMacVlan::Flags(0), // defaulted by the kernel
+                InfoMacVlan::Flags(MacVlanFlags::empty()), /* defaulted by
+                                                            * the kernel */
                 InfoMacVlan::MacAddrCount(0), // defaulted by the kernel
                 InfoMacVlan::BcQueueLen(1000), // defaulted by the kernel
                 InfoMacVlan::BcQueueLenUsed(1000)  // defaulted by the kernel
