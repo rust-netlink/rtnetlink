@@ -219,7 +219,9 @@ impl LinkMessageBuilder<LinkBond> {
     /// This is equivalent to `ip link add name NAME type bond ad_select
     /// AD_SELECT`.
     pub fn ad_select(self, ad_select: u8) -> Self {
-        self.append_info_data(InfoBond::AdSelect(ad_select))
+        self.append_info_data(InfoBond::AdSelect(
+            netlink_packet_route::link::BondAdSelect::Other(ad_select),
+        ))
     }
 
     /// Adds the `ad_actor_sys_prio` attribute to the bond

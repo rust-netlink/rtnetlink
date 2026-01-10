@@ -19,6 +19,7 @@ mod link;
 mod macros;
 mod multicast;
 mod neighbour;
+mod nexthop;
 #[cfg(not(target_os = "freebsd"))]
 mod ns;
 mod route;
@@ -59,6 +60,10 @@ pub use crate::{
     neighbour::{
         NeighbourAddRequest, NeighbourDelRequest, NeighbourGetRequest,
         NeighbourHandle,
+    },
+    nexthop::{
+        NexthopAddRequest, NexthopDelRequest, NexthopGetRequest, NexthopHandle,
+        NexthopMessageBuilder,
     },
     route::{
         IpVersion, RouteAddRequest, RouteDelRequest, RouteGetRequest,

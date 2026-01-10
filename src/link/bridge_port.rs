@@ -148,7 +148,7 @@ impl LinkMessageBuilder<LinkBridgePort> {
     /// `ip link set name NAME type bridge_slave \
     ///     neigh_vlan_suppress { on | off }`.
     pub fn neigh_vlan_suppress(self, v: bool) -> Self {
-        self.append_info_data(InfoBridgePort::NeighVlanSupress(v))
+        self.append_info_data(InfoBridgePort::NeighVlanSuppress(v))
     }
 
     /// This is equivalent to

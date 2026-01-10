@@ -6,7 +6,8 @@ use netlink_packet_route::RouteNetlinkMessage;
 use netlink_proto::{sys::SocketAddr, ConnectionHandle};
 
 use crate::{
-    AddressHandle, Error, LinkHandle, NeighbourHandle, RouteHandle, RuleHandle,
+    AddressHandle, Error, LinkHandle, NeighbourHandle, NexthopHandle,
+    RouteHandle, RuleHandle,
 };
 #[cfg(not(target_os = "freebsd"))]
 use crate::{
@@ -69,6 +70,12 @@ impl Handle {
     /// (equivalent to `ip neighbour` commands)
     pub fn neighbours(&self) -> NeighbourHandle {
         NeighbourHandle::new(self.clone())
+    }
+
+    /// Create a new handle, specifically for nexthop requests
+    /// (equivalent to `ip nexthop` commands)
+    pub fn nexthop(&self) -> NexthopHandle {
+        NexthopHandle::new(self.clone())
     }
 
     /// Create a new handle, specifically for traffic control qdisc requests
