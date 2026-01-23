@@ -69,11 +69,7 @@ impl AddressMessageBuilder<Ipv4Addr> {
                 .push(AddressAttribute::Local(address.into()));
 
             // Set the IFA_BROADCAST address as well.
-            if prefix_len == 32 {
-                self.message
-                    .attributes
-                    .push(AddressAttribute::Broadcast(address));
-            } else {
+            if prefix_len < 31 {
                 let ip_addr = u32::from(address);
                 let brd = Ipv4Addr::from(
                     (0xffff_ffff_u32) >> u32::from(prefix_len) | ip_addr,
