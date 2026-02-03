@@ -115,6 +115,12 @@ impl<T> RouteMessageBuilder<T> {
         self
     }
 
+    /// Sets the nexthop ID.
+    pub fn nexthop_id(mut self, id: u32) -> Self {
+        self.message.attributes.push(RouteAttribute::NextHopId(id));
+        self
+    }
+
     #[cfg(not(target_os = "android"))]
     /// Sets mark value on route.
     pub fn mark(mut self, mark: u32) -> Self {
