@@ -53,7 +53,8 @@ pub use crate::{
         LinkBridgeVlan, LinkDelPropRequest, LinkDelRequest, LinkDummy,
         LinkGetRequest, LinkHandle, LinkMacSec, LinkMacVlan, LinkMacVtap,
         LinkMessageBuilder, LinkNetkit, LinkSetRequest, LinkUnspec, LinkVeth,
-        LinkVlan, LinkVrf, LinkVxlan, LinkWireguard, LinkXfrm, QosMapping,
+        LinkVlan, LinkVrf, LinkVxcan, LinkVxlan, LinkWireguard, LinkXfrm,
+        QosMapping,
     },
     multicast::MulticastGroup,
     neighbour::{

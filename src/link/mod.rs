@@ -22,6 +22,7 @@ mod set;
 mod veth;
 mod vlan;
 mod vrf;
+mod vxcan;
 mod vxlan;
 mod wireguard;
 mod xfrm;
@@ -47,6 +48,7 @@ pub use self::{
     veth::LinkVeth,
     vlan::{LinkVlan, QosMapping},
     vrf::LinkVrf,
+    vxcan::LinkVxcan,
     vxlan::LinkVxlan,
     wireguard::LinkWireguard,
     xfrm::LinkXfrm,
