@@ -62,7 +62,7 @@ impl NeighbourAddRequest {
 
         message
             .attributes
-            .push(NeighbourAttribute::LinkLocalAddress(lla.to_vec()));
+            .push(NeighbourAttribute::LinkLayerAddress(lla.to_vec()));
 
         NeighbourAddRequest {
             handle,
@@ -92,14 +92,25 @@ impl NeighbourAddRequest {
         self
     }
 
+    #[deprecated(
+        since = "0.21.0",
+        note = "please use `link_layer_address` instead"
+    )]
     /// Set a neighbor cache link layer address (see `NDA_LLADDR` for details).
-    pub fn link_local_address(mut self, addr: &[u8]) -> Self {
+    /// Deprecated. Please use [NeighbourAddRequest::link_layer_address()]
+    /// instead.
+    pub fn link_local_address(self, addr: &[u8]) -> Self {
+        self.link_layer_address(addr)
+    }
+
+    /// Set a neighbor cache link layer address (see `NDA_LLADDR` for details).
+    pub fn link_layer_address(mut self, addr: &[u8]) -> Self {
         let lla =
             self.message
                 .attributes
                 .iter_mut()
                 .find_map(|nla| match nla {
-                    NeighbourAttribute::LinkLocalAddress(lla) => Some(lla),
+                    NeighbourAttribute::LinkLayerAddress(lla) => Some(lla),
                     _ => None,
                 });
 
@@ -108,7 +119,7 @@ impl NeighbourAddRequest {
         } else {
             self.message
                 .attributes
-                .push(NeighbourAttribute::LinkLocalAddress(addr.to_vec()));
+                .push(NeighbourAttribute::LinkLayerAddress(addr.to_vec()));
         }
 
         self

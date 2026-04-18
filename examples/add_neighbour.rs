@@ -29,7 +29,7 @@ async fn main() -> Result<(), ()> {
         })
         .collect();
 
-    let link_local_address = <[u8; 6]>::try_from(link_local_parts).unwrap_or_else(|_| {
+    let link_layer_address = <[u8; 6]>::try_from(link_local_parts).unwrap_or_else(|_| {
         eprintln!("invalid mac address, please give it in the format of 56:78:90:ab:cd:ef");
         std::process::exit(1);
     });
@@ -38,7 +38,7 @@ async fn main() -> Result<(), ()> {
     tokio::spawn(connection);
 
     if let Err(e) =
-        add_neighbour(link_name, ip, link_local_address, handle.clone()).await
+        add_neighbour(link_name, ip, link_layer_address, handle.clone()).await
     {
         eprintln!("{e}");
     }
@@ -48,7 +48,7 @@ async fn main() -> Result<(), ()> {
 async fn add_neighbour(
     link_name: &str,
     ip: IpAddr,
-    link_local_address: [u8; 6],
+    link_layer_address: [u8; 6],
     handle: Handle,
 ) -> Result<(), Error> {
     let mut links = handle
@@ -60,7 +60,7 @@ async fn add_neighbour(
         handle
             .neighbours()
             .add(link.header.index, ip)
-            .link_local_address(&link_local_address)
+            .link_layer_address(&link_layer_address)
             .execute()
             .await?;
         println!("Done");
