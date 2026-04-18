@@ -1,4 +1,16 @@
 # Changelog
+## [0.21.0] - 2026-04-18
+### Breaking changes
+ - Use netlink-packet-route 0.30. (7bfbbf5)
+ - Deprecated `NeighbourAddRequest::link_local_address()`, please use
+   `NeighbourAddRequest::link_layer_address()`. (7bfbbf5)
+
+### New features
+ - link: add vxcan support. (cd212b8)
+
+### Bug fixes
+ - addr: only assign broadcast when subnet over /31. (7c16a2d)
+
 ## [0.20.0] - 2026-01-01
 ### Breaking changes
  - Please check breaking changes in netlink-packet-route 0.28.0 and 0.27.0.
