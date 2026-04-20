@@ -8,6 +8,7 @@ use std::{
 #[cfg(not(target_os = "android"))]
 use netlink_packet_route::route::{
     MplsLabel, RouteLwEnCapType, RouteLwTunnelEncap, RouteMplsIpTunnel,
+    RouteSeg6IpTunnel, Seg6Header, Seg6Mode,
 };
 use netlink_packet_route::{
     route::{
@@ -84,6 +85,33 @@ impl<T> RouteMessageBuilder<T> {
                 .attributes
                 .push(RouteAttribute::Encap(vec![encap]));
         }
+        self
+    }
+
+    /// Sets the output SRv6 encapsulation segments.
+    #[cfg(not(target_os = "android"))]
+    pub fn output_seg6(
+        mut self,
+        mode: Seg6Mode,
+        segments: Vec<Ipv6Addr>,
+    ) -> Self {
+        if segments.is_empty() {
+            return self;
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::EncapType(RouteLwEnCapType::Seg6));
+
+        let mut header = Seg6Header::default();
+        header.mode = mode;
+        header.segments = segments;
+
+        let encap = RouteLwTunnelEncap::Seg6(RouteSeg6IpTunnel::Seg6(header));
+
+        self.message
+            .attributes
+            .push(RouteAttribute::Encap(vec![encap]));
+
         self
     }
 
