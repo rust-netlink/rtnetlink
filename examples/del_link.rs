@@ -23,8 +23,12 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
-async fn del_link(handle: Handle, name: String) -> Result<(), Error> {
-    let mut links = handle.link().get().match_name(name.clone()).execute();
+async fn del_link(
+    handle: Handle,
+    name: impl Into<String>,
+) -> Result<(), Error> {
+    let name = name.into();
+    let mut links = handle.link().get().match_name(&name).execute();
     if let Some(link) = links.try_next().await? {
         handle.link().del(link.header.index).execute().await
     } else {

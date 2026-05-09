@@ -90,9 +90,11 @@ impl LinkGetRequest {
     ///
     /// This function requires support from your kernel (>= 2.6.33). If yours is
     /// older, consider filtering the resulting stream of links.
-    pub fn match_name(mut self, name: String) -> Self {
+    pub fn match_name(mut self, name: impl Into<String>) -> Self {
         self.dump = false;
-        self.message.attributes.push(LinkAttribute::IfName(name));
+        self.message
+            .attributes
+            .push(LinkAttribute::IfName(name.into()));
         self
     }
 }

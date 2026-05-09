@@ -127,7 +127,7 @@ async fn _create_wg() -> Result<LinkHandle, Error> {
 
 async fn _get_iface(
     handle: &mut LinkHandle,
-    iface_name: String,
+    iface_name: impl Into<String>,
 ) -> Result<LinkMessage, Error> {
     let mut links = handle.get().match_name(iface_name).execute();
     let msg = links.try_next().await?;

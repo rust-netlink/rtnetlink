@@ -31,12 +31,13 @@ async fn main() -> Result<(), ()> {
 
 async fn dump_bond_port_settings(
     handle: Handle,
-    linkname: String,
+    link_name: impl Into<String>,
 ) -> Result<(), Error> {
-    let mut links = handle.link().get().match_name(linkname.clone()).execute();
+    let link_name = link_name.into();
+    let mut links = handle.link().get().match_name(&link_name).execute();
     if let Some(_link) = links.try_next().await? {
         let mut link_messgage =
-            handle.link().get().match_name(linkname).execute();
+            handle.link().get().match_name(link_name).execute();
         while let Some(msg) = link_messgage.try_next().await? {
             for nla in msg.attributes {
                 if let LinkAttribute::LinkInfo(i) = &nla {
@@ -46,7 +47,7 @@ async fn dump_bond_port_settings(
         }
         Ok(())
     } else {
-        eprintln!("link {linkname} not found");
+        eprintln!("link {link_name} not found");
         Ok(())
     }
 }

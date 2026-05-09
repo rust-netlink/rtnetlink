@@ -22,8 +22,12 @@ async fn main() -> Result<(), String> {
         .map_err(|e| format!("{e}"))
 }
 
-async fn create_vxlan(handle: Handle, name: String) -> Result<(), Error> {
-    let mut links = handle.link().get().match_name(name.clone()).execute();
+async fn create_vxlan(
+    handle: Handle,
+    name: impl Into<String>,
+) -> Result<(), Error> {
+    let name = name.into();
+    let mut links = handle.link().get().match_name(&name).execute();
     if let Some(link) = links.try_next().await? {
         let message = LinkVxlan::new("vxlan0", 10)
             .dev(link.header.index)

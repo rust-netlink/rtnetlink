@@ -60,7 +60,7 @@ pub struct NetworkNamespace();
 impl NetworkNamespace {
     /// Add a new network namespace.
     /// This is equivalent to `ip netns add NS_NAME`.
-    pub async fn add(ns_name: String) -> Result<(), Error> {
+    pub async fn add(ns_name: impl AsRef<str>) -> Result<(), Error> {
         // Forking process to avoid moving caller into new namespace
         NetworkNamespace::prep_for_fork()?;
         log::trace!("Forking...");
@@ -69,7 +69,7 @@ impl NetworkNamespace {
                 NetworkNamespace::parent_process(child)
             }
             Ok(ForkResult::Child) => {
-                NetworkNamespace::child_process(ns_name);
+                NetworkNamespace::child_process(ns_name.as_ref());
             }
             Err(e) => {
                 let err_msg = format!("Fork failed: {e}");
@@ -80,15 +80,15 @@ impl NetworkNamespace {
 
     /// Remove a network namespace
     /// This is equivalent to `ip netns del NS_NAME`.
-    pub async fn del(ns_name: String) -> Result<(), Error> {
-        try_spawn_blocking(move || {
-            let mut netns_path = String::new();
-            netns_path.push_str(NETNS_PATH);
-            netns_path.push_str(&ns_name);
-            let ns_path = Path::new(&netns_path);
+    pub async fn del(ns_name: impl AsRef<str>) -> Result<(), Error> {
+        let netns_path = Path::new(NETNS_PATH).join(ns_name.as_ref());
 
-            if nix::mount::umount2(ns_path, nix::mount::MntFlags::MNT_DETACH)
-                .is_err()
+        try_spawn_blocking(move || {
+            if nix::mount::umount2(
+                &netns_path,
+                nix::mount::MntFlags::MNT_DETACH,
+            )
+            .is_err()
             {
                 let err_msg = String::from(
                     "Namespace unmount failed (are you running as root?)",
@@ -96,7 +96,7 @@ impl NetworkNamespace {
                 return Err(Error::NamespaceError(err_msg));
             }
 
-            if nix::unistd::unlink(ns_path).is_err() {
+            if nix::unistd::unlink(&netns_path).is_err() {
                 let err_msg = String::from(
                     "Namespace file remove failed (are you running as root?)",
                 );
@@ -150,7 +150,7 @@ impl NetworkNamespace {
         }
     }
 
-    fn child_process(ns_name: String) -> ! {
+    fn child_process(ns_name: &str) -> ! {
         let res = std::panic::catch_unwind(|| -> Result<(), Error> {
             let netns_path =
                 NetworkNamespace::child_process_create_ns(ns_name)?;
@@ -174,10 +174,12 @@ impl NetworkNamespace {
     /// This is the child process, it will actually create the namespace
     /// resources. It creates the folder and namespace file.
     /// Returns the namespace file path
-    pub fn child_process_create_ns(ns_name: String) -> Result<String, Error> {
+    pub fn child_process_create_ns(
+        ns_name: impl Into<String>,
+    ) -> Result<String, Error> {
         log::trace!("child_process will create the namespace");
 
-        let mut netns_path = String::new();
+        let netns_path = format!("{NETNS_PATH}{}", ns_name.into());
 
         let dir_path = Path::new(NETNS_PATH);
         let mut mkdir_mode = Mode::empty();
@@ -196,9 +198,6 @@ impl NetworkNamespace {
         open_flags.insert(OFlag::O_RDONLY);
         open_flags.insert(OFlag::O_CREAT);
         open_flags.insert(OFlag::O_EXCL);
-
-        netns_path.push_str(NETNS_PATH);
-        netns_path.push_str(&ns_name);
 
         // creating namespaces folder if not exists
         #[allow(clippy::collapsible_if)]
@@ -281,10 +280,12 @@ impl NetworkNamespace {
     /// This function unshare the calling process and move into
     /// the given network namespace
     #[allow(unused)]
-    pub fn unshare_processing(netns_path: String) -> Result<(), Error> {
+    pub fn unshare_processing(
+        netns_path: impl AsRef<Path>,
+    ) -> Result<(), Error> {
         let mut setns_flags = CloneFlags::empty();
         let mut open_flags = OFlag::empty();
-        let ns_path = Path::new(&netns_path);
+        let ns_path = netns_path.as_ref();
 
         let none_fs = Path::new(&NONE_FS);
         let none_p4: Option<&Path> = None;

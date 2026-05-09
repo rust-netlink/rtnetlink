@@ -26,10 +26,10 @@ async fn main() -> Result<(), String> {
 
 async fn create_macvtap(
     handle: Handle,
-    link_name: String,
+    link_name: impl Into<String>,
 ) -> Result<(), Error> {
-    let mut parent_links =
-        handle.link().get().match_name(link_name.clone()).execute();
+    let link_name = link_name.into();
+    let mut parent_links = handle.link().get().match_name(&link_name).execute();
     if let Some(parent) = parent_links.try_next().await? {
         let message = LinkMacVtap::new(
             "test_macvtap",

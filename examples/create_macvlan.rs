@@ -35,11 +35,11 @@ async fn main() -> Result<(), String> {
 
 async fn create_macvlan(
     handle: Handle,
-    link_name: String,
+    link_name: impl Into<String>,
     mac_address: Option<Vec<u8>>,
 ) -> Result<(), Error> {
-    let mut parent_links =
-        handle.link().get().match_name(link_name.clone()).execute();
+    let link_name = link_name.into();
+    let mut parent_links = handle.link().get().match_name(&link_name).execute();
     if let Some(parent) = parent_links.try_next().await? {
         let mut builder = LinkMacVlan::new(
             "my-macvlan",
