@@ -42,7 +42,7 @@ async fn main() -> Result<(), String> {
 
     let mut mode = ParsingMode::None;
     for argument in args.drain(1..) {
-        fn match_argument(argument: String) -> Result<ParsingMode, String> {
+        fn match_argument(argument: &str) -> Result<ParsingMode, String> {
             match argument.to_lowercase().as_str() {
                 ARG_BASE => Ok(ParsingMode::Base),
                 ARG_NAME => Ok(ParsingMode::Name),
@@ -57,7 +57,7 @@ async fn main() -> Result<(), String> {
         }
 
         mode = match mode {
-            ParsingMode::None => match_argument(argument)?,
+            ParsingMode::None => match_argument(&argument)?,
             ParsingMode::Base => {
                 base_interface = u32::from_str(&argument).ok();
                 ParsingMode::None
@@ -75,14 +75,14 @@ async fn main() -> Result<(), String> {
                     ingress.push(mapping);
                     mode
                 }
-                Err(_) => match_argument(argument)?,
+                Err(_) => match_argument(&argument)?,
             },
             mode @ ParsingMode::Egress => match parse_mapping(&argument) {
                 Ok(mapping) => {
                     egress.push(mapping);
                     mode
                 }
-                Err(_) => match_argument(argument)?,
+                Err(_) => match_argument(&argument)?,
             },
         }
     }

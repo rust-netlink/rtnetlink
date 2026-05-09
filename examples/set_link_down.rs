@@ -22,8 +22,12 @@ async fn main() -> Result<(), String> {
         .map_err(|e| format!("{e}"))
 }
 
-async fn set_link_down(handle: Handle, name: String) -> Result<(), Error> {
-    let mut links = handle.link().get().match_name(name.clone()).execute();
+async fn set_link_down(
+    handle: Handle,
+    name: impl Into<String>,
+) -> Result<(), Error> {
+    let name = name.into();
+    let mut links = handle.link().get().match_name(&name).execute();
     if let Some(link) = links.try_next().await? {
         handle
             .link()

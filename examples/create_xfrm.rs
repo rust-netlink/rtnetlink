@@ -20,9 +20,12 @@ async fn main() -> Result<(), String> {
         .map_err(|e| format!("{e}"))
 }
 
-async fn create_xfrm(handle: Handle, link_name: String) -> Result<(), Error> {
-    let mut parent_links =
-        handle.link().get().match_name(link_name.clone()).execute();
+async fn create_xfrm(
+    handle: Handle,
+    link_name: impl Into<String>,
+) -> Result<(), Error> {
+    let link_name = link_name.into();
+    let mut parent_links = handle.link().get().match_name(&link_name).execute();
     if let Some(parent) = parent_links.try_next().await? {
         let request = handle
             .link()

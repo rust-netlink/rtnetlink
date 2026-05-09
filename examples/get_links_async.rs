@@ -68,8 +68,12 @@ async fn get_link_by_index(handle: Handle, index: u32) -> Result<(), Error> {
     Ok(())
 }
 
-async fn get_link_by_name(handle: Handle, name: String) -> Result<(), Error> {
-    let mut links = handle.link().get().match_name(name.clone()).execute();
+async fn get_link_by_name(
+    handle: Handle,
+    name: impl Into<String>,
+) -> Result<(), Error> {
+    let name = name.into();
+    let mut links = handle.link().get().match_name(&name).execute();
     if (links.try_next().await?).is_some() {
         println!("found link {name}");
         // We should only have one link with that name

@@ -44,14 +44,18 @@ impl<T> RuleAddRequest<T> {
     }
 
     /// Sets the input interface name.
-    pub fn input_interface(mut self, ifname: String) -> Self {
-        self.message.attributes.push(RuleAttribute::Iifname(ifname));
+    pub fn input_interface(mut self, ifname: impl Into<String>) -> Self {
+        self.message
+            .attributes
+            .push(RuleAttribute::Iifname(ifname.into()));
         self
     }
 
     /// Sets the output interface name.
-    pub fn output_interface(mut self, ifname: String) -> Self {
-        self.message.attributes.push(RuleAttribute::Oifname(ifname));
+    pub fn output_interface(mut self, ifname: impl Into<String>) -> Self {
+        self.message
+            .attributes
+            .push(RuleAttribute::Oifname(ifname.into()));
         self
     }
 

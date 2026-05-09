@@ -18,8 +18,12 @@ async fn main() -> Result<(), ()> {
     Ok(())
 }
 
-async fn dump_addresses(handle: Handle, link: String) -> Result<(), Error> {
-    let mut links = handle.link().get().match_name(link.clone()).execute();
+async fn dump_addresses(
+    handle: Handle,
+    link: impl Into<String>,
+) -> Result<(), Error> {
+    let link = link.into();
+    let mut links = handle.link().get().match_name(&link).execute();
     if let Some(link) = links.try_next().await? {
         let mut addresses = handle
             .address()

@@ -149,8 +149,8 @@ impl<T> LinkMessageBuilder<T> {
         ret
     }
 
-    pub fn name(self, name: String) -> Self {
-        self.append_extra_attribute(LinkAttribute::IfName(name))
+    pub fn name(self, name: impl Into<String>) -> Self {
+        self.append_extra_attribute(LinkAttribute::IfName(name.into()))
     }
 
     /// Set the mtu of the link with the given index (equivalent to

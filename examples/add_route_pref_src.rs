@@ -38,10 +38,11 @@ async fn main() -> Result<(), ()> {
 
 async fn add_route(
     dest: &Ipv4Network,
-    iface: String,
+    iface: impl Into<String>,
     source: Ipv4Addr,
     handle: Handle,
 ) -> Result<(), Error> {
+    let iface = iface.into();
     let iface_idx = handle
         .link()
         .get()
