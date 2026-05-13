@@ -10,7 +10,7 @@ use netlink_packet_core::{
 };
 use netlink_packet_route::{
     neighbour::{NeighbourFlags, NeighbourMessage},
-    RouteNetlinkMessage,
+    AddressFamily, RouteNetlinkMessage,
 };
 
 use crate::{Error, Handle, IpVersion};
@@ -33,8 +33,22 @@ impl NeighbourGetRequest {
         self
     }
 
+    #[deprecated(
+        since = "0.22.0",
+        note = "please use `set_address_family` instead"
+    )]
     pub fn set_family(mut self, ip_version: IpVersion) -> Self {
         self.message.header.family = ip_version.family();
+        self
+    }
+
+    pub fn set_address_family(mut self, family: AddressFamily) -> Self {
+        self.message.header.family = family;
+        self
+    }
+
+    pub fn set_flags(mut self, flags: NeighbourFlags) -> Self {
+        self.message.header.flags = flags;
         self
     }
 
