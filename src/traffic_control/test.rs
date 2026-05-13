@@ -238,9 +238,7 @@ async fn _get_chains(ifindex: i32) -> Vec<TcMessage> {
             Ok(None) => {
                 break;
             }
-            Err(NetlinkError(ErrorMessage {
-                code, header: _, ..
-            })) => {
+            Err(NetlinkError(ErrorMessage { code, .. })) => {
                 assert_eq!(code, std::num::NonZeroI32::new(-95));
                 eprintln!(
                     "The chain in traffic control is not supported, \
