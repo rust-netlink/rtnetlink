@@ -21,7 +21,7 @@ smol_socket = ["netlink-proto/smol_socket", "async-global-executor"]
 futures-util = "0.3.11"
 futures-channel = "0.3.11"
 log = "0.4.8"
-thiserror = "1"
+thiserror = "2"
 netlink-sys = { version = "0.8" }
 netlink-packet-route = { version = "0.30" }
 netlink-packet-core = { version = "0.8" }
