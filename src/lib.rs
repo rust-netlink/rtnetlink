@@ -28,6 +28,12 @@ mod traffic_control;
 
 #[cfg(feature = "tokio_socket")]
 pub use crate::connection::{new_connection, new_multicast_connection};
+#[cfg(any(
+    target_os = "linux",
+    target_os = "fuchsia",
+    target_os = "android"
+))]
+pub use crate::link::LinkBridgeVlan;
 #[cfg(not(target_os = "freebsd"))]
 pub use crate::ns::{NetworkNamespace, NETNS_PATH, NONE_FS, SELF_NS_PATH};
 #[cfg(not(target_os = "freebsd"))]
@@ -50,11 +56,10 @@ pub use crate::{
     handle::Handle,
     link::{
         LinkAddRequest, LinkBond, LinkBondPort, LinkBridge, LinkBridgePort,
-        LinkBridgeVlan, LinkDelPropRequest, LinkDelRequest, LinkDummy,
-        LinkGetRequest, LinkHandle, LinkMacSec, LinkMacVlan, LinkMacVtap,
-        LinkMessageBuilder, LinkNetkit, LinkSetRequest, LinkUnspec, LinkVeth,
-        LinkVlan, LinkVrf, LinkVxcan, LinkVxlan, LinkWireguard, LinkXfrm,
-        QosMapping,
+        LinkDelPropRequest, LinkDelRequest, LinkDummy, LinkGetRequest,
+        LinkHandle, LinkMacSec, LinkMacVlan, LinkMacVtap, LinkMessageBuilder,
+        LinkNetkit, LinkSetRequest, LinkUnspec, LinkVeth, LinkVlan, LinkVrf,
+        LinkVxcan, LinkVxlan, LinkWireguard, LinkXfrm, QosMapping,
     },
     multicast::MulticastGroup,
     neighbour::{
