@@ -229,6 +229,14 @@ impl LinkMessageBuilder<LinkVxlan> {
         self.append_info_data(InfoVxlan::CollectMetadata(collect_metadata))
     }
 
+    // Adds the `localbypass` attribute to the VXLAN
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// [no]localbypass`. \[no\]localbypass - specifies if the VXLAN
+    /// localbypass mode is turned on.
+    pub fn localbypass(self, localbypass: bool) -> Self {
+        self.append_info_data(InfoVxlan::Localbypass(localbypass))
+    }
+
     // Adds the `udp_csum` attribute to the VXLAN
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
     /// [no]udp_csum`. \[no\]udpcsum - specifies if UDP checksum is
