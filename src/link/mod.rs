@@ -12,6 +12,7 @@ mod del;
 mod dummy;
 mod get;
 mod handle;
+mod hsr;
 mod mac_vlan;
 mod mac_vtap;
 mod macsec;
@@ -39,6 +40,7 @@ pub use self::{
     dummy::LinkDummy,
     get::LinkGetRequest,
     handle::LinkHandle,
+    hsr::LinkHsr,
     mac_vlan::LinkMacVlan,
     mac_vtap::LinkMacVtap,
     macsec::LinkMacSec,
