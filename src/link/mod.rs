@@ -13,6 +13,7 @@ mod dummy;
 mod get;
 mod handle;
 mod hsr;
+mod iptun;
 mod mac_vlan;
 mod mac_vtap;
 mod macsec;
@@ -41,6 +42,7 @@ pub use self::{
     get::LinkGetRequest,
     handle::LinkHandle,
     hsr::LinkHsr,
+    iptun::LinkIpIp,
     mac_vlan::LinkMacVlan,
     mac_vtap::LinkMacVtap,
     macsec::LinkMacSec,
