@@ -108,7 +108,11 @@ impl LinkMessageBuilder<LinkIpIp> {
     /// This is equivalent to `external` in command
     /// `ip link add name NAME type ipip external`.
     pub fn collect_metadata(self, enabled: bool) -> Self {
-        self.append_info_data(InfoIpTunnel::CollectMetadata(enabled))
+        if enabled {
+            self.append_info_data(InfoIpTunnel::CollectMetadata)
+        } else {
+            self
+        }
     }
 
     /// This is equivalent to `fwmark MARK` in command
