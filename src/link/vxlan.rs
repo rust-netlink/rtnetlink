@@ -244,4 +244,32 @@ impl LinkMessageBuilder<LinkVxlan> {
     pub fn udp_csum(self, udp_csum: bool) -> Self {
         self.append_info_data(InfoVxlan::UDPCsum(udp_csum))
     }
+
+    /// Sets the IPv6 flow label policy.
+    ///
+    /// Kernel enum: `VXLAN_LABEL_FIXED = 0`, `VXLAN_LABEL_INHERIT = 1`.
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// label_policy POLICY`.
+    pub fn label_policy(self, policy: u32) -> Self {
+        self.append_info_data(InfoVxlan::LabelPolicy(policy))
+    }
+
+    /// Tolerated reserved bits in VxLAN header.
+    ///
+    /// When set to 1 on certain reserved bit, linux kernel will not
+    /// reject(drop and count as error) the VxLAN packet with that reserved
+    /// bits set to 1.
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// reserved_bits VALUE`.
+    pub fn reserved_bits(self, bits: u64) -> Self {
+        self.append_info_data(InfoVxlan::ReservedBits(bits))
+    }
+
+    /// Adds the `mc_route` attribute to the VXLAN
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// [no]mc_route`. \[no\]mc_route - specifies if multicast routing
+    /// is enabled.
+    pub fn mc_route(self, mc_route: bool) -> Self {
+        self.append_info_data(InfoVxlan::McRoute(mc_route))
+    }
 }
