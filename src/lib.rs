@@ -51,10 +51,10 @@ pub use crate::{
     link::{
         LinkAddRequest, LinkBond, LinkBondPort, LinkBridge, LinkBridgePort,
         LinkBridgeVlan, LinkDelPropRequest, LinkDelRequest, LinkDummy,
-        LinkGetRequest, LinkHandle, LinkHsr, LinkIpIp, LinkMacSec, LinkMacVlan,
-        LinkMacVtap, LinkMessageBuilder, LinkNetkit, LinkNlmon, LinkSetRequest,
-        LinkUnspec, LinkVeth, LinkVlan, LinkVrf, LinkVxcan, LinkVxlan,
-        LinkWireguard, LinkXfrm, QosMapping,
+        LinkGetRequest, LinkHandle, LinkHsr, LinkIp6Tnl, LinkIpIp, LinkMacSec,
+        LinkMacVlan, LinkMacVtap, LinkMessageBuilder, LinkNetkit, LinkNlmon,
+        LinkSetRequest, LinkUnspec, LinkVeth, LinkVlan, LinkVrf, LinkVxcan,
+        LinkVxlan, LinkWireguard, LinkXfrm, QosMapping,
     },
     multicast::MulticastGroup,
     neighbour::{
