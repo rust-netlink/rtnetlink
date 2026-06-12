@@ -24,7 +24,7 @@ use crate::{
 /// ```
 ///
 /// Please check LinkMessageBuilder::<LinkXfrm> for more detail.
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkXfrm;
 
 impl LinkXfrm {

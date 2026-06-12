@@ -7,7 +7,7 @@ use crate::{
     LinkMessageBuilder, LinkUnspec,
 };
 
-#[derive(Debug)]
+#[derive(Default, Debug)]
 /// Represent netkit virtual interface.
 /// Netkit devices are used for container networking and BPF programs.
 ///

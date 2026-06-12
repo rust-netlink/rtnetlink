@@ -13,6 +13,9 @@ use crate::{
     LinkMessageBuilder,
 };
 
+const IP6_FLOWINFO_TCLASS_MASK: u32 = 0x0ff00000;
+const IP6_FLOWINFO_FLOWLABEL_MASK: u32 = 0x000fffff;
+
 /// Represent IP6TNL interface.
 /// Example code on creating a IP6TNL interface
 /// ```no_run
@@ -38,21 +41,59 @@ use crate::{
 /// ```
 ///
 /// Please check LinkMessageBuilder::<LinkIp6Tnl> for more detail.
-#[derive(Debug)]
-pub struct LinkIp6Tnl;
+#[derive(Default, Debug)]
+pub struct LinkIp6Tnl {
+    flags: Option<Ip6TunnelFlags>,
+    flowinfo: Option<u32>,
+}
 
 impl LinkIp6Tnl {
     /// Equal to `LinkMessageBuilder::<LinkIp6Tnl>::new()`
     pub fn new(name: &str) -> LinkMessageBuilder<Self> {
         LinkMessageBuilder::<LinkIp6Tnl>::new(name)
     }
+
+    fn get_flags_mut(&mut self) -> &mut Ip6TunnelFlags {
+        self.flags.get_or_insert(Ip6TunnelFlags::empty())
+    }
+
+    fn get_flowinfo_mut(&mut self) -> &mut u32 {
+        self.flowinfo.get_or_insert(0)
+    }
+
+    pub(crate) fn pre_build_info_data_process(
+        &self,
+        info_data: &mut Option<InfoData>,
+    ) {
+        if self.flowinfo.is_none() && self.flags.is_none() {
+            return;
+        }
+        let InfoData::IpTunnel(infos) =
+            info_data.get_or_insert_with(|| InfoData::IpTunnel(Vec::new()))
+        else {
+            log::error!("BUG: InfoData is not IpTunnel when processing ip6tnl");
+            return;
+        };
+        if let Some(flowinfo) = self.flowinfo {
+            infos.push(InfoIpTunnel::FlowInfo(flowinfo));
+        }
+        if let Some(flags) = self.flags {
+            infos.push(InfoIpTunnel::Ipv6Flags(flags));
+        }
+    }
 }
 
 impl LinkMessageBuilder<LinkIp6Tnl> {
     /// Create [LinkMessageBuilder] for IP6TNL
     pub fn new(name: &str) -> Self {
-        LinkMessageBuilder::<LinkIp6Tnl>::new_with_info_kind(InfoKind::Ip6Tnl)
-            .name(name.to_string())
+        let mut builder = LinkMessageBuilder::<LinkIp6Tnl>::new_with_info_kind(
+            InfoKind::Ip6Tnl,
+        )
+        .name(name.to_string());
+        builder.set_pre_build_info_data_func(
+            LinkIp6Tnl::pre_build_info_data_process,
+        );
+        builder
     }
 
     fn append_info_data(self, info: InfoIpTunnel) -> Self {
@@ -84,28 +125,85 @@ impl LinkMessageBuilder<LinkIp6Tnl> {
         self.append_info_data(InfoIpTunnel::Ttl(ttl))
     }
 
-    /// This is equivalent to `tos TOS` in command
-    /// `ip link add name NAME type ip6tnl tos TOS`.
-    pub fn tos(self, tos: u8) -> Self {
-        self.append_info_data(InfoIpTunnel::Tos(tos))
-    }
-
     /// This is equivalent to `encaplimit LIMIT` in command
     /// `ip link add name NAME type ip6tnl encaplimit LIMIT`.
     pub fn encap_limit(self, limit: u8) -> Self {
         self.append_info_data(InfoIpTunnel::EncapLimit(limit))
     }
 
-    /// This is equivalent to `flowlabel LABEL` in command
-    /// `ip link add name NAME type ip6tnl flowlabel LABEL`.
-    pub fn flowlabel(self, flowlabel: u32) -> Self {
-        self.append_info_data(InfoIpTunnel::FlowInfo(flowlabel))
+    /// Set the traffic class value.
+    ///
+    /// `val` is the 8-bit traffic class value.
+    /// When `Some`, the tclass bits are set and `UseOrigTclass` flag is
+    /// cleared. When `None`, the `UseOrigTclass` flag is set (inherit).
+    pub fn tclass(mut self, val: Option<u8>) -> Self {
+        match val {
+            Some(v) => {
+                let flowinfo = self.iface_self.get_flowinfo_mut();
+                *flowinfo = (*flowinfo & !IP6_FLOWINFO_TCLASS_MASK)
+                    | ((v as u32) << 20);
+                let f = self.iface_self.get_flags_mut();
+                *f &= !Ip6TunnelFlags::UseOrigTclass;
+            }
+            None => {
+                let f = self.iface_self.get_flags_mut();
+                *f |= Ip6TunnelFlags::UseOrigTclass;
+            }
+        }
+        self
+    }
+
+    /// Set the flow label value.
+    ///
+    /// `val` is the 20-bit flow label value.
+    /// When `Some`, the flowlabel bits are set and `UseOrigFlowlabel` flag
+    /// is cleared. When `None`, the `UseOrigFlowlabel` flag is set (inherit).
+    /// Values exceeding 20 bits are ignored with a warning logged.
+    pub fn flowlabel(mut self, val: Option<u32>) -> Self {
+        match val {
+            Some(v) => {
+                if v > 0xfffff {
+                    log::error!(
+                        "flowlabel value {v:#x} exceeds 20 bits \
+                        (max 0xFFFFF), ignoring"
+                    );
+                    return self;
+                }
+                let flowinfo = self.iface_self.get_flowinfo_mut();
+                *flowinfo = (*flowinfo & !IP6_FLOWINFO_FLOWLABEL_MASK)
+                    | (v & IP6_FLOWINFO_FLOWLABEL_MASK);
+                let f = self.iface_self.get_flags_mut();
+                *f &= !Ip6TunnelFlags::UseOrigFlowlabel;
+            }
+            None => {
+                let f = self.iface_self.get_flags_mut();
+                *f |= Ip6TunnelFlags::UseOrigFlowlabel;
+            }
+        }
+        self
+    }
+
+    /// Set or clear an ip6 tunnel flag
+    pub fn set_flag(mut self, flag: Ip6TunnelFlags, enabled: bool) -> Self {
+        let f = self.iface_self.get_flags_mut();
+        if enabled {
+            *f |= flag;
+        } else {
+            *f &= !flag;
+        }
+        self
     }
 
     /// This is equivalent to `mode MODE` in command
     /// `ip link add name NAME type ip6tnl mode MODE`.
     pub fn protocol(self, proto: IpProtocol) -> Self {
         self.append_info_data(InfoIpTunnel::Protocol(proto))
+    }
+
+    /// This is equivalent to `mode MODE` in command
+    /// `ip link add name NAME type ip6tnl mode MODE`.
+    pub fn mode(self, mode: IpProtocol) -> Self {
+        self.protocol(mode)
     }
 
     /// This is equivalent to `[no]pmtudisc` in command
@@ -137,11 +235,6 @@ impl LinkMessageBuilder<LinkIp6Tnl> {
         self.append_info_data(InfoIpTunnel::FwMark(mark))
     }
 
-    /// Set IP6 tunnel flags
-    pub fn ip6_flags(self, flags: Ip6TunnelFlags) -> Self {
-        self.append_info_data(InfoIpTunnel::Ipv6Flags(flags))
-    }
-
     /// This is equivalent to `encap { fou | gue | none }` in command
     /// `ip link add name NAME type ip6tnl encap TYPE`.
     pub fn encap_type(self, encap_type: TunnelEncapType) -> Self {
@@ -164,5 +257,17 @@ impl LinkMessageBuilder<LinkIp6Tnl> {
     /// `ip link add name NAME type ip6tnl encap-csum`.
     pub fn encap_flags(self, flags: TunnelEncapFlags) -> Self {
         self.append_info_data(InfoIpTunnel::EncapFlags(flags))
+    }
+
+    /// Set arbitrary [InfoIpTunnel::Ipv6Flags]
+    pub fn ipv6_flags(mut self, flags: Ip6TunnelFlags) -> Self {
+        self.iface_self.flags = Some(flags);
+        self
+    }
+
+    /// Set arbitrary [InfoIpTunnel::FlowInfo]
+    pub fn flowinfo_raw(mut self, flowinfo: u32) -> Self {
+        self.iface_self.flowinfo = Some(flowinfo);
+        self
     }
 }

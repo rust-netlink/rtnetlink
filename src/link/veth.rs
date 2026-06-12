@@ -5,7 +5,7 @@ use crate::{
     LinkMessageBuilder, LinkUnspec,
 };
 
-#[derive(Debug)]
+#[derive(Default, Debug)]
 /// Represent virtual ethernet interface.
 /// Example code on creating a veth pair
 /// ```no_run

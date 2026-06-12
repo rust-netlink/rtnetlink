@@ -5,7 +5,7 @@ use crate::{
     LinkMessageBuilder,
 };
 
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkBondPort;
 
 impl LinkBondPort {
