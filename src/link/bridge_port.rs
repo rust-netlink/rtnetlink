@@ -8,7 +8,7 @@ use crate::{
     LinkMessageBuilder,
 };
 
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkBridgePort;
 
 impl LinkBridgePort {

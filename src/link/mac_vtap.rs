@@ -30,7 +30,7 @@ use crate::{
 /// ```
 ///
 /// Please check LinkMessageBuilder::<LinkMacVtap> for more detail.
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkMacVtap;
 
 impl LinkMacVtap {

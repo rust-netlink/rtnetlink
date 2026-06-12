@@ -34,7 +34,7 @@ use crate::{
 /// ```
 ///
 /// Please check LinkMessageBuilder::<LinkMacSec> for more detail.
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkMacSec;
 
 impl LinkMacSec {

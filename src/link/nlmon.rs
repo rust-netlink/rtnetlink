@@ -19,7 +19,7 @@ use crate::{link::LinkMessageBuilder, packet_route::link::InfoKind};
 ///         .map_err(|e| format!("{e}"))
 /// }
 /// ```
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkNlmon;
 
 impl LinkNlmon {

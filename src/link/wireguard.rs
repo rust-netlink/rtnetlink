@@ -21,7 +21,7 @@ use crate::{link::LinkMessageBuilder, packet_route::link::InfoKind};
 /// ```
 ///
 /// Please check LinkMessageBuilder::<LinkWireguard> for more detail.
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkWireguard;
 
 impl LinkWireguard {

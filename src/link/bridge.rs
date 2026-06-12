@@ -28,21 +28,48 @@ use crate::{
 /// ```
 ///
 /// Please check LinkMessageBuilder::<LinkBridge> for more detail.
-#[derive(Debug)]
-pub struct LinkBridge;
+#[derive(Default, Debug)]
+pub struct LinkBridge {
+    boolopt: Option<BridgeBooleanOptions>,
+}
 
 impl LinkBridge {
     /// Equal to `LinkMessageBuilder::<LinkBridge>::new().up()`
     pub fn new(name: &str) -> LinkMessageBuilder<Self> {
         LinkMessageBuilder::<LinkBridge>::new(name).up()
     }
+
+    pub(crate) fn pre_build_info_data_process(
+        &self,
+        info_data: &mut Option<InfoData>,
+    ) {
+        let Some(boolopt) = self.boolopt else {
+            return;
+        };
+        if boolopt.mask == BridgeBooleanOptionFlags::empty() {
+            return;
+        }
+        let InfoData::Bridge(infos) =
+            info_data.get_or_insert_with(|| InfoData::Bridge(Vec::new()))
+        else {
+            log::error!("BUG: InfoData is not Bridge when processing bridge");
+            return;
+        };
+        infos.push(InfoBridge::MultiBoolOpt(boolopt));
+    }
 }
 
 impl LinkMessageBuilder<LinkBridge> {
     /// Create [LinkMessageBuilder] for linux bridge
     pub fn new(name: &str) -> Self {
-        LinkMessageBuilder::<LinkBridge>::new_with_info_kind(InfoKind::Bridge)
-            .name(name.to_string())
+        let mut builder = LinkMessageBuilder::<LinkBridge>::new_with_info_kind(
+            InfoKind::Bridge,
+        )
+        .name(name.to_string());
+        builder.set_pre_build_info_data_func(
+            LinkBridge::pre_build_info_data_process,
+        );
+        builder
     }
 
     pub fn append_info_data(self, info: InfoBridge) -> Self {
@@ -57,36 +84,19 @@ impl LinkMessageBuilder<LinkBridge> {
     }
 
     pub fn set_boolean_opt(
-        self,
+        mut self,
         opt: BridgeBooleanOptionFlags,
         value: bool,
     ) -> Self {
-        let mut ret = self;
-        if let InfoData::Bridge(infos) = ret
-            .info_data
-            .get_or_insert_with(|| InfoData::Bridge(Vec::new()))
-        {
-            let mut found = false;
-            for info in infos.iter_mut() {
-                if let InfoBridge::MultiBoolOpt(opts) = info {
-                    found = true;
-                    opts.value.set(opt, value);
-                    opts.mask.set(opt, true);
-                    break;
-                }
+        let opts = self.iface_self.boolopt.get_or_insert_with(|| {
+            BridgeBooleanOptions {
+                value: BridgeBooleanOptionFlags::empty(),
+                mask: BridgeBooleanOptionFlags::empty(),
             }
-            if !found {
-                infos.push(InfoBridge::MultiBoolOpt(BridgeBooleanOptions {
-                    value: if value {
-                        opt
-                    } else {
-                        BridgeBooleanOptionFlags::empty()
-                    },
-                    mask: opt,
-                }));
-            }
-        }
-        ret
+        });
+        opts.value.set(opt, value);
+        opts.mask.set(opt, true);
+        self
     }
 
     pub fn ageing_time(self, value: u32) -> Self {

@@ -44,7 +44,7 @@ impl From<QosMapping> for VlanQosMapping {
 /// ```
 ///
 /// Please check LinkMessageBuilder::<LinkVlan> for more detail.
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkVlan;
 
 impl LinkVlan {

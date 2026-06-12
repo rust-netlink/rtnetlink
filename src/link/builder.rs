@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use std::{marker::PhantomData, os::fd::RawFd};
+use std::os::fd::RawFd;
 
 use crate::packet_route::{
     link::{
@@ -35,7 +35,7 @@ use crate::packet_route::{
 ///         .map_err(|e| format!("{e}"))
 /// }
 /// ```
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct LinkUnspec;
 
 impl LinkUnspec {
@@ -61,10 +61,11 @@ pub struct LinkMessageBuilder<T> {
     pub(crate) port_kind: Option<InfoPortKind>,
     pub(crate) port_data: Option<InfoPortData>,
     pub(crate) extra_attriutes: Vec<LinkAttribute>,
-    _phantom: PhantomData<T>,
+    pre_build_info_data_process_fn: Option<fn(&T, &mut Option<InfoData>)>,
+    pub(crate) iface_self: T,
 }
 
-impl<T> Default for LinkMessageBuilder<T> {
+impl<T: Default> Default for LinkMessageBuilder<T> {
     fn default() -> Self {
         Self {
             header: Default::default(),
@@ -73,17 +74,27 @@ impl<T> Default for LinkMessageBuilder<T> {
             extra_attriutes: Default::default(),
             port_kind: None,
             port_data: None,
-            _phantom: Default::default(),
+            pre_build_info_data_process_fn: None,
+            iface_self: T::default(),
         }
     }
 }
 
-impl<T> LinkMessageBuilder<T> {
+impl<T: Default> LinkMessageBuilder<T> {
     pub fn new_with_info_kind(info_kind: InfoKind) -> Self {
         Self {
             info_kind: Some(info_kind),
             ..Default::default()
         }
+    }
+}
+
+impl<T> LinkMessageBuilder<T> {
+    pub fn set_pre_build_info_data_func(
+        &mut self,
+        f: fn(&T, &mut Option<InfoData>),
+    ) {
+        self.pre_build_info_data_process_fn = Some(f);
     }
 
     /// Set arbitrary [LinkHeader]
@@ -236,7 +247,12 @@ impl<T> LinkMessageBuilder<T> {
         if let Some(info_kind) = self.info_kind {
             link_infos.push(LinkInfo::Kind(info_kind));
         }
-        if let Some(info_data) = self.info_data {
+
+        let mut info_data = self.info_data;
+        if let Some(pre_build_fn) = self.pre_build_info_data_process_fn {
+            pre_build_fn(&self.iface_self, &mut info_data);
+        }
+        if let Some(info_data) = info_data {
             link_infos.push(LinkInfo::Data(info_data));
         }
 
