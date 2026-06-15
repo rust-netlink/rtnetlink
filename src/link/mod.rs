@@ -12,6 +12,8 @@ mod del;
 mod dummy;
 mod geneve;
 mod get;
+mod gre;
+mod gre6;
 mod handle;
 mod hsr;
 mod ip6tnl;
@@ -44,6 +46,8 @@ pub use self::{
     dummy::LinkDummy,
     geneve::LinkGeneve,
     get::LinkGetRequest,
+    gre::LinkGre,
+    gre6::LinkGre6,
     handle::LinkHandle,
     hsr::LinkHsr,
     ip6tnl::LinkIp6Tnl,
