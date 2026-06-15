@@ -160,6 +160,58 @@ impl<T> LinkMessageBuilder<T> {
         ret
     }
 
+    /// Enable or disable multicast on the link (equivalent to
+    /// `ip link set DEV multicast on/off`)
+    pub fn multicast(self, enable: bool) -> Self {
+        let mut ret = self;
+        if enable {
+            ret.header.flags |= LinkFlags::Multicast;
+        } else {
+            ret.header.flags.remove(LinkFlags::Multicast);
+        }
+        ret.header.change_mask |= LinkFlags::Multicast;
+        ret
+    }
+
+    /// Enable or disable allmulticast mode on the link (equivalent to
+    /// `ip link set DEV allmulticast on/off`)
+    pub fn allmulticast(self, enable: bool) -> Self {
+        let mut ret = self;
+        if enable {
+            ret.header.flags |= LinkFlags::Allmulti;
+        } else {
+            ret.header.flags.remove(LinkFlags::Allmulti);
+        }
+        ret.header.change_mask |= LinkFlags::Allmulti;
+        ret
+    }
+
+    /// Enable or disable dynamic flag on the link (equivalent to
+    /// `ip link set DEV dynamic on/off`)
+    pub fn dynamic(self, enable: bool) -> Self {
+        let mut ret = self;
+        if enable {
+            ret.header.flags |= LinkFlags::Dynamic;
+        } else {
+            ret.header.flags.remove(LinkFlags::Dynamic);
+        }
+        ret.header.change_mask |= LinkFlags::Dynamic;
+        ret
+    }
+
+    /// Enable or disable notrailers flag on the link (equivalent to
+    /// `ip link set DEV trailers on/off`)
+    pub fn notrailers(self, enable: bool) -> Self {
+        let mut ret = self;
+        if enable {
+            ret.header.flags.remove(LinkFlags::Notrailers);
+        } else {
+            ret.header.flags |= LinkFlags::Notrailers;
+        }
+        ret.header.change_mask |= LinkFlags::Notrailers;
+        ret
+    }
+
     pub fn name(self, name: impl Into<String>) -> Self {
         self.append_extra_attribute(LinkAttribute::IfName(name.into()))
     }
@@ -219,6 +271,41 @@ impl<T> LinkMessageBuilder<T> {
     /// UP.
     pub fn nocontroller(self) -> Self {
         self.append_extra_attribute(LinkAttribute::Controller(0))
+    }
+
+    /// Set the tx queue length (equivalent to `ip link set DEV txqueuelen QLEN`)
+    pub fn txqueuelen(self, len: u32) -> Self {
+        self.append_extra_attribute(LinkAttribute::TxQueueLen(len))
+    }
+
+    /// Set the broadcast address (equivalent to `ip link set DEV broadcast LLADDR`)
+    pub fn broadcast(self, addr: Vec<u8>) -> Self {
+        self.append_extra_attribute(LinkAttribute::Broadcast(addr))
+    }
+
+    /// Set the device group (equivalent to `ip link set DEV group GROUP`)
+    pub fn link_group(self, group: u32) -> Self {
+        self.append_extra_attribute(LinkAttribute::Group(group))
+    }
+
+    /// Set protodown state (equivalent to `ip link set DEV protodown on/off`)
+    pub fn protodown(self, on: bool) -> Self {
+        self.append_extra_attribute(LinkAttribute::ProtoDown(if on { 1 } else { 0 }))
+    }
+
+    /// Set carrier state (equivalent to `ip link set DEV carrier on/off`)
+    pub fn carrier(self, on: bool) -> Self {
+        self.append_extra_attribute(LinkAttribute::Carrier(if on { 1 } else { 0 }))
+    }
+
+    /// Set the operational state (equivalent to `ip link set DEV state STATE`)
+    pub fn operstate(self, state: u8) -> Self {
+        self.append_extra_attribute(LinkAttribute::OperState(state.into()))
+    }
+
+    /// Set the interface alias (equivalent to `ip link set DEV alias NAME`)
+    pub fn alias(self, name: impl Into<String>) -> Self {
+        self.append_extra_attribute(LinkAttribute::IfAlias(name.into()))
     }
 
     pub fn set_port_kind(self, port_kind: InfoPortKind) -> Self {
