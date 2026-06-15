@@ -15,6 +15,7 @@ mod handle;
 mod hsr;
 mod ip6tnl;
 mod iptun;
+mod ipvlan;
 mod mac_vlan;
 mod mac_vtap;
 mod macsec;
@@ -45,6 +46,7 @@ pub use self::{
     hsr::LinkHsr,
     ip6tnl::LinkIp6Tnl,
     iptun::LinkIpIp,
+    ipvlan::{LinkIpVlan, LinkIpVtap},
     mac_vlan::LinkMacVlan,
     mac_vtap::LinkMacVtap,
     macsec::LinkMacSec,
