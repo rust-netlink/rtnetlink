@@ -28,6 +28,7 @@ mod nlmon;
 mod property_add;
 mod property_del;
 mod set;
+mod vcan;
 mod veth;
 mod vlan;
 mod vrf;
@@ -63,6 +64,7 @@ pub use self::{
     property_add::LinkNewPropRequest,
     property_del::LinkDelPropRequest,
     set::LinkSetRequest,
+    vcan::LinkVcan,
     veth::LinkVeth,
     vlan::{LinkVlan, QosMapping},
     vrf::LinkVrf,
