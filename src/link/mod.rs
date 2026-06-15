@@ -22,6 +22,7 @@ mod ipvlan;
 mod mac_vlan;
 mod mac_vtap;
 mod macsec;
+mod netdevsim;
 mod netkit;
 mod nlmon;
 mod property_add;
@@ -56,6 +57,7 @@ pub use self::{
     mac_vlan::LinkMacVlan,
     mac_vtap::LinkMacVtap,
     macsec::LinkMacSec,
+    netdevsim::LinkNetdevsim,
     netkit::LinkNetkit,
     nlmon::LinkNlmon,
     property_add::LinkNewPropRequest,

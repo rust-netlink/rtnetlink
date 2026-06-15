@@ -54,7 +54,7 @@ pub use crate::{
         LinkGeneve, LinkGetRequest, LinkGre, LinkGre6, LinkHandle, LinkHsr,
         LinkIp6Tnl, LinkIpIp, LinkIpVlan, LinkIpVtap, LinkMacSec, LinkMacVlan,
         LinkMacVtap, LinkMessageBuilder,
-        LinkNetkit, LinkNlmon, LinkSetRequest, LinkUnspec, LinkVeth, LinkVlan,
+        LinkNetdevsim, LinkNetkit, LinkNlmon, LinkSetRequest, LinkUnspec, LinkVeth, LinkVlan,
         LinkVrf, LinkVxcan, LinkVxlan, LinkWireguard, LinkXfrm, QosMapping,
     },
     multicast::MulticastGroup,
