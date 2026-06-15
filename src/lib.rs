@@ -51,8 +51,9 @@ pub use crate::{
     link::{
         LinkAddRequest, LinkBond, LinkBondPort, LinkBridge, LinkBridgePort,
         LinkBridgeVlan, LinkDelPropRequest, LinkDelRequest, LinkDummy,
-        LinkGetRequest, LinkHandle, LinkHsr, LinkIp6Tnl, LinkIpIp, LinkIpVlan,
-        LinkIpVtap, LinkMacSec, LinkMacVlan, LinkMacVtap, LinkMessageBuilder,
+        LinkGeneve, LinkGetRequest, LinkHandle, LinkHsr, LinkIp6Tnl, LinkIpIp,
+        LinkIpVlan, LinkIpVtap, LinkMacSec, LinkMacVlan, LinkMacVtap,
+        LinkMessageBuilder,
         LinkNetkit, LinkNlmon, LinkSetRequest, LinkUnspec, LinkVeth, LinkVlan,
         LinkVrf, LinkVxcan, LinkVxlan, LinkWireguard, LinkXfrm, QosMapping,
     },
