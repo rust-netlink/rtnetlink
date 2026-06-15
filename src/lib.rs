@@ -49,7 +49,8 @@ pub use crate::{
     errors::Error,
     handle::Handle,
     link::{
-        LinkAddRequest, LinkBond, LinkBondPort, LinkBridge, LinkBridgePort,
+        LinkAddRequest,         LinkBond, LinkBondPort, LinkBridge, LinkBridgePort,
+        LinkVcan,
         LinkBridgeVlan, LinkDelPropRequest, LinkDelRequest, LinkDummy,
         LinkGeneve, LinkGetRequest, LinkGre, LinkGre6, LinkHandle, LinkHsr,
         LinkIp6Tnl, LinkIpIp, LinkIpVlan, LinkIpVtap, LinkMacSec, LinkMacVlan,
