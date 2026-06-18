@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 mod add;
+mod afstats;
 mod bond;
 mod bond_port;
 mod bridge;
@@ -39,6 +40,7 @@ mod xfrm;
 
 pub use self::{
     add::LinkAddRequest,
+    afstats::AfstatsRequest,
     bond::LinkBond,
     bond_port::LinkBondPort,
     bridge::LinkBridge,
