@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
 use super::{
-    LinkAddRequest, LinkDelPropRequest, LinkDelRequest, LinkGetRequest,
-    LinkNewPropRequest, LinkSetRequest,
+    AfstatsRequest, LinkAddRequest, LinkDelPropRequest, LinkDelRequest,
+    LinkGetRequest, LinkNewPropRequest, LinkSetRequest,
 };
 use crate::{
     packet_core::{NLM_F_ACK, NLM_F_REQUEST},
@@ -57,6 +57,12 @@ impl LinkHandle {
     /// Retrieve the list of links (equivalent to `ip link show`)
     pub fn get(&self) -> LinkGetRequest {
         LinkGetRequest::new(self.0.clone())
+    }
+
+    /// Retrieve address-family specific statistics (equivalent to `ip link
+    /// afstats`)
+    pub fn afstats(&self) -> AfstatsRequest {
+        AfstatsRequest::new(self.0.clone())
     }
 
     /// The `LinkHandle::set()` cannot be used for setting bond or bridge port
