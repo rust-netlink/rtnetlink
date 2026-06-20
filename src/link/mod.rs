@@ -15,9 +15,9 @@ mod geneve;
 mod get;
 mod gre;
 mod gre6;
-mod ifb;
 mod handle;
 mod hsr;
+mod ifb;
 mod ip6tnl;
 mod iptun;
 mod ipvlan;
@@ -30,6 +30,7 @@ mod nlmon;
 mod property_add;
 mod property_del;
 mod set;
+mod sit;
 mod vcan;
 mod veth;
 mod vlan;
@@ -68,6 +69,7 @@ pub use self::{
     property_add::LinkNewPropRequest,
     property_del::LinkDelPropRequest,
     set::LinkSetRequest,
+    sit::LinkSit,
     vcan::LinkVcan,
     veth::LinkVeth,
     vlan::{LinkVlan, QosMapping},
