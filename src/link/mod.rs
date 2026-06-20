@@ -15,6 +15,7 @@ mod geneve;
 mod get;
 mod gre;
 mod gre6;
+mod ifb;
 mod handle;
 mod hsr;
 mod ip6tnl;
@@ -54,6 +55,7 @@ pub use self::{
     gre6::LinkGre6,
     handle::LinkHandle,
     hsr::LinkHsr,
+    ifb::LinkIfb,
     ip6tnl::LinkIp6Tnl,
     iptun::LinkIpIp,
     ipvlan::{LinkIpVlan, LinkIpVtap},
