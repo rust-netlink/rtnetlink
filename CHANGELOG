@@ -1,4 +1,23 @@
 # Changelog
+## [0.22.0] - 2026-06-23
+### Breaking changes
+ - Use netlink-packet-route 0.31.0. (ceb2aff)
+ - Migrate to more permissive/accurate string types. (0c42c83)
+ - Replace function on `NeighbourGetRequest` to set family. (97dd4ca)
+ - Bump minimum supported Rust version to 1.71. (3041a35)
+
+### New features
+ - link: Add `LinkIp6Tnl` builder for IPv4/IPv6 tunnel over IPv6. (908fa90)
+ - link: vxlan: Add builder functions for label_policy, reserved_bits, and mc_route. (616450a)
+ - link: Add IPIP message builder. (e92b23f)
+ - link: Add HSR interface support. (f1fb864)
+ - link: vxlan: Add localbypass support. (cf0a5c8)
+ - link: Add nlmon support. (9b4536a)
+ - Add API for Seg6 encapsulation. (e48d718)
+
+### Bug fixes
+ - link: ip6tnl: Fix flow_info and flag handling. (e7799b6)
+
 ## [0.21.0] - 2026-04-18
 ### Breaking changes
  - Use netlink-packet-route 0.30. (7bfbbf5)
