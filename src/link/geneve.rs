@@ -3,10 +3,8 @@
 use std::net::{Ipv4Addr, Ipv6Addr};
 
 use crate::{
+    packet_route::link::{GeneveDf, InfoData, InfoGeneve, InfoKind},
     LinkMessageBuilder,
-    packet_route::link::{
-        GeneveDf, InfoData, InfoGeneve, InfoKind,
-    },
 };
 
 /// Represent GENEVE interface.

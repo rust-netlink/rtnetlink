@@ -273,12 +273,14 @@ impl<T> LinkMessageBuilder<T> {
         self.append_extra_attribute(LinkAttribute::Controller(0))
     }
 
-    /// Set the tx queue length (equivalent to `ip link set DEV txqueuelen QLEN`)
+    /// Set the tx queue length (equivalent to `ip link set DEV txqueuelen
+    /// QLEN`)
     pub fn txqueuelen(self, len: u32) -> Self {
         self.append_extra_attribute(LinkAttribute::TxQueueLen(len))
     }
 
-    /// Set the broadcast address (equivalent to `ip link set DEV broadcast LLADDR`)
+    /// Set the broadcast address (equivalent to `ip link set DEV broadcast
+    /// LLADDR`)
     pub fn broadcast(self, addr: Vec<u8>) -> Self {
         self.append_extra_attribute(LinkAttribute::Broadcast(addr))
     }
@@ -290,12 +292,20 @@ impl<T> LinkMessageBuilder<T> {
 
     /// Set protodown state (equivalent to `ip link set DEV protodown on/off`)
     pub fn protodown(self, on: bool) -> Self {
-        self.append_extra_attribute(LinkAttribute::ProtoDown(if on { 1 } else { 0 }))
+        self.append_extra_attribute(LinkAttribute::ProtoDown(if on {
+            1
+        } else {
+            0
+        }))
     }
 
     /// Set carrier state (equivalent to `ip link set DEV carrier on/off`)
     pub fn carrier(self, on: bool) -> Self {
-        self.append_extra_attribute(LinkAttribute::Carrier(if on { 1 } else { 0 }))
+        self.append_extra_attribute(LinkAttribute::Carrier(if on {
+            1
+        } else {
+            0
+        }))
     }
 
     /// Set the operational state (equivalent to `ip link set DEV state STATE`)
