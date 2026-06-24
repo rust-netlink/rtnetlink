@@ -3,6 +3,7 @@
 mod add;
 mod afstats;
 mod bareudp;
+mod batadv;
 mod bond;
 mod bond_port;
 mod bridge;
@@ -49,6 +50,7 @@ pub use self::{
     add::LinkAddRequest,
     afstats::AfstatsRequest,
     bareudp::LinkBareudp,
+    batadv::LinkBatAdv,
     bond::LinkBond,
     bond_port::LinkBondPort,
     bridge::LinkBridge,
