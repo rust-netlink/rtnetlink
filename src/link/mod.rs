@@ -36,6 +36,7 @@ mod vcan;
 mod veth;
 mod virt_wifi;
 mod vlan;
+mod wwan;
 mod vrf;
 mod vxcan;
 mod vxlan;
@@ -77,6 +78,7 @@ pub use self::{
     veth::LinkVeth,
     virt_wifi::LinkVirtWifi,
     vlan::{LinkVlan, QosMapping},
+    wwan::LinkWwan,
     vrf::LinkVrf,
     vxcan::LinkVxcan,
     vxlan::LinkVxlan,
