@@ -15,6 +15,7 @@ mod geneve;
 mod get;
 mod gre;
 mod gre6;
+mod gtp;
 mod handle;
 mod hsr;
 mod ifb;
@@ -33,6 +34,7 @@ mod set;
 mod sit;
 mod vcan;
 mod veth;
+mod virt_wifi;
 mod vlan;
 mod vrf;
 mod vxcan;
@@ -54,6 +56,7 @@ pub use self::{
     get::LinkGetRequest,
     gre::LinkGre,
     gre6::LinkGre6,
+    gtp::LinkGtp,
     handle::LinkHandle,
     hsr::LinkHsr,
     ifb::LinkIfb,
@@ -72,6 +75,7 @@ pub use self::{
     sit::LinkSit,
     vcan::LinkVcan,
     veth::LinkVeth,
+    virt_wifi::LinkVirtWifi,
     vlan::{LinkVlan, QosMapping},
     vrf::LinkVrf,
     vxcan::LinkVxcan,

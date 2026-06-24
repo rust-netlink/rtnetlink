@@ -3,10 +3,10 @@
 use std::net::Ipv6Addr;
 
 use crate::{
-    LinkMessageBuilder,
     packet_route::link::{
         GreEncapFlags, GreEncapType, GreIOFlags, InfoData, InfoGre6, InfoKind,
     },
+    LinkMessageBuilder,
 };
 
 /// Represent IP6GRE/IP6Gretap interface (IPv6).
@@ -37,9 +37,8 @@ impl LinkMessageBuilder<LinkGre6> {
     fn append_info_data(self, info: InfoGre6) -> Self {
         let mut ret = self;
         let kind = ret.info_kind.clone();
-        if let InfoData::GreTun6(infos) | InfoData::GreTap6(infos) = ret
-            .info_data
-            .get_or_insert_with(|| match kind {
+        if let InfoData::GreTun6(infos) | InfoData::GreTap6(infos) =
+            ret.info_data.get_or_insert_with(|| match kind {
                 Some(InfoKind::GreTap6) => InfoData::GreTap6(Vec::new()),
                 _ => InfoData::GreTun6(Vec::new()),
             })

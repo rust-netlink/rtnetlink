@@ -3,10 +3,10 @@
 use std::net::Ipv4Addr;
 
 use crate::{
-    LinkMessageBuilder,
     packet_route::link::{
         GreEncapFlags, GreEncapType, GreIOFlags, InfoData, InfoGre, InfoKind,
     },
+    LinkMessageBuilder,
 };
 
 /// Represent GRE/Gretap interface (IPv4).
@@ -37,9 +37,8 @@ impl LinkMessageBuilder<LinkGre> {
     fn append_info_data(self, info: InfoGre) -> Self {
         let mut ret = self;
         let kind = ret.info_kind.clone();
-        if let InfoData::GreTun(infos) | InfoData::GreTap(infos) = ret
-            .info_data
-            .get_or_insert_with(|| match kind {
+        if let InfoData::GreTun(infos) | InfoData::GreTap(infos) =
+            ret.info_data.get_or_insert_with(|| match kind {
                 Some(InfoKind::GreTap) => InfoData::GreTap(Vec::new()),
                 _ => InfoData::GreTun(Vec::new()),
             })

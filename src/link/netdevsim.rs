@@ -32,7 +32,9 @@ impl LinkNetdevsim {
 impl LinkMessageBuilder<LinkNetdevsim> {
     /// Create [LinkMessageBuilder] for netdevsim interface type
     pub fn new(name: &str) -> Self {
-        LinkMessageBuilder::<LinkNetdevsim>::new_with_info_kind(InfoKind::Netdevsim)
-            .name(name.to_string())
+        LinkMessageBuilder::<LinkNetdevsim>::new_with_info_kind(
+            InfoKind::Netdevsim,
+        )
+        .name(name.to_string())
     }
 }
