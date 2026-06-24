@@ -32,15 +32,16 @@ mod property_add;
 mod property_del;
 mod set;
 mod sit;
+mod team;
 mod vcan;
 mod veth;
 mod virt_wifi;
 mod vlan;
-mod wwan;
 mod vrf;
 mod vxcan;
 mod vxlan;
 mod wireguard;
+mod wwan;
 mod xfrm;
 
 pub use self::{
@@ -74,15 +75,16 @@ pub use self::{
     property_del::LinkDelPropRequest,
     set::LinkSetRequest,
     sit::LinkSit,
+    team::LinkTeam,
     vcan::LinkVcan,
     veth::LinkVeth,
     virt_wifi::LinkVirtWifi,
     vlan::{LinkVlan, QosMapping},
-    wwan::LinkWwan,
     vrf::LinkVrf,
     vxcan::LinkVxcan,
     vxlan::LinkVxlan,
     wireguard::LinkWireguard,
+    wwan::LinkWwan,
     xfrm::LinkXfrm,
 };
 
