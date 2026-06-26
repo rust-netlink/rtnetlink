@@ -51,7 +51,7 @@ pub use crate::{
     link::{
         AfstatsRequest, LinkAddRequest, LinkBareudp, LinkBatAdv, LinkBond,
         LinkBondPort, LinkBridge, LinkBridgePort, LinkBridgeVlan, LinkCan,
-        LinkDelPropRequest, LinkDelRequest, LinkDummy, LinkGeneve,
+        LinkDelPropRequest, LinkDelRequest, LinkDsa, LinkDummy, LinkGeneve,
         LinkGetRequest, LinkGre, LinkGre6, LinkGtp, LinkHandle, LinkHsr,
         LinkIfb, LinkIp6Tnl, LinkIpIp, LinkIpVlan, LinkIpVtap, LinkMacSec,
         LinkMacVlan, LinkMacVtap, LinkMessageBuilder, LinkNetdevsim,
