@@ -13,6 +13,7 @@ mod bridge_vlan;
 mod builder;
 mod can;
 mod del;
+mod dsa;
 mod dummy;
 mod geneve;
 mod get;
@@ -59,6 +60,7 @@ pub use self::{
     builder::{LinkMessageBuilder, LinkUnspec},
     can::LinkCan,
     del::LinkDelRequest,
+    dsa::LinkDsa,
     dummy::LinkDummy,
     geneve::LinkGeneve,
     get::LinkGetRequest,
