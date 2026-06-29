@@ -4,7 +4,8 @@ use std::net::Ipv6Addr;
 
 use crate::{
     packet_route::link::{
-        GreEncapFlags, GreEncapType, GreIOFlags, InfoData, InfoGre6, InfoKind,
+        ErSpanDir, GreEncapFlags, GreEncapType, GreIOFlags, InfoData, InfoGre6,
+        InfoKind,
     },
     LinkMessageBuilder,
 };
@@ -21,6 +22,10 @@ impl LinkGre6 {
     pub fn new_gretap6(name: &str) -> LinkMessageBuilder<Self> {
         LinkMessageBuilder::<LinkGre6>::new_gretap6(name)
     }
+
+    pub fn new_ip6erspan(name: &str) -> LinkMessageBuilder<Self> {
+        LinkMessageBuilder::<LinkGre6>::new_ip6erspan(name)
+    }
 }
 
 impl LinkMessageBuilder<LinkGre6> {
@@ -34,12 +39,20 @@ impl LinkMessageBuilder<LinkGre6> {
             .name(name.to_string())
     }
 
+    pub fn new_ip6erspan(name: &str) -> Self {
+        LinkMessageBuilder::<LinkGre6>::new_with_info_kind(InfoKind::Ip6ErSpan)
+            .name(name.to_string())
+    }
+
     fn append_info_data(self, info: InfoGre6) -> Self {
         let mut ret = self;
         let kind = ret.info_kind.clone();
-        if let InfoData::GreTun6(infos) | InfoData::GreTap6(infos) =
+        if let InfoData::GreTun6(infos)
+            | InfoData::GreTap6(infos)
+            | InfoData::Ip6ErSpan(infos) =
             ret.info_data.get_or_insert_with(|| match kind {
                 Some(InfoKind::GreTap6) => InfoData::GreTap6(Vec::new()),
+                Some(InfoKind::Ip6ErSpan) => InfoData::Ip6ErSpan(Vec::new()),
                 _ => InfoData::GreTun6(Vec::new()),
             })
         {
@@ -70,6 +83,22 @@ impl LinkMessageBuilder<LinkGre6> {
 
     pub fn fwmark(self, mark: u32) -> Self {
         self.append_info_data(InfoGre6::FwMask(mark))
+    }
+
+    pub fn erspan_index(self, index: u32) -> Self {
+        self.append_info_data(InfoGre6::ErSpanIndex(index))
+    }
+
+    pub fn erspan_ver(self, ver: u8) -> Self {
+        self.append_info_data(InfoGre6::ErSpanVer(ver))
+    }
+
+    pub fn erspan_dir(self, dir: ErSpanDir) -> Self {
+        self.append_info_data(InfoGre6::ErSpanDir(dir))
+    }
+
+    pub fn erspan_hwid(self, hwid: u16) -> Self {
+        self.append_info_data(InfoGre6::ErSpanHwId(hwid))
     }
 
     pub fn iflags(self, flags: GreIOFlags) -> Self {

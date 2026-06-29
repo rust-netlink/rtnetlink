@@ -4,7 +4,8 @@ use std::net::Ipv4Addr;
 
 use crate::{
     packet_route::link::{
-        GreEncapFlags, GreEncapType, GreIOFlags, InfoData, InfoGre, InfoKind,
+        ErSpanDir, GreEncapFlags, GreEncapType, GreIOFlags, InfoData, InfoGre,
+        InfoKind,
     },
     LinkMessageBuilder,
 };
@@ -21,6 +22,10 @@ impl LinkGre {
     pub fn new_gretap(name: &str) -> LinkMessageBuilder<Self> {
         LinkMessageBuilder::<LinkGre>::new_gretap(name)
     }
+
+    pub fn new_erspan(name: &str) -> LinkMessageBuilder<Self> {
+        LinkMessageBuilder::<LinkGre>::new_erspan(name)
+    }
 }
 
 impl LinkMessageBuilder<LinkGre> {
@@ -34,12 +39,20 @@ impl LinkMessageBuilder<LinkGre> {
             .name(name.to_string())
     }
 
+    pub fn new_erspan(name: &str) -> Self {
+        LinkMessageBuilder::<LinkGre>::new_with_info_kind(InfoKind::ErSpan)
+            .name(name.to_string())
+    }
+
     fn append_info_data(self, info: InfoGre) -> Self {
         let mut ret = self;
         let kind = ret.info_kind.clone();
-        if let InfoData::GreTun(infos) | InfoData::GreTap(infos) =
+        if let InfoData::GreTun(infos)
+            | InfoData::GreTap(infos)
+            | InfoData::ErSpan(infos) =
             ret.info_data.get_or_insert_with(|| match kind {
                 Some(InfoKind::GreTap) => InfoData::GreTap(Vec::new()),
+                Some(InfoKind::ErSpan) => InfoData::ErSpan(Vec::new()),
                 _ => InfoData::GreTun(Vec::new()),
             })
         {
@@ -114,5 +127,21 @@ impl LinkMessageBuilder<LinkGre> {
 
     pub fn encap_flags(self, flags: GreEncapFlags) -> Self {
         self.append_info_data(InfoGre::EncapFlags(flags))
+    }
+
+    pub fn erspan_index(self, index: u32) -> Self {
+        self.append_info_data(InfoGre::ErSpanIndex(index))
+    }
+
+    pub fn erspan_ver(self, ver: u8) -> Self {
+        self.append_info_data(InfoGre::ErSpanVer(ver))
+    }
+
+    pub fn erspan_dir(self, dir: ErSpanDir) -> Self {
+        self.append_info_data(InfoGre::ErSpanDir(dir))
+    }
+
+    pub fn erspan_hwid(self, hwid: u16) -> Self {
+        self.append_info_data(InfoGre::ErSpanHwId(hwid))
     }
 }
