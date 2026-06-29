@@ -32,6 +32,7 @@ mod macsec;
 mod netdevsim;
 mod netkit;
 mod nlmon;
+mod pfcp;
 mod property_add;
 mod property_del;
 mod set;
@@ -79,6 +80,7 @@ pub use self::{
     netdevsim::LinkNetdevsim,
     netkit::LinkNetkit,
     nlmon::LinkNlmon,
+    pfcp::LinkPfcp,
     property_add::LinkNewPropRequest,
     property_del::LinkDelPropRequest,
     set::LinkSetRequest,
