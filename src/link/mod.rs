@@ -35,6 +35,7 @@ mod nlmon;
 mod pfcp;
 mod property_add;
 mod property_del;
+mod rmnet;
 mod set;
 mod sit;
 mod team;
@@ -83,6 +84,7 @@ pub use self::{
     pfcp::LinkPfcp,
     property_add::LinkNewPropRequest,
     property_del::LinkDelPropRequest,
+    rmnet::LinkRmNet,
     set::LinkSetRequest,
     sit::LinkSit,
     team::LinkTeam,

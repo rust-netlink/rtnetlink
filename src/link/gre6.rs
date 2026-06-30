@@ -48,8 +48,8 @@ impl LinkMessageBuilder<LinkGre6> {
         let mut ret = self;
         let kind = ret.info_kind.clone();
         if let InfoData::GreTun6(infos)
-            | InfoData::GreTap6(infos)
-            | InfoData::Ip6ErSpan(infos) =
+        | InfoData::GreTap6(infos)
+        | InfoData::Ip6ErSpan(infos) =
             ret.info_data.get_or_insert_with(|| match kind {
                 Some(InfoKind::GreTap6) => InfoData::GreTap6(Vec::new()),
                 Some(InfoKind::Ip6ErSpan) => InfoData::Ip6ErSpan(Vec::new()),
