@@ -11,6 +11,7 @@ mod bridge_port;
 #[cfg(any(target_os = "linux", target_os = "fuchsia", target_os = "android"))]
 mod bridge_vlan;
 mod builder;
+mod can;
 mod del;
 mod dummy;
 mod geneve;
@@ -56,6 +57,7 @@ pub use self::{
     bridge::LinkBridge,
     bridge_port::LinkBridgePort,
     builder::{LinkMessageBuilder, LinkUnspec},
+    can::LinkCan,
     del::LinkDelRequest,
     dummy::LinkDummy,
     geneve::LinkGeneve,
