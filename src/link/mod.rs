@@ -44,6 +44,8 @@ mod veth;
 mod virt_wifi;
 mod vlan;
 mod vrf;
+mod vti;
+mod vti6;
 mod vxcan;
 mod vxlan;
 mod wireguard;
@@ -93,6 +95,8 @@ pub use self::{
     virt_wifi::LinkVirtWifi,
     vlan::{LinkVlan, QosMapping},
     vrf::LinkVrf,
+    vti::LinkVti,
+    vti6::LinkVti6,
     vxcan::LinkVxcan,
     vxlan::LinkVxlan,
     wireguard::LinkWireguard,
