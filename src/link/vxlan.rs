@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 use crate::{
-    packet_route::link::{InfoData, InfoKind, InfoVxlan},
+    packet_route::link::{InfoData, InfoKind, InfoVxlan, VxlanDf},
     LinkMessageBuilder,
 };
 
@@ -271,5 +271,66 @@ impl LinkMessageBuilder<LinkVxlan> {
     /// is enabled.
     pub fn mc_route(self, mc_route: bool) -> Self {
         self.append_info_data(InfoVxlan::McRoute(mc_route))
+    }
+
+    /// Adds the `ttl_inherit` attribute to the VXLAN
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// ttl inherit`. ttl inherit - specifies to inherit TTL from
+    /// the inner packet.
+    pub fn ttl_inherit(self) -> Self {
+        self.append_info_data(InfoVxlan::TtlInheritFlag)
+    }
+
+    /// Adds the `udp_zero_csum6_tx` attribute to the VXLAN
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// [no]udp6zerocsumtx`.
+    pub fn udp_zero_csum6_tx(self, v: bool) -> Self {
+        self.append_info_data(InfoVxlan::UDPZeroCsumTX(v))
+    }
+
+    /// Adds the `udp_zero_csum6_rx` attribute to the VXLAN
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// [no]udp6zerocsumrx`.
+    pub fn udp_zero_csum6_rx(self, v: bool) -> Self {
+        self.append_info_data(InfoVxlan::UDPZeroCsumRX(v))
+    }
+
+    /// Adds the `remcsum_tx` attribute to the VXLAN
+    pub fn remcsum_tx(self, v: bool) -> Self {
+        self.append_info_data(InfoVxlan::RemCsumTX(v))
+    }
+
+    /// Adds the `remcsum_rx` attribute to the VXLAN
+    pub fn remcsum_rx(self, v: bool) -> Self {
+        self.append_info_data(InfoVxlan::RemCsumRX(v))
+    }
+
+    /// Adds the `gbp` flag to the VXLAN (VXLAN-GBP)
+    pub fn gbp(self) -> Self {
+        self.append_info_data(InfoVxlan::Gbp)
+    }
+
+    /// Adds the `gpe` flag to the VXLAN (VXLAN-GPE)
+    pub fn gpe(self) -> Self {
+        self.append_info_data(InfoVxlan::Gpe)
+    }
+
+    /// Adds the `remcsum_no_partial` flag to the VXLAN
+    pub fn remcsum_no_partial(self) -> Self {
+        self.append_info_data(InfoVxlan::RemCsumNoPartial)
+    }
+
+    /// Adds the `df` attribute to the VXLAN
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// df DF`. df - specifies the Don't Fragment policy.
+    pub fn df(self, df: VxlanDf) -> Self {
+        self.append_info_data(InfoVxlan::Df(df))
+    }
+
+    /// Adds the `vnifilter` attribute to the VXLAN
+    /// This is equivalent to `ip link add name NAME type vxlan id VNI
+    /// [no]vnifilter`. \[no\]vnifilter - specifies VNI filtering.
+    pub fn vnifilter(self, v: bool) -> Self {
+        self.append_info_data(InfoVxlan::Vnifilter(v))
     }
 }
