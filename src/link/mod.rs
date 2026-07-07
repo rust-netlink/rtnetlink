@@ -2,6 +2,7 @@
 
 mod add;
 mod afstats;
+mod amt;
 mod bareudp;
 mod batadv;
 mod bond;
@@ -55,6 +56,7 @@ mod xfrm;
 pub use self::{
     add::LinkAddRequest,
     afstats::AfstatsRequest,
+    amt::LinkAmt,
     bareudp::LinkBareudp,
     batadv::LinkBatAdv,
     bond::LinkBond,
