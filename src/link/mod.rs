@@ -25,6 +25,7 @@ mod handle;
 mod hsr;
 mod ifb;
 mod ip6tnl;
+mod ipoib;
 mod iptun;
 mod ipvlan;
 mod mac_vlan;
@@ -40,6 +41,7 @@ mod rmnet;
 mod set;
 mod sit;
 mod team;
+mod tun;
 mod vcan;
 mod veth;
 mod virt_wifi;
@@ -77,6 +79,7 @@ pub use self::{
     hsr::LinkHsr,
     ifb::LinkIfb,
     ip6tnl::LinkIp6Tnl,
+    ipoib::LinkIpoib,
     iptun::LinkIpIp,
     ipvlan::{LinkIpVlan, LinkIpVtap},
     mac_vlan::LinkMacVlan,
@@ -92,6 +95,7 @@ pub use self::{
     set::LinkSetRequest,
     sit::LinkSit,
     team::LinkTeam,
+    tun::LinkTun,
     vcan::LinkVcan,
     veth::LinkVeth,
     virt_wifi::LinkVirtWifi,
