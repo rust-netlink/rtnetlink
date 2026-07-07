@@ -61,6 +61,10 @@ impl LinkMessageBuilder<LinkGre6> {
         ret
     }
 
+    pub fn dev(self, ifindex: u32) -> Self {
+        self.append_info_data(InfoGre6::Link(ifindex))
+    }
+
     pub fn local(self, addr: Ipv6Addr) -> Self {
         self.append_info_data(InfoGre6::Local(addr))
     }
