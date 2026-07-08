@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 use super::{
-    AfstatsRequest, LinkAddRequest, LinkDelPropRequest, LinkDelRequest,
-    LinkGetRequest, LinkNewPropRequest, LinkSetRequest,
+    AfstatsRequest, LinkAddRequest, LinkAssignNsidHandle, LinkDelPropRequest,
+    LinkDelRequest, LinkGetNsidHandle, LinkGetRequest, LinkNewPropRequest,
+    LinkSetRequest,
 };
 use crate::{
     packet_core::{NLM_F_ACK, NLM_F_REQUEST},
@@ -57,6 +58,23 @@ impl LinkHandle {
     /// Retrieve the list of links (equivalent to `ip link show`)
     pub fn get(&self) -> LinkGetRequest {
         LinkGetRequest::new(self.0.clone())
+    }
+
+    /// Resolve a network namespace name to its nsid
+    /// (equivalent to `RTM_GETNSID`).
+    pub fn get_netns_id(&self, name: impl Into<String>) -> LinkGetNsidHandle {
+        LinkGetNsidHandle::new(self.0.clone(), name.into())
+    }
+
+    /// Assign a new nsid to a network namespace
+    /// (equivalent to `RTM_NEWNSID`). Pass `nsid = -1` for automatic
+    /// assignment.
+    pub fn assign_netns_id(
+        &self,
+        name: impl Into<String>,
+        nsid: i32,
+    ) -> LinkAssignNsidHandle {
+        LinkAssignNsidHandle::new(self.0.clone(), name.into(), nsid)
     }
 
     /// Retrieve address-family specific statistics (equivalent to `ip link

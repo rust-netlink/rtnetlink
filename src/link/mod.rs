@@ -33,6 +33,7 @@ mod mac_vtap;
 mod macsec;
 mod netdevsim;
 mod netkit;
+mod netns;
 mod nlmon;
 mod pfcp;
 mod property_add;
@@ -87,6 +88,7 @@ pub use self::{
     macsec::LinkMacSec,
     netdevsim::LinkNetdevsim,
     netkit::LinkNetkit,
+    netns::{LinkAssignNsidHandle, LinkGetNsidHandle},
     nlmon::LinkNlmon,
     pfcp::LinkPfcp,
     property_add::LinkNewPropRequest,
