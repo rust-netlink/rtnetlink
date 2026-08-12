@@ -1,4 +1,49 @@
 # Changelog
+## [0.22.0] - 2026-08-12
+### Breaking changes
+ - Please check netlink-packet-route 0.32.0 API breaks.
+ - Bump minimum supported rust version to 1.71. (3041a35)
+
+### New features
+ - link: link_gre6: add dev() builder method. (9d68ac6)
+ - link: Support assign NSID to a namespace. (adf7bc4)
+ - link: add `LinkTun` builder for TUN/TAP interface. (751284f)
+ - link: add `LinkIpoib` builder for IPoIB interface. (59ba7e7)
+ - link: add `LinkAmt` builder for AMT interface. (84a0a94)
+ - link: Add more options to LinkVxlan. (240e4ea)
+ - link: Add LinkVti and LinkVti6. (ae70e3a)
+ - link: Add LinkRmNet for rmnet support. (694a83e)
+ - link: Add LinkPfcp. (80307e9)
+ - link: Expand LinkGre6 and LinkGre for more properties. (7d8d98b)
+ - link: Add LinkDsa for DSA interface. (082903a)
+ - link: Add LinkCan for CAN interface. (13f2a53)
+ - link: Add LinkBatAdv builder for batadv interface type. (63c520f)
+ - link: add builder for bareudp interface type. (39025dc)
+ - link: add LinkTeam builder for team interface. (61e3142)
+ - link: add WWAN builder. (d6ea80b)
+ - link: Add gtp, netdevsim and virt_wifi builder. (fa565f9)
+ - link: add LinkSit builder for SIT tunnel interface. (ed73430)
+ - link: add LinkIfb builder for ifb interface type. (d323d43)
+ - link: add afstats request support. (3c65356)
+ - link: add helper methods to LinkMessageBuilder for generic actions. (11bfb11)
+ - link: Add LinkVcan builder. (b7dd5bf)
+ - link: Add LinkNetdevsim builder. (64cfe71)
+ - link: Add LinkGre and LinkGre6 builders. (c2d8c1f)
+ - link: Add LinkGeneve builder. (a25018e)
+ - link: Add LinkIpVlan and LinkIpVtap builders. (5c8d62e)
+ - link: ip6tnl: Fix flow_info and flag handling. (e7799b6)
+ - link: Add LinkIp6Tnl builder for IPv4|IPv6 tunnel over IPv6. (908fa90)
+ - link vxlan: Add builder functions for label_policy, reserved_bits and mc_route. (616450a)
+ - link: Add IPIP message builder. (e92b23f)
+ - link: add HSR interface support. (f1fb864)
+ - link: vxlan: add localbypass support. (cf0a5c8)
+ - link: Add support of nlmon. (9b4536a)
+ - link: Add API for Seg6 Encapsulation. (e48d718)
+ - Replace function on NeighbourGetRequest to set family. (97dd4ca)
+
+### Bug fixes
+ - refactor: migrate to more permissive/accurate string types. (0c42c83)
+
 ## [0.21.0] - 2026-04-18
 ### Breaking changes
  - Use netlink-packet-route 0.30. (7bfbbf5)
