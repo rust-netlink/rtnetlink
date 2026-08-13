@@ -36,3 +36,6 @@ ipnetwork = "0.20.0"
 tokio = { version = "1.0.1", features = ["macros", "rt", "rt-multi-thread"] }
 async-std = { version = "1.9.0", features = ["attributes"]}
 macaddr = "1.0"
+
+[patch.crates-io]
+netlink-packet-route = { git = "https://github.com/rust-netlink/netlink-packet-route" }
