@@ -152,6 +152,13 @@ impl LinkMessageBuilder<LinkBridgePort> {
     }
 
     /// This is equivalent to
+    /// `ip link set name NAME type bridge_slave \
+    ///     neigh_forward_grat { on | off }`.
+    pub fn neigh_forward_grat(self, v: bool) -> Self {
+        self.append_info_data(InfoBridgePort::NeighForwardGrat(v))
+    }
+
+    /// This is equivalent to
     /// `ip link set name NAME type bridge_slave vlan_tunnel { on | off }`.
     pub fn vlan_tunnel(self, v: bool) -> Self {
         self.append_info_data(InfoBridgePort::VlanTunnel(v))
