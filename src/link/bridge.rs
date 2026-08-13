@@ -4,8 +4,8 @@ use crate::{
     link::LinkMessageBuilder,
     packet_route::link::{
         BridgeBooleanOptionFlags, BridgeBooleanOptions,
-        BridgeMulticastRouterType, BridgeStpState, InfoBridge, InfoData,
-        InfoKind, VlanProtocol,
+        BridgeMulticastRouterType, BridgeStpMode, BridgeStpState, InfoBridge,
+        InfoData, InfoKind, VlanProtocol,
     },
 };
 
@@ -125,6 +125,12 @@ impl LinkMessageBuilder<LinkBridge> {
 
     pub fn stp_state(self, value: BridgeStpState) -> Self {
         self.append_info_data(InfoBridge::StpState(value))
+    }
+
+    /// This is equivalent to
+    /// `ip link set name NAME type bridge stp_mode STP_MODE`.
+    pub fn stp_mode(self, value: BridgeStpMode) -> Self {
+        self.append_info_data(InfoBridge::StpMode(value))
     }
 
     pub fn mst_enabled(self, value: bool) -> Self {
