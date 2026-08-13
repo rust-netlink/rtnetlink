@@ -20,8 +20,8 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
-    - name: Install Rust 1.71
-      run: rustup install 1.71
+    - name: Install Rust 1.75
+      run: rustup install 1.75
 
     - name: Build test
-      run: cargo +1.71 build --ignore-rust-version
+      run: cargo +1.75 build --ignore-rust-version
