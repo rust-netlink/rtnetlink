@@ -72,6 +72,16 @@ impl LinkMessageBuilder<LinkGeneve> {
         self.append_info_data(InfoGeneve::Remote6(addr))
     }
 
+    /// Local IPv4 address of the backend UDP socket
+    pub fn local(self, addr: Ipv4Addr) -> Self {
+        self.append_info_data(InfoGeneve::Local(addr))
+    }
+
+    /// Local IPv6 address of the backend UDP socket
+    pub fn local6(self, addr: Ipv6Addr) -> Self {
+        self.append_info_data(InfoGeneve::Local6(addr))
+    }
+
     pub fn ttl(self, ttl: u8) -> Self {
         self.append_info_data(InfoGeneve::Ttl(ttl))
     }
