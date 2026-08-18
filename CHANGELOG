@@ -1,4 +1,17 @@
 # Changelog
+## [0.23.0] - 2026-08-18
+### Breaking changes
+ - Use latest rust-netlink crates. (9914eec)
+ - Bump MSRV to 1.75 as netlink-proto requires. (03762b3)
+
+### New features
+ - link: geneve: add local and local6 builders. (5b12111)
+ - link: bridge_slave: add neigh_forward_grat builder. (addbc5b)
+ - link: bridge: add stp_mode builder. (81b6430)
+
+### Bug fixes
+ - N/A
+
 ## [0.22.0] - 2026-08-12
 ### Breaking changes
  - Please check netlink-packet-route 0.32.0 API breaks.
