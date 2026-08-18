@@ -22,10 +22,10 @@ futures-util = "0.3.11"
 futures-channel = "0.3.11"
 log = "0.4.8"
 thiserror = "2"
-netlink-sys = { version = "0.8" }
-netlink-packet-route = { version = "0.32.1" }
-netlink-packet-core = { version = "0.8" }
-netlink-proto = { default-features = false, version = "0.12.0" }
+netlink-sys = { version = "0.9" }
+netlink-packet-route = { version = "0.33" }
+netlink-packet-core = { version = "0.9" }
+netlink-proto = { default-features = false, version = "0.13" }
 nix = { version = "0.30.0", default-features = false, features = ["fs", "mount", "sched", "signal"] }
 tokio = { version = "1.0.1", features = ["rt"], optional = true}
 async-global-executor = { version = "2.0.2", optional = true }
@@ -37,5 +37,5 @@ tokio = { version = "1.0.1", features = ["macros", "rt", "rt-multi-thread"] }
 async-std = { version = "1.9.0", features = ["attributes"]}
 macaddr = "1.0"
 
-[patch.crates-io]
-netlink-packet-route = { git = "https://github.com/rust-netlink/netlink-packet-route" }
+#[patch.crates-io]
+#netlink-packet-route = { git = "https://github.com/rust-netlink/netlink-packet-route" }
