@@ -26,7 +26,7 @@ netlink-sys = { version = "0.9" }
 netlink-packet-route = { version = "0.33" }
 netlink-packet-core = { version = "0.9" }
 netlink-proto = { default-features = false, version = "0.13" }
-nix = { version = "0.30.0", default-features = false, features = ["fs", "mount", "sched", "signal"] }
+nix = { version = "0.31.3", default-features = false, features = ["fs", "mount", "sched", "signal"] }
 tokio = { version = "1.0.1", features = ["rt"], optional = true}
 async-global-executor = { version = "2.0.2", optional = true }
 
