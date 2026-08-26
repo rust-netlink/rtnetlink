@@ -13,8 +13,8 @@ use netlink_packet_route::route::{
 use netlink_packet_route::{
     route::{
         RouteAddress, RouteAttribute, RouteFlags, RouteHeader, RouteMessage,
-        RouteNextHop, RouteNextHopFlags, RouteProtocol, RouteScope, RouteType,
-        RouteVia,
+        RouteMetric, RouteNextHop, RouteNextHopFlags, RouteProtocol,
+        RouteScope, RouteType, RouteVia,
     },
     AddressFamily,
 };
@@ -128,6 +128,14 @@ impl<T> RouteMessageBuilder<T> {
         self.message
             .attributes
             .push(RouteAttribute::Priority(priority));
+        self
+    }
+
+    /// Sets the route mtu (metric)
+    pub fn mtu(mut self, mtu: u32) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::Metrics(vec![RouteMetric::Mtu(mtu)]));
         self
     }
 
