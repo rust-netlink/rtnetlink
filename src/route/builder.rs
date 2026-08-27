@@ -791,6 +791,28 @@ impl RouteNextHopBuilder {
         self
     }
 
+    /// Sets the nexthop SRv6 encapsulation mode and segments.
+    #[cfg(not(target_os = "android"))]
+    pub fn seg6(mut self, mode: Seg6Mode, segments: Vec<Ipv6Addr>) -> Self {
+        if segments.is_empty() {
+            return self;
+        }
+
+        let mut header = Seg6Header::default();
+        header.mode = mode;
+        header.segments = segments;
+
+        self.nexthop
+            .attributes
+            .push(RouteAttribute::EncapType(RouteLwEnCapType::Seg6));
+        let encap = RouteLwTunnelEncap::Seg6(RouteSeg6IpTunnel::Seg6(header));
+        self.nexthop
+            .attributes
+            .push(RouteAttribute::Encap(vec![encap]));
+
+        self
+    }
+
     /// Set the nexthop weight
     ///
     /// Equal to `weight` property in `ip route`, but please be advised the
