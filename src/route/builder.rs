@@ -64,6 +64,38 @@ impl<T> RouteMessageBuilder<T> {
         self
     }
 
+    /// Sets the IP protocol (`RTA_IP_PROTO`) of the packet to match when
+    /// looking up a route.
+    pub fn ip_protocol(mut self, protocol: u8) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::IpProto(protocol));
+        self
+    }
+
+    /// Sets the source port (`RTA_SPORT`) of the packet to match when
+    /// looking up a route.
+    pub fn sport(mut self, sport: u16) -> Self {
+        self.message.attributes.push(RouteAttribute::Sport(sport));
+        self
+    }
+
+    /// Sets the destination port (`RTA_DPORT`) of the packet to match when
+    /// looking up a route.
+    pub fn dport(mut self, dport: u16) -> Self {
+        self.message.attributes.push(RouteAttribute::Dport(dport));
+        self
+    }
+
+    /// Sets the IPv6 flow label (`RTA_FLOWLABEL`) of the packet to match
+    /// when looking up a route.
+    pub fn flowlabel(mut self, flowlabel: u32) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::Flowlabel(flowlabel));
+        self
+    }
+
     /// Sets the output MPLS encapsulation labels.
     #[cfg(not(target_os = "android"))]
     pub fn output_mpls(mut self, labels: Vec<MplsLabel>) -> Self {
