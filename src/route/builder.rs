@@ -14,7 +14,7 @@ use netlink_packet_route::{
     route::{
         RouteAddress, RouteAttribute, RouteFlags, RouteHeader, RouteMessage,
         RouteMplsTtlPropagation, RouteNextHop, RouteNextHopFlags,
-        RouteProtocol, RouteScope, RouteType, RouteVia,
+        RouteProtocol, RouteRealm, RouteScope, RouteType, RouteVia,
     },
     AddressFamily,
 };
@@ -136,6 +136,12 @@ impl<T> RouteMessageBuilder<T> {
         self.message
             .attributes
             .push(RouteAttribute::Expires(expires));
+        self
+    }
+
+    /// Sets the route realm (`RTA_FLOW`).
+    pub fn realm(mut self, realm: RouteRealm) -> Self {
+        self.message.attributes.push(RouteAttribute::Realm(realm));
         self
     }
 
