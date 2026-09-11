@@ -7,9 +7,10 @@ use std::{
 
 #[cfg(not(target_os = "android"))]
 use netlink_packet_route::route::{
-    MplsLabel, RouteIp6Tunnel, RouteIpTunnel, RouteLwEnCapType,
-    RouteLwTunnelEncap, RouteMplsIpTunnel, RouteRplIpTunnel, RouteSeg6IpTunnel,
-    RouteSeg6LocalTunnel, RouteXfrmTunnel, Seg6Header, Seg6Mode,
+    MplsLabel, RouteIoam6Tunnel, RouteIp6Tunnel, RouteIpTunnel,
+    RouteLwEnCapType, RouteLwTunnelEncap, RouteMplsIpTunnel, RouteRplIpTunnel,
+    RouteSeg6IpTunnel, RouteSeg6LocalTunnel, RouteXfrmTunnel, Seg6Header,
+    Seg6Mode,
 };
 use netlink_packet_route::{
     route::{
@@ -224,6 +225,21 @@ impl<T> RouteMessageBuilder<T> {
             .push(RouteAttribute::EncapType(RouteLwEnCapType::Rpl));
         let encap: Vec<RouteLwTunnelEncap> =
             tunnel.into_iter().map(RouteLwTunnelEncap::Rpl).collect();
+        self.message.attributes.push(RouteAttribute::Encap(encap));
+        self
+    }
+
+    /// Sets the IOAM6 encapsulation (`encap ioam6`).
+    #[cfg(not(target_os = "android"))]
+    pub fn encap_ioam6(mut self, tunnel: Vec<RouteIoam6Tunnel>) -> Self {
+        if tunnel.is_empty() {
+            return self;
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::EncapType(RouteLwEnCapType::Ioam6));
+        let encap: Vec<RouteLwTunnelEncap> =
+            tunnel.into_iter().map(RouteLwTunnelEncap::Ioam6).collect();
         self.message.attributes.push(RouteAttribute::Encap(encap));
         self
     }
