@@ -20,6 +20,27 @@ pub fn new_connection() -> io::Result<(
     new_connection_with_socket()
 }
 
+/// Same as [`new_connection()`] but with `NETLINK_GET_STRICT_CHK` enabled,
+/// making the kernel reject unsupported attributes of route requests instead
+/// of silently ignoring them, like `rtnl_set_strict_dump()` of iproute2.
+#[cfg(feature = "tokio_socket")]
+#[allow(clippy::type_complexity)]
+pub fn new_connection_with_strict_check() -> io::Result<(
+    Connection<RouteNetlinkMessage>,
+    Handle,
+    UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+)> {
+    let (mut conn, handle, messages): (
+        Connection<RouteNetlinkMessage>,
+        Handle,
+        UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+    ) = new_connection_with_socket()?;
+    conn.socket_mut()
+        .socket_mut()
+        .set_netlink_get_strict_chk(true)?;
+    Ok((conn, handle, messages))
+}
+
 /// Equal to `ip monitor` command
 #[cfg(feature = "tokio_socket")]
 #[allow(clippy::type_complexity)]
