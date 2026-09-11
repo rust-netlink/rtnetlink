@@ -8,8 +8,8 @@ use std::{
 #[cfg(not(target_os = "android"))]
 use netlink_packet_route::route::{
     MplsLabel, RouteIp6Tunnel, RouteIpTunnel, RouteLwEnCapType,
-    RouteLwTunnelEncap, RouteMplsIpTunnel, RouteSeg6IpTunnel, RouteXfrmTunnel,
-    Seg6Header, Seg6Mode,
+    RouteLwTunnelEncap, RouteMplsIpTunnel, RouteSeg6IpTunnel,
+    RouteSeg6LocalTunnel, RouteXfrmTunnel, Seg6Header, Seg6Mode,
 };
 use netlink_packet_route::{
     route::{
@@ -189,6 +189,26 @@ impl<T> RouteMessageBuilder<T> {
             .push(RouteAttribute::EncapType(RouteLwEnCapType::Xfrm));
         let encap: Vec<RouteLwTunnelEncap> =
             tunnel.into_iter().map(RouteLwTunnelEncap::Xfrm).collect();
+        self.message.attributes.push(RouteAttribute::Encap(encap));
+        self
+    }
+
+    /// Sets the SRv6 local encapsulation (`encap seg6local`).
+    #[cfg(not(target_os = "android"))]
+    pub fn encap_seg6local(
+        mut self,
+        tunnel: Vec<RouteSeg6LocalTunnel>,
+    ) -> Self {
+        if tunnel.is_empty() {
+            return self;
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::EncapType(RouteLwEnCapType::Seg6Local));
+        let encap: Vec<RouteLwTunnelEncap> = tunnel
+            .into_iter()
+            .map(RouteLwTunnelEncap::Seg6Local)
+            .collect();
         self.message.attributes.push(RouteAttribute::Encap(encap));
         self
     }
