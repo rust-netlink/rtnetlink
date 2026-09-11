@@ -284,4 +284,11 @@ impl LinkMessageBuilder<LinkBond> {
     pub fn ns_ip6_target(self, ns_ip6_target: Vec<Ipv6Addr>) -> Self {
         self.append_info_data(InfoBond::NsIp6Target(ns_ip6_target))
     }
+
+    /// Adds the `lacp_strict` attribute to the bond
+    /// This is equivalent to `ip link add name NAME type bond lacp_strict
+    /// LACP_STRICT`.
+    pub fn lacp_strict(self, lacp_strict: bool) -> Self {
+        self.append_info_data(InfoBond::LacpStrict(lacp_strict))
+    }
 }
