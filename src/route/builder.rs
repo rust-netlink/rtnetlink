@@ -8,7 +8,7 @@ use std::{
 #[cfg(not(target_os = "android"))]
 use netlink_packet_route::route::{
     MplsLabel, RouteIp6Tunnel, RouteIpTunnel, RouteLwEnCapType,
-    RouteLwTunnelEncap, RouteMplsIpTunnel, RouteSeg6IpTunnel,
+    RouteLwTunnelEncap, RouteMplsIpTunnel, RouteRplIpTunnel, RouteSeg6IpTunnel,
     RouteSeg6LocalTunnel, RouteXfrmTunnel, Seg6Header, Seg6Mode,
 };
 use netlink_packet_route::{
@@ -209,6 +209,21 @@ impl<T> RouteMessageBuilder<T> {
             .into_iter()
             .map(RouteLwTunnelEncap::Seg6Local)
             .collect();
+        self.message.attributes.push(RouteAttribute::Encap(encap));
+        self
+    }
+
+    /// Sets the RPL encapsulation (`encap rpl`).
+    #[cfg(not(target_os = "android"))]
+    pub fn encap_rpl(mut self, tunnel: Vec<RouteRplIpTunnel>) -> Self {
+        if tunnel.is_empty() {
+            return self;
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::EncapType(RouteLwEnCapType::Rpl));
+        let encap: Vec<RouteLwTunnelEncap> =
+            tunnel.into_iter().map(RouteLwTunnelEncap::Rpl).collect();
         self.message.attributes.push(RouteAttribute::Encap(encap));
         self
     }
