@@ -131,6 +131,14 @@ impl<T> RouteMessageBuilder<T> {
         self
     }
 
+    /// Sets route expiration time (`RTA_EXPIRES`) in seconds.
+    pub fn expires(mut self, expires: u32) -> Self {
+        self.message
+            .attributes
+            .push(RouteAttribute::Expires(expires));
+        self
+    }
+
     /// Sets the route nexthop ID (`RTA_NH_ID`).
     pub fn nhid(mut self, id: u32) -> Self {
         self.message.attributes.push(RouteAttribute::NhId(id));
