@@ -8,8 +8,8 @@ use std::{
 #[cfg(not(target_os = "android"))]
 use netlink_packet_route::route::{
     MplsLabel, RouteIp6Tunnel, RouteIpTunnel, RouteLwEnCapType,
-    RouteLwTunnelEncap, RouteMplsIpTunnel, RouteSeg6IpTunnel, Seg6Header,
-    Seg6Mode,
+    RouteLwTunnelEncap, RouteMplsIpTunnel, RouteSeg6IpTunnel, RouteXfrmTunnel,
+    Seg6Header, Seg6Mode,
 };
 use netlink_packet_route::{
     route::{
@@ -174,6 +174,21 @@ impl<T> RouteMessageBuilder<T> {
             .push(RouteAttribute::EncapType(RouteLwEnCapType::Ip6));
         let encap: Vec<RouteLwTunnelEncap> =
             tunnel.into_iter().map(RouteLwTunnelEncap::Ip6).collect();
+        self.message.attributes.push(RouteAttribute::Encap(encap));
+        self
+    }
+
+    /// Sets the XFRM lightweight tunnel encapsulation (`encap xfrm`).
+    #[cfg(not(target_os = "android"))]
+    pub fn encap_xfrm(mut self, tunnel: Vec<RouteXfrmTunnel>) -> Self {
+        if tunnel.is_empty() {
+            return self;
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::EncapType(RouteLwEnCapType::Xfrm));
+        let encap: Vec<RouteLwTunnelEncap> =
+            tunnel.into_iter().map(RouteLwTunnelEncap::Xfrm).collect();
         self.message.attributes.push(RouteAttribute::Encap(encap));
         self
     }
