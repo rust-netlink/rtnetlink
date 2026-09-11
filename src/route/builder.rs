@@ -7,8 +7,9 @@ use std::{
 
 #[cfg(not(target_os = "android"))]
 use netlink_packet_route::route::{
-    MplsLabel, RouteIpTunnel, RouteLwEnCapType, RouteLwTunnelEncap,
-    RouteMplsIpTunnel, RouteSeg6IpTunnel, Seg6Header, Seg6Mode,
+    MplsLabel, RouteIp6Tunnel, RouteIpTunnel, RouteLwEnCapType,
+    RouteLwTunnelEncap, RouteMplsIpTunnel, RouteSeg6IpTunnel, Seg6Header,
+    Seg6Mode,
 };
 use netlink_packet_route::{
     route::{
@@ -158,6 +159,21 @@ impl<T> RouteMessageBuilder<T> {
             .push(RouteAttribute::EncapType(RouteLwEnCapType::Ip));
         let encap: Vec<RouteLwTunnelEncap> =
             tunnel.into_iter().map(RouteLwTunnelEncap::Ip).collect();
+        self.message.attributes.push(RouteAttribute::Encap(encap));
+        self
+    }
+
+    /// Sets the IPv6 lightweight tunnel encapsulation (`encap ip6`).
+    #[cfg(not(target_os = "android"))]
+    pub fn encap_ip6(mut self, tunnel: Vec<RouteIp6Tunnel>) -> Self {
+        if tunnel.is_empty() {
+            return self;
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::EncapType(RouteLwEnCapType::Ip6));
+        let encap: Vec<RouteLwTunnelEncap> =
+            tunnel.into_iter().map(RouteLwTunnelEncap::Ip6).collect();
         self.message.attributes.push(RouteAttribute::Encap(encap));
         self
     }
