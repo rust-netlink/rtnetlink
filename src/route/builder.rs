@@ -13,8 +13,8 @@ use netlink_packet_route::route::{
 use netlink_packet_route::{
     route::{
         RouteAddress, RouteAttribute, RouteFlags, RouteHeader, RouteMessage,
-        RouteNextHop, RouteNextHopFlags, RouteProtocol, RouteScope, RouteType,
-        RouteVia,
+        RouteMplsTtlPropagation, RouteNextHop, RouteNextHopFlags,
+        RouteProtocol, RouteScope, RouteType, RouteVia,
     },
     AddressFamily,
 };
@@ -137,6 +137,19 @@ impl<T> RouteMessageBuilder<T> {
         self
     }
 
+    /// Enables or disables TTL propagation (`RTA_TTL_PROPAGATE`).
+    pub fn ttl_propagate(mut self, value: bool) -> Self {
+        let propagation = if value {
+            RouteMplsTtlPropagation::Enabled
+        } else {
+            RouteMplsTtlPropagation::Disabled
+        };
+        self.message
+            .attributes
+            .push(RouteAttribute::TtlPropagate(propagation));
+        self
+    }
+
     /// Sets the route table ID.
     ///
     /// Default is main route table.
@@ -177,6 +190,12 @@ impl<T> RouteMessageBuilder<T> {
     /// Default is unicast route kind.
     pub fn kind(mut self, kind: RouteType) -> Self {
         self.message.header.kind = kind;
+        self
+    }
+
+    /// Sets the route TOS (DS field).
+    pub fn tos(mut self, tos: u8) -> Self {
+        self.message.header.tos = tos;
         self
     }
 
