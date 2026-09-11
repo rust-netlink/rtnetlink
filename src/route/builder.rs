@@ -131,6 +131,12 @@ impl<T> RouteMessageBuilder<T> {
         self
     }
 
+    /// Sets the route nexthop ID (`RTA_NH_ID`).
+    pub fn nhid(mut self, id: u32) -> Self {
+        self.message.attributes.push(RouteAttribute::NhId(id));
+        self
+    }
+
     /// Sets the route table ID.
     ///
     /// Default is main route table.
@@ -614,6 +620,16 @@ impl RouteNextHopBuilder {
     /// kernel number from range of 0 to 255.
     pub fn weight(mut self, weight: u8) -> Self {
         self.nexthop.hops = weight;
+        self
+    }
+
+    /// Marks the nexthop as pervasive when `value` is true, and removes the
+    /// flag otherwise.
+    ///
+    /// Indicates that the gateway needs a recursive lookup, equivalent to
+    /// the `pervasive` nexthop flag in `ip route`.
+    pub fn pervasive(mut self, value: bool) -> Self {
+        self.nexthop.flags.set(RouteNextHopFlags::Pervasive, value);
         self
     }
 
