@@ -200,6 +200,14 @@ impl LinkMessageBuilder<LinkBridge> {
         self.append_info_data(InfoBridge::MulticastHashMax(value))
     }
 
+    pub fn mcast_hash_elasticity(self, value: u32) -> Self {
+        self.append_info_data(InfoBridge::MulticastHashElasticity(value))
+    }
+
+    pub fn fdb_flush(self) -> Self {
+        self.append_info_data(InfoBridge::FdbFlush)
+    }
+
     pub fn mcast_last_member_count(self, value: u32) -> Self {
         self.append_info_data(InfoBridge::MulticastLastMemberCount(value))
     }
