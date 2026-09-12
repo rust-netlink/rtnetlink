@@ -149,6 +149,23 @@ impl<T> RouteMessageBuilder<T> {
         self
     }
 
+    /// Sets the SRv6 encapsulation (`encap seg6`) with the
+    /// `SEG6_IPTUNNEL_*` attributes of the tunnel, e.g. the `tunsrc`,
+    /// `hmac` and `lookup` arguments of `iproute2`.
+    #[cfg(not(target_os = "android"))]
+    pub fn encap_seg6(mut self, tunnel: Vec<RouteSeg6IpTunnel>) -> Self {
+        if tunnel.is_empty() {
+            return self;
+        }
+        self.message
+            .attributes
+            .push(RouteAttribute::EncapType(RouteLwEnCapType::Seg6));
+        let encap: Vec<RouteLwTunnelEncap> =
+            tunnel.into_iter().map(RouteLwTunnelEncap::Seg6).collect();
+        self.message.attributes.push(RouteAttribute::Encap(encap));
+        self
+    }
+
     /// Sets the IPv4 lightweight tunnel encapsulation (`encap ip`).
     #[cfg(not(target_os = "android"))]
     pub fn encap_ip(mut self, tunnel: Vec<RouteIpTunnel>) -> Self {
