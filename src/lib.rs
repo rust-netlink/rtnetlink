@@ -11,6 +11,7 @@ pub use netlink_proto as proto;
 pub use netlink_sys as sys;
 
 mod addr;
+mod addrlabel;
 mod connection;
 pub mod constants;
 mod errors;
@@ -43,6 +44,10 @@ pub use crate::{
     addr::{
         AddressAddRequest, AddressDelRequest, AddressGetRequest, AddressHandle,
         AddressMessageBuilder,
+    },
+    addrlabel::{
+        AddrLabelAddRequest, AddrLabelDelRequest, AddrLabelGetRequest,
+        AddrLabelHandle,
     },
     connection::{
         from_socket, new_connection_with_socket,
