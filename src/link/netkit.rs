@@ -102,7 +102,7 @@ impl LinkMessageBuilder<LinkNetkit> {
 
     /// Helper to append netkit-specific info data
     fn append_info_data(mut self, info: InfoNetkit) -> Self {
-        if let InfoData::Netkit(ref mut infos) = self
+        if let InfoData::Netkit(infos) = self
             .info_data
             .get_or_insert_with(|| InfoData::Netkit(Vec::new()))
         {

@@ -25,8 +25,10 @@ impl Handle {
     pub fn request(
         &mut self,
         message: NetlinkMessage<RouteNetlinkMessage>,
-    ) -> Result<impl Stream<Item = NetlinkMessage<RouteNetlinkMessage>>, Error>
-    {
+    ) -> Result<
+        impl Stream<Item = NetlinkMessage<RouteNetlinkMessage>> + use<>,
+        Error,
+    > {
         self.0
             .request(message, SocketAddr::new(0, 0))
             .map_err(|_| Error::RequestFailed)
