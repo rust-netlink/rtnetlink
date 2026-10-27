@@ -2,8 +2,8 @@
 
 use crate::{
     packet_route::link::{
-        CanBitTiming, CanCtrlMode, CanCtrlModeFlags, InfoCan, InfoData,
-        InfoKind,
+        CanBitTiming, CanCtrlMode, CanCtrlModeExt, CanCtrlModeFlags, CanTdc,
+        InfoCan, InfoData, InfoKind,
     },
     LinkMessageBuilder,
 };
@@ -93,13 +93,11 @@ impl LinkMessageBuilder<LinkCan> {
         self.append_info_data(InfoCan::CtrlMode(CanCtrlMode { mask, flags }))
     }
 
-    /// Set extended CAN controller mode.
-    pub fn ctrl_mode_ext(
-        self,
-        mask: CanCtrlModeFlags,
-        flags: CanCtrlModeFlags,
-    ) -> Self {
-        self.append_info_data(InfoCan::CtrlModeExt(CanCtrlMode { mask, flags }))
+    /// Set the extended CAN controller modes supported by the interface.
+    pub fn ctrl_mode_ext(self, supported: CanCtrlModeFlags) -> Self {
+        self.append_info_data(InfoCan::CtrlModeExt(vec![
+            CanCtrlModeExt::Supported(supported),
+        ]))
     }
 
     /// Set restart ms.
@@ -124,15 +122,14 @@ impl LinkMessageBuilder<LinkCan> {
         tdco: u32,
         tdcf: u32,
     ) -> Self {
-        use crate::packet_route::link::CanTdc;
-        self.append_info_data(InfoCan::Tdc(CanTdc {
-            tdcv_min,
-            tdcv_max,
-            tdcv,
-            tdco_min,
-            tdco_max,
-            tdco,
-            tdcf,
-        }))
+        self.append_info_data(InfoCan::Tdc(vec![
+            CanTdc::TdcvMin(tdcv_min),
+            CanTdc::TdcvMax(tdcv_max),
+            CanTdc::Tdcv(tdcv),
+            CanTdc::TdcoMin(tdco_min),
+            CanTdc::TdcoMax(tdco_max),
+            CanTdc::Tdco(tdco),
+            CanTdc::Tdcf(tdcf),
+        ]))
     }
 }
