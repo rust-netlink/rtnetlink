@@ -3,7 +3,6 @@ name = "rtnetlink"
 version = "0.23.0"
 authors = ["Corentin Henry <corentinhenry@gmail.com>"]
 edition = "2024"
-homepage = "https://github.com/rust-netlink/rtnetlink"
 keywords = ["netlink", "ip", "linux"]
 license = "MIT"
 readme = "README.md"
@@ -22,7 +21,7 @@ futures-util = "0.3.11"
 futures-channel = "0.3.11"
 log = "0.4.8"
 netlink-sys = { version = "0.9" }
-netlink-packet-route = { version = "0.33" }
+netlink-packet-route = { version = "0.34" }
 netlink-packet-core = { version = "0.9" }
 netlink-proto = { default-features = false, version = "0.14.1" }
 nix = { version = "0.31.3", default-features = false, features = ["fs", "mount", "sched", "signal"] }
@@ -36,5 +35,5 @@ tokio = { version = "1.0.1", features = ["macros", "rt", "rt-multi-thread"] }
 async-std = { version = "1.9.0", features = ["attributes"]}
 macaddr = "1.0"
 
-[patch.crates-io]
-netlink-packet-route = { git = "https://github.com/rust-netlink/netlink-packet-route" }
+#[patch.crates-io]
+#netlink-packet-route = { git = "https://github.com/rust-netlink/netlink-packet-route" }
