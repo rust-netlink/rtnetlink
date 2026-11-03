@@ -1,34 +1,60 @@
 // SPDX-License-Identifier: MIT
 
+use std::fmt;
+
 use netlink_packet_core::{ErrorMessage, NetlinkMessage};
 use netlink_packet_route::RouteNetlinkMessage;
-use thiserror::Error;
 
-#[derive(Clone, Eq, PartialEq, Debug, Error)]
+#[derive(Clone, Eq, PartialEq, Debug)]
 pub enum Error {
-    #[error("Received an unexpected message {0:?}")]
     UnexpectedMessage(NetlinkMessage<RouteNetlinkMessage>),
 
-    #[error("Received a netlink error message {0}")]
     NetlinkError(ErrorMessage),
 
-    #[error("A netlink request failed")]
     RequestFailed,
 
-    #[error("Namespace error {0}")]
     NamespaceError(String),
 
-    #[error(
-        "Received a link message (RTM_GETLINK, RTM_NEWLINK, RTM_SETLINK or RTMGETLINK) with an invalid hardware address attribute: {0:?}."
-    )]
     InvalidHardwareAddress(Vec<u8>),
 
-    #[error("Failed to parse an IP address: {0:?}")]
     InvalidIp(Vec<u8>),
 
-    #[error("Failed to parse a network address (IP and mask): {0:?}/{1:?}")]
     InvalidAddress(Vec<u8>, Vec<u8>),
 
-    #[error("Attempting to set and Invalid NLA: {0}")]
     InvalidNla(String),
 }
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnexpectedMessage(msg) => {
+                write!(f, "Received an unexpected message {msg:?}")
+            }
+            Self::NetlinkError(err) => {
+                write!(f, "Received a netlink error message {err}")
+            }
+            Self::RequestFailed => write!(f, "A netlink request failed"),
+            Self::NamespaceError(err) => {
+                write!(f, "Namespace error {err}")
+            }
+            Self::InvalidHardwareAddress(addr) => write!(
+                f,
+                "Received a link message (RTM_GETLINK, RTM_NEWLINK, \
+                 RTM_SETLINK or RTMGETLINK) with an invalid hardware address \
+                 attribute: {addr:?}."
+            ),
+            Self::InvalidIp(addr) => {
+                write!(f, "Failed to parse an IP address: {addr:?}")
+            }
+            Self::InvalidAddress(ip, mask) => write!(
+                f,
+                "Failed to parse a network address (IP and mask): {ip:?}/{mask:?}"
+            ),
+            Self::InvalidNla(nla) => {
+                write!(f, "Attempting to set and Invalid NLA: {nla}")
+            }
+        }
+    }
+}
+
+impl std::error::Error for Error {}

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 use std::{
+    fmt,
     marker::PhantomData,
     net::{IpAddr, Ipv4Addr, Ipv6Addr},
 };
@@ -508,23 +509,42 @@ impl Default for RouteMessageBuilder<Ipv6Addr> {
     }
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug)]
 pub enum InvalidRouteMessage {
-    #[error("invalid address family {:?}", _0)]
     AddressFamily(AddressFamily),
 
-    #[error("invalid gateway {}", _0)]
     Gateway(IpAddr),
 
-    #[error("invalid preferred source {}", _0)]
     PrefSource(IpAddr),
 
-    #[error("invalid source prefix {}/{}", _0, _1)]
     SourcePrefix(IpAddr, u8),
 
-    #[error("invalid destination prefix {}/{}", _0, _1)]
     DestinationPrefix(IpAddr, u8),
 }
+
+impl fmt::Display for InvalidRouteMessage {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::AddressFamily(family) => {
+                write!(f, "invalid address family {family:?}")
+            }
+            Self::Gateway(gateway) => {
+                write!(f, "invalid gateway {gateway}")
+            }
+            Self::PrefSource(source) => {
+                write!(f, "invalid preferred source {source}")
+            }
+            Self::SourcePrefix(prefix, len) => {
+                write!(f, "invalid source prefix {prefix}/{len}")
+            }
+            Self::DestinationPrefix(prefix, len) => {
+                write!(f, "invalid destination prefix {prefix}/{len}")
+            }
+        }
+    }
+}
+
+impl std::error::Error for InvalidRouteMessage {}
 
 impl RouteMessageBuilder<IpAddr> {
     pub fn new() -> Self {
