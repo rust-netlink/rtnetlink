@@ -1,4 +1,35 @@
 # Changelog
+## [0.24.0] - 2026-11-04
+### Breaking changes
+ - use netlink-packet-route 0.34. (6dae39f)
+ - Use netlink-proto 0.14.1 and remove thiserror. (20a2386)
+ - Bump MSRV to 1.85 and edition to 2024. (fef576c)
+ - API break: link: fix CAN builder for nested TDC attributes. (7ed4ff5)
+
+### New features
+ - route: add seg6 encapsulation to nexthop builder. (47e910d)
+ - addrlabel: add `AddrLabelHandle`. (39f5e6c)
+ - link: add `mcast_hash_elasticity` and `fdb_flush` builders. (8b89818)
+ - route: add builder API for seg6 lwtunnel encap attributes. (4843bcf)
+ - route: add builder API for IOAM6 lwtunnel encap. (3acc66d)
+ - route: add builder API for RPL lwtunnel encap. (449c59d)
+ - route: add builder API for seg6local lwtunnel encap. (88af654)
+ - Add `new_connection_with_strict_check()`. (a130dae)
+ - route: add builder API for XFRM lwtunnel encap. (e895c88)
+ - route: add builder API for IPv6 lwtunnel encap. (e1fa16d)
+ - route: add builder API for IPv4 lwtunnel encap. (542fb18)
+ - route: add builder API for route lookup match attributes. (af9bf10)
+ - route: add builder API for `RTA_FLOW`. (b560b1d)
+ - route: add builder API for `RTA_EXPIRES`. (b9eda44)
+ - link: add `lacp_strict` bond option builder. (f4ea8e3)
+ - route: add builder API for TOS and TTL propagation. (53b9b74)
+ - route: add builder API for nexthop ID and pervasive flag. (b5e773e)
+
+### Bug fixes
+ - CI: adopt to ubuntu-latest which switched to 24.04.5. (a675cb8)
+ - LICENSE: fix LICENSE-MIT. (1dec546)
+ - Upgrade nix to 0.31. (ebd5c57)
+
 ## [0.23.0] - 2026-08-18
 ### Breaking changes
  - Use latest rust-netlink crates. (9914eec)
