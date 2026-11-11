@@ -7,7 +7,8 @@ macro_rules! try_rtnl {
         use netlink_packet_route::RouteNetlinkMessage;
         use $crate::Error;
 
-        let (header, payload) = $msg.into_parts();
+        let msg = $msg?;
+        let (header, payload) = msg.into_parts();
         match payload {
             NetlinkPayload::InnerMessage($message_type(msg)) => msg,
             NetlinkPayload::Error(err) => return Err(Error::NetlinkError(err)),
@@ -25,7 +26,8 @@ macro_rules! try_nl {
     ($msg: expr) => {{
         use netlink_packet_core::NetlinkPayload;
         use $crate::Error;
-        if let NetlinkPayload::Error(err) = $msg.payload {
+        let message = $msg?;
+        if let NetlinkPayload::Error(err) = message.payload {
             return Err(Error::NetlinkError(err));
         }
     }};

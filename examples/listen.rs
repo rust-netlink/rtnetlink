@@ -4,13 +4,13 @@
 //! changes, listens for said changes and prints the received messages.
 
 use futures_util::stream::StreamExt;
-use netlink_sys::{AsyncSocket, SocketAddr};
 use rtnetlink::{
     constants::{
         RTMGRP_IPV4_IFADDR, RTMGRP_IPV4_ROUTE, RTMGRP_IPV6_IFADDR,
         RTMGRP_IPV6_ROUTE, RTMGRP_LINK,
     },
     new_connection,
+    sys::{AsyncSocket, SocketAddr},
 };
 
 #[tokio::main]

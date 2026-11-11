@@ -35,6 +35,7 @@ impl LinkDelPropRequest {
 
         let mut response = handle.request(req)?;
         while let Some(message) = response.next().await {
+            let message = message?;
             if let NetlinkPayload::Error(err) = message.payload {
                 return Err(Error::NetlinkError(err));
             }

@@ -38,10 +38,9 @@ impl LinkMessageBuilder<LinkBridgeVlan> {
     }
 
     pub fn vlan(self, vid: u16, flags: BridgeVlanInfoFlags) -> Self {
-        self.append_af_spec(AfSpecBridge::VlanInfo(BridgeVlanInfo {
-            vid,
-            flags,
-        }))
+        self.append_af_spec(AfSpecBridge::VlanInfo(BridgeVlanInfo::new(
+            flags, vid,
+        )))
     }
 
     /// Helper function by adding [BridgeVlanInfoFlags::RangeBegin]

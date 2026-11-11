@@ -31,6 +31,7 @@ impl RouteDelRequest {
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK;
         let mut response = handle.request(req)?;
         while let Some(msg) = response.next().await {
+            let msg = msg?;
             if let NetlinkPayload::Error(e) = msg.payload {
                 return Err(Error::NetlinkError(e));
             }

@@ -85,7 +85,7 @@ pub enum MulticastGroup {
 }
 
 impl MulticastGroup {
-    /// Whether need to use `netlink_sys::Socket::add_membership()`.
+    /// Whether need to use `netlink_proto::sys::Socket::add_membership()`.
     pub fn need_via_add_membership(self) -> bool {
         self as u32 > 31
     }

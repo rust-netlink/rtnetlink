@@ -139,19 +139,15 @@ impl TrafficFilterGetRequest {
 
     /// Set parent to ingress.
     pub fn ingress(mut self) -> Self {
-        self.message.header.parent = TcHandle {
-            major: 0xffff,
-            minor: TcHandle::MIN_INGRESS,
-        };
+        self.message.header.parent =
+            TcHandle::new(0xffff, TcHandle::MIN_INGRESS);
         self
     }
 
     /// Set parent to egress.
     pub fn egress(mut self) -> Self {
-        self.message.header.parent = TcHandle {
-            major: 0xffff,
-            minor: TcHandle::MIN_EGRESS,
-        };
+        self.message.header.parent =
+            TcHandle::new(0xffff, TcHandle::MIN_EGRESS);
         self
     }
 }
