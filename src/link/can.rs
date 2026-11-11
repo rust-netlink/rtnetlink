@@ -90,7 +90,7 @@ impl LinkMessageBuilder<LinkCan> {
         mask: CanCtrlModeFlags,
         flags: CanCtrlModeFlags,
     ) -> Self {
-        self.append_info_data(InfoCan::CtrlMode(CanCtrlMode { mask, flags }))
+        self.append_info_data(InfoCan::CtrlMode(CanCtrlMode::new(mask, flags)))
     }
 
     /// Set the extended CAN controller modes supported by the interface.

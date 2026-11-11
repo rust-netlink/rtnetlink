@@ -5,10 +5,14 @@ use std::io;
 use futures_channel::mpsc::UnboundedReceiver;
 use netlink_packet_core::NetlinkMessage;
 use netlink_packet_route::RouteNetlinkMessage;
-use netlink_proto::Connection;
-use netlink_sys::{protocols::NETLINK_ROUTE, AsyncSocket, SocketAddr};
+use netlink_proto::{
+    sys::{AsyncSocket, SocketAddr},
+    Connection,
+};
 
 use crate::{Handle, MulticastGroup};
+
+const NETLINK_ROUTE: isize = 0;
 
 #[cfg(feature = "tokio_socket")]
 #[allow(clippy::type_complexity)]
@@ -64,7 +68,8 @@ where
     S: AsyncSocket,
 {
     let (conn, handle, messages) =
-        netlink_proto::new_connection_with_socket(NETLINK_ROUTE)?;
+        netlink_proto::new_connection_with_socket(NETLINK_ROUTE)
+            .map_err(io::Error::other)?;
     Ok((conn, Handle::new(handle), messages))
 }
 
@@ -83,7 +88,8 @@ where
     let (mut conn, handle, messages) =
         netlink_proto::new_connection_with_socket::<RouteNetlinkMessage, S>(
             NETLINK_ROUTE,
-        )?;
+        )
+        .map_err(io::Error::other)?;
     let mut all_groups: u32 = 0;
     for group in groups.iter().filter(|g| !g.need_via_add_membership()) {
         all_groups |= 1 << (*group as u32 - 1);

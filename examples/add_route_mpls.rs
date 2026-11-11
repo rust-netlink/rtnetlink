@@ -16,12 +16,7 @@ async fn main() -> Result<(), ()> {
 
     let input_label = args[1]
         .parse::<u32>()
-        .map(|label| MplsLabel {
-            label,
-            traffic_class: 0,
-            bottom_of_stack: true,
-            ttl: 0,
-        })
+        .map(|label| MplsLabel::new(label, 0, true, 0))
         .unwrap_or_else(|_| {
             eprintln!("invalid MPLS input label");
             std::process::exit(1);
@@ -34,12 +29,7 @@ async fn main() -> Result<(), ()> {
 
     let output_label = args[3]
         .parse::<u32>()
-        .map(|label| MplsLabel {
-            label,
-            traffic_class: 0,
-            bottom_of_stack: true,
-            ttl: 0,
-        })
+        .map(|label| MplsLabel::new(label, 0, true, 0))
         .unwrap_or_else(|_| {
             eprintln!("invalid MPLS output label");
             std::process::exit(1);

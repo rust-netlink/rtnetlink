@@ -89,10 +89,10 @@ impl LinkMessageBuilder<LinkBridge> {
         value: bool,
     ) -> Self {
         let opts = self.iface_self.boolopt.get_or_insert_with(|| {
-            BridgeBooleanOptions {
-                value: BridgeBooleanOptionFlags::empty(),
-                mask: BridgeBooleanOptionFlags::empty(),
-            }
+            BridgeBooleanOptions::new(
+                BridgeBooleanOptionFlags::empty(),
+                BridgeBooleanOptionFlags::empty(),
+            )
         });
         opts.value.set(opt, value);
         opts.mask.set(opt, true);

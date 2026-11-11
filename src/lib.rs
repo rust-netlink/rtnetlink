@@ -8,7 +8,7 @@
 pub use netlink_packet_core as packet_core;
 pub use netlink_packet_route as packet_route;
 pub use netlink_proto as proto;
-pub use netlink_sys as sys;
+pub use netlink_proto::sys;
 
 mod addr;
 mod addrlabel;

@@ -39,10 +39,10 @@ impl LinkGetNsidHandle {
             RouteNetlinkMessage::GetNsId(msg),
         );
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK;
-        let mut resp_stream =
-            self.handle.request(req).map_err(|_| Error::RequestFailed)?;
+        let mut resp_stream = self.handle.request(req)?;
 
         while let Some(resp) = resp_stream.next().await {
+            let resp = resp?;
             if let NetlinkPayload::Error(err) = resp.payload {
                 return Err(Error::NetlinkError(err));
             }
@@ -94,10 +94,10 @@ impl LinkAssignNsidHandle {
             RouteNetlinkMessage::NewNsId(msg),
         );
         req.header.flags = NLM_F_REQUEST | NLM_F_ACK;
-        let mut resp_stream =
-            self.handle.request(req).map_err(|_| Error::RequestFailed)?;
+        let mut resp_stream = self.handle.request(req)?;
 
         while let Some(resp) = resp_stream.next().await {
+            let resp = resp?;
             if let NetlinkPayload::Error(err) = resp.payload {
                 return Err(Error::NetlinkError(err));
             }

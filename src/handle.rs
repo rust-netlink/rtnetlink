@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-use futures_util::stream::Stream;
+use std::{future::Future, sync::Arc};
+
+use futures_util::stream::{Stream, StreamExt};
 use netlink_packet_core::NetlinkMessage;
 use netlink_packet_route::RouteNetlinkMessage;
-use netlink_proto::{sys::SocketAddr, ConnectionHandle};
+use netlink_proto::{sys::SocketAddr, ConnectionHandle, NetlinkProtoError};
 
 use crate::{
     AddrLabelHandle, AddressHandle, Error, LinkHandle, NeighbourHandle,
@@ -26,12 +28,27 @@ impl Handle {
         &mut self,
         message: NetlinkMessage<RouteNetlinkMessage>,
     ) -> Result<
-        impl Stream<Item = NetlinkMessage<RouteNetlinkMessage>> + use<>,
+        impl Stream<Item = Result<NetlinkMessage<RouteNetlinkMessage>, Error>>
+            + use<>,
         Error,
     > {
-        self.0
+        let response = self
+            .0
             .request(message, SocketAddr::new(0, 0))
-            .map_err(|_| Error::RequestFailed)
+            .map_err(Error::NetlinkProtoError)?;
+        Ok(response.map(|item| item.map_err(Error::NetlinkProtoError)))
+    }
+
+    /// Resolves once the underlying connection has terminated.
+    ///
+    /// Yields the terminal error when one is known, or `None` for a clean
+    /// shutdown. This is the way to learn why the unsolicited messages stream
+    /// (returned by
+    /// [`new_multicast_connection`](crate::new_multicast_connection)) ended.
+    pub fn closed(
+        &self,
+    ) -> impl Future<Output = Option<Arc<NetlinkProtoError>>> + use<> {
+        self.0.closed()
     }
 
     pub fn notify(
@@ -40,7 +57,7 @@ impl Handle {
     ) -> Result<(), Error> {
         self.0
             .notify(msg, SocketAddr::new(0, 0))
-            .map_err(|_| Error::RequestFailed)?;
+            .map_err(Error::NetlinkProtoError)?;
         Ok(())
     }
 

@@ -67,6 +67,7 @@ impl NeighbourGetRequest {
 
         match handle.request(req) {
             Ok(response) => Either::Left(response.map(move |msg| {
+                let msg = msg?;
                 let (header, payload) = msg.into_parts();
                 match payload {
                     NetlinkPayload::InnerMessage(

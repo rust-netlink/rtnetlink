@@ -49,7 +49,7 @@ impl QDiscNewRequest {
 
     /// Set handle,
     pub fn handle(mut self, major: u16, minor: u16) -> Self {
-        self.message.header.handle = TcHandle { major, minor };
+        self.message.header.handle = TcHandle::new(major, minor);
         self
     }
 

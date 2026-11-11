@@ -4,12 +4,15 @@ use std::fmt;
 
 use netlink_packet_core::{ErrorMessage, NetlinkMessage};
 use netlink_packet_route::RouteNetlinkMessage;
+use netlink_proto::NetlinkProtoError;
 
-#[derive(Clone, Eq, PartialEq, Debug)]
+#[derive(Debug)]
 pub enum Error {
     UnexpectedMessage(NetlinkMessage<RouteNetlinkMessage>),
 
     NetlinkError(ErrorMessage),
+
+    NetlinkProtoError(NetlinkProtoError),
 
     RequestFailed,
 
@@ -32,6 +35,9 @@ impl fmt::Display for Error {
             }
             Self::NetlinkError(err) => {
                 write!(f, "Received a netlink error message {err}")
+            }
+            Self::NetlinkProtoError(err) => {
+                write!(f, "Netlink protocol error: {err}")
             }
             Self::RequestFailed => write!(f, "A netlink request failed"),
             Self::NamespaceError(err) => {
@@ -57,4 +63,11 @@ impl fmt::Display for Error {
     }
 }
 
-impl std::error::Error for Error {}
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::NetlinkProtoError(err) => Some(err),
+            _ => None,
+        }
+    }
+}

@@ -84,29 +84,22 @@ impl TrafficFilterNewRequest {
 
     /// Set parent to ingress.
     pub fn ingress(mut self) -> Self {
-        self.message.header.parent = TcHandle {
-            major: 0xffff,
-            minor: TcHandle::MIN_INGRESS,
-        };
+        self.message.header.parent =
+            TcHandle::new(0xffff, TcHandle::MIN_INGRESS);
         self
     }
 
     /// Set parent to egress.
     pub fn egress(mut self) -> Self {
-        self.message.header.parent = TcHandle {
-            major: 0xffff,
-            minor: TcHandle::MIN_EGRESS,
-        };
+        self.message.header.parent =
+            TcHandle::new(0xffff, TcHandle::MIN_EGRESS);
         self
     }
 
     /// Set priority.
     /// Equivalent to `priority PRIO` or `pref PRIO`.
     pub fn priority(mut self, priority: u16) -> Self {
-        self.message.header.info = u32::from(TcHandle {
-            major: priority,
-            minor: priority,
-        });
+        self.message.header.info = u32::from(TcHandle::new(priority, priority));
         self
     }
 
@@ -114,10 +107,10 @@ impl TrafficFilterNewRequest {
     /// Equivalent to `protocol PROT`.
     /// Default: ETH_P_ALL 0x0003, see llproto_names at iproute2/lib/ll_proto.c.
     pub fn protocol(mut self, protocol: u16) -> Self {
-        self.message.header.info = u32::from(TcHandle {
-            major: (self.message.header.info >> 16) as u16,
-            minor: protocol,
-        });
+        self.message.header.info = u32::from(TcHandle::new(
+            (self.message.header.info >> 16) as u16,
+            protocol,
+        ));
         self
     }
 
