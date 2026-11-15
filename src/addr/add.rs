@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
-
 use futures_util::stream::StreamExt;
 use netlink_packet_core::{
     NetlinkMessage, NLM_F_ACK, NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE,
@@ -9,7 +7,7 @@ use netlink_packet_core::{
 };
 use netlink_packet_route::{address::AddressMessage, RouteNetlinkMessage};
 
-use crate::{addr::AddressMessageBuilder, try_nl, Error, Handle};
+use crate::{try_nl, Error, Handle};
 
 /// A request to create a new address. This is equivalent to the `ip address
 /// add` commands.
@@ -21,34 +19,7 @@ pub struct AddressAddRequest {
 }
 
 impl AddressAddRequest {
-    pub(crate) fn new(
-        handle: Handle,
-        index: u32,
-        address: IpAddr,
-        prefix_len: u8,
-    ) -> Self {
-        let message = match address {
-            IpAddr::V4(address) => AddressMessageBuilder::<Ipv4Addr>::new()
-                .index(index)
-                .address(address, prefix_len)
-                .build(),
-            IpAddr::V6(address) => AddressMessageBuilder::<Ipv6Addr>::new()
-                .index(index)
-                .address(address, prefix_len)
-                .build(),
-        };
-
-        AddressAddRequest {
-            handle,
-            message,
-            replace: false,
-        }
-    }
-
-    pub(crate) fn new_with_message(
-        handle: Handle,
-        message: AddressMessage,
-    ) -> Self {
+    pub(crate) fn new(handle: Handle, message: AddressMessage) -> Self {
         AddressAddRequest {
             handle,
             message,

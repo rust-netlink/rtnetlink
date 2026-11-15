@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-use std::net::IpAddr;
-
 use netlink_packet_route::address::AddressMessage;
 
 use super::{AddressAddRequest, AddressDelRequest, AddressGetRequest};
@@ -20,25 +18,12 @@ impl AddressHandle {
         AddressGetRequest::new(self.0.clone())
     }
 
-    /// Add an ip address on an interface (equivalent to `ip addr add`)
-    pub fn add(
-        &self,
-        index: u32,
-        address: IpAddr,
-        prefix_len: u8,
-    ) -> AddressAddRequest {
-        AddressAddRequest::new(self.0.clone(), index, address, prefix_len)
-    }
-
-    /// Add an address from a pre-built [AddressMessage].
+    /// Add an ip address on an interface (equivalent to `ip addr add`).
     ///
-    /// This is useful for address families that do not have a high-level
-    /// helper yet.
-    pub fn add_with_message(
-        &self,
-        message: AddressMessage,
-    ) -> AddressAddRequest {
-        AddressAddRequest::new_with_message(self.0.clone(), message)
+    /// The [AddressMessage] can be built with
+    /// [crate::AddressMessageBuilder].
+    pub fn add(&self, message: AddressMessage) -> AddressAddRequest {
+        AddressAddRequest::new(self.0.clone(), message)
     }
 
     /// Delete the given address

@@ -3,7 +3,7 @@
 use std::{convert::TryFrom, env, net::IpAddr};
 
 use futures_util::stream::TryStreamExt;
-use rtnetlink::{new_connection, Error, Handle};
+use rtnetlink::{new_connection, Error, Handle, NeighbourMessageBuilder};
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -57,12 +57,12 @@ async fn add_neighbour(
         .match_name(link_name.to_string())
         .execute();
     if let Some(link) = links.try_next().await? {
-        handle
-            .neighbours()
-            .add(link.header.index, ip)
+        let message = NeighbourMessageBuilder::new()
+            .index(link.header.index)
+            .destination(ip)
             .link_layer_address(&link_layer_address)
-            .execute()
-            .await?;
+            .build();
+        handle.neighbours().add(message).execute().await?;
         println!("Done");
     }
 

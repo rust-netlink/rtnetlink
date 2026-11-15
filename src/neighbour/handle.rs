@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-use std::net::IpAddr;
-
 use netlink_packet_route::neighbour::NeighbourMessage;
 
 use crate::{
@@ -20,26 +18,12 @@ impl NeighbourHandle {
         NeighbourGetRequest::new(self.0.clone())
     }
 
-    /// Add a new neighbour entry (equivalent to `ip neighbour add`)
-    pub fn add(&self, index: u32, destination: IpAddr) -> NeighbourAddRequest {
-        NeighbourAddRequest::new(self.0.clone(), index, destination)
-    }
-
-    #[cfg(not(target_os = "freebsd"))]
-    /// Add a new fdb entry (equivalent to `bridge fdb add`)
-    pub fn add_bridge(&self, index: u32, lla: &[u8]) -> NeighbourAddRequest {
-        NeighbourAddRequest::new_bridge(self.0.clone(), index, lla)
-    }
-
-    /// Add a neighbour entry from a pre-built [NeighbourMessage].
+    /// Add a new neighbour entry (equivalent to `ip neighbour add`).
     ///
-    /// This is useful for address families that do not have a high-level
-    /// helper yet.
-    pub fn add_with_message(
-        &self,
-        message: NeighbourMessage,
-    ) -> NeighbourAddRequest {
-        NeighbourAddRequest::new_with_message(self.0.clone(), message)
+    /// The [NeighbourMessage] can be built with
+    /// [crate::NeighbourMessageBuilder].
+    pub fn add(&self, message: NeighbourMessage) -> NeighbourAddRequest {
+        NeighbourAddRequest::new(self.0.clone(), message)
     }
 
     /// Delete a neighbour entry (equivalent to `ip neighbour delete`)

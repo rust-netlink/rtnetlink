@@ -78,7 +78,7 @@ pub use crate::{
     multicast::MulticastGroup,
     neighbour::{
         NeighbourAddRequest, NeighbourDelRequest, NeighbourGetRequest,
-        NeighbourHandle,
+        NeighbourHandle, NeighbourMessageBuilder,
     },
     route::{
         InvalidRouteMessage, IpVersion, RouteAddRequest, RouteDelRequest,
