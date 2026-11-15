@@ -27,6 +27,11 @@ impl QDiscGetRequest {
         }
     }
 
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut TcMessage {
+        &mut self.message
+    }
+
     /// Execute the request
     pub fn execute(self) -> impl Stream<Item = Result<TcMessage, Error>> {
         let QDiscGetRequest {
@@ -74,6 +79,11 @@ impl TrafficClassGetRequest {
         TrafficClassGetRequest { handle, message }
     }
 
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut TcMessage {
+        &mut self.message
+    }
+
     /// Execute the request
     pub fn execute(self) -> impl Stream<Item = Result<TcMessage, Error>> {
         let TrafficClassGetRequest {
@@ -107,6 +117,11 @@ impl TrafficFilterGetRequest {
         let mut message = TcMessage::default();
         message.header.index = ifindex;
         TrafficFilterGetRequest { handle, message }
+    }
+
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut TcMessage {
+        &mut self.message
     }
 
     /// Execute the request
@@ -163,6 +178,11 @@ impl TrafficChainGetRequest {
         let mut message = TcMessage::default();
         message.header.index = ifindex;
         TrafficChainGetRequest { handle, message }
+    }
+
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut TcMessage {
+        &mut self.message
     }
 
     /// Execute the request

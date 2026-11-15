@@ -25,6 +25,11 @@ impl AfstatsRequest {
         AfstatsRequest { handle, message }
     }
 
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut StatsMessage {
+        &mut self.message
+    }
+
     /// Filter by link index
     pub fn match_index(mut self, index: u32) -> Self {
         self.message.header.ifindex = index;

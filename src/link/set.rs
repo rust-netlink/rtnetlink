@@ -18,6 +18,11 @@ impl LinkSetRequest {
         LinkSetRequest { handle, message }
     }
 
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut LinkMessage {
+        &mut self.message
+    }
+
     /// Execute the request
     pub async fn execute(self) -> Result<(), Error> {
         let LinkSetRequest {

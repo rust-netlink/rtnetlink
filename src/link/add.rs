@@ -38,11 +38,16 @@ impl LinkAddRequest {
         ret
     }
 
-    /// Setting arbitrary [NetlinkHeader] flags
+    /// Setting arbitrary [netlink_packet_core::NetlinkHeader] flags
     pub fn set_flags(self, flags: u16) -> Self {
         let mut ret = self;
         ret.flags = flags;
         ret
+    }
+
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut LinkMessage {
+        &mut self.message
     }
 
     /// Execute the request.

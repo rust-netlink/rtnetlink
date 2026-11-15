@@ -25,6 +25,11 @@ impl TrafficFilterDelRequest {
         }
     }
 
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut TcMessage {
+        &mut self.message
+    }
+
     /// Execute the request
     pub async fn execute(self) -> Result<(), Error> {
         let Self {
