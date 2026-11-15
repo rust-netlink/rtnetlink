@@ -34,13 +34,13 @@ pub fn new_connection_with_strict_check() -> io::Result<(
     Handle,
     UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
 )> {
-    let (mut conn, handle, messages): (
+    let (conn, handle, messages): (
         Connection<RouteNetlinkMessage>,
         Handle,
         UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
     ) = new_connection_with_socket()?;
-    conn.socket_mut()
-        .socket_mut()
+    conn.socket_ref()
+        .socket_ref()
         .set_netlink_get_strict_chk(true)?;
     Ok((conn, handle, messages))
 }
@@ -85,22 +85,22 @@ pub fn new_multicast_connection_with_socket<S>(
 where
     S: AsyncSocket,
 {
-    let (mut conn, handle, messages) =
-        netlink_proto::new_connection_with_socket::<RouteNetlinkMessage, S>(
-            NETLINK_ROUTE,
-        )
-        .map_err(io::Error::other)?;
+    let (conn, handle, messages) = netlink_proto::new_connection_with_socket::<
+        RouteNetlinkMessage,
+        S,
+    >(NETLINK_ROUTE)
+    .map_err(io::Error::other)?;
     let mut all_groups: u32 = 0;
     for group in groups.iter().filter(|g| !g.need_via_add_membership()) {
         all_groups |= 1 << (*group as u32 - 1);
     }
 
     let addr = SocketAddr::new(0, all_groups);
-    conn.socket_mut().socket_mut().bind(&addr)?;
+    conn.socket_ref().socket_ref().bind(&addr)?;
 
     for group in groups.iter().filter(|g| g.need_via_add_membership()) {
-        conn.socket_mut()
-            .socket_mut()
+        conn.socket_ref()
+            .socket_ref()
             .add_membership(*group as u32)?;
     }
 
