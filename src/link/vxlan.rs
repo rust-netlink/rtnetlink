@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 use crate::{
-    packet_route::link::{InfoData, InfoKind, InfoVxlan, VxlanDf},
+    packet_route::link::{
+        InfoData, InfoKind, InfoVxlan, VxlanDf, VxlanLabelPolicy,
+    },
     LinkMessageBuilder,
 };
 
@@ -250,7 +252,7 @@ impl LinkMessageBuilder<LinkVxlan> {
     /// Kernel enum: `VXLAN_LABEL_FIXED = 0`, `VXLAN_LABEL_INHERIT = 1`.
     /// This is equivalent to `ip link add name NAME type vxlan id VNI
     /// label_policy POLICY`.
-    pub fn label_policy(self, policy: u32) -> Self {
+    pub fn label_policy(self, policy: VxlanLabelPolicy) -> Self {
         self.append_info_data(InfoVxlan::LabelPolicy(policy))
     }
 

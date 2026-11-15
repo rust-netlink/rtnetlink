@@ -40,7 +40,7 @@ fn test_get_qdiscs() {
     );
     assert_eq!(
         qdisc_of_loopback_nic.attributes[1],
-        TcAttribute::HwOffload(0)
+        TcAttribute::HwOffload(false)
     );
 }
 

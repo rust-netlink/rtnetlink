@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 use crate::{
-    packet_route::link::{HsrProtocol, InfoData, InfoHsr, InfoKind},
+    packet_route::link::{
+        HsrProtocol, HsrVersion, InfoData, InfoHsr, InfoKind,
+    },
     LinkMessageBuilder,
 };
 
@@ -79,7 +81,7 @@ impl LinkMessageBuilder<LinkHsr> {
     }
 
     /// HSR protocol version
-    pub fn version(self, version: u8) -> Self {
+    pub fn version(self, version: HsrVersion) -> Self {
         self.append_info_data(InfoHsr::Version(version))
     }
 

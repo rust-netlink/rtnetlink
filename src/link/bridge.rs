@@ -3,7 +3,8 @@
 use crate::{
     link::LinkMessageBuilder,
     packet_route::link::{
-        BridgeBooleanOptionFlags, BridgeBooleanOptions,
+        BridgeBooleanOptionFlags, BridgeBooleanOptions, BridgeGroupFwdMask,
+        BridgeMulticastIgmpVersion, BridgeMulticastMldVersion,
         BridgeMulticastRouterType, BridgeStpMode, BridgeStpState, InfoBridge,
         InfoData, InfoKind, VlanProtocol,
     },
@@ -103,7 +104,7 @@ impl LinkMessageBuilder<LinkBridge> {
         self.append_info_data(InfoBridge::AgeingTime(value))
     }
 
-    pub fn group_fwd_mask(self, value: u16) -> Self {
+    pub fn group_fwd_mask(self, value: BridgeGroupFwdMask) -> Self {
         self.append_info_data(InfoBridge::GroupFwdMask(value))
     }
 
@@ -244,11 +245,11 @@ impl LinkMessageBuilder<LinkBridge> {
         self.append_info_data(InfoBridge::MulticastStatsEnabled(value))
     }
 
-    pub fn mcast_igmp_version(self, value: u8) -> Self {
+    pub fn mcast_igmp_version(self, value: BridgeMulticastIgmpVersion) -> Self {
         self.append_info_data(InfoBridge::MulticastIgmpVersion(value))
     }
 
-    pub fn mcast_mld_version(self, value: u8) -> Self {
+    pub fn mcast_mld_version(self, value: BridgeMulticastMldVersion) -> Self {
         self.append_info_data(InfoBridge::MulticastMldVersion(value))
     }
 

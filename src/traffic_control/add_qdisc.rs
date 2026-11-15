@@ -187,7 +187,7 @@ mod test {
                     nl_msg.attributes[0],
                     TcAttribute::Kind("ingress".to_string())
                 );
-                assert_eq!(nl_msg.attributes[2], TcAttribute::HwOffload(0));
+                assert_eq!(nl_msg.attributes[2], TcAttribute::HwOffload(false));
                 found = true;
                 break;
             }
