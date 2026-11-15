@@ -8,6 +8,7 @@ use netlink_packet_route::{link::LinkMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct LinkSetRequest {
     handle: Handle,
     message: LinkMessage,

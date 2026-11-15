@@ -11,6 +11,7 @@ use crate::{
     Handle,
 };
 
+#[derive(Debug, Clone)]
 pub struct LinkHandle(Handle);
 
 impl LinkHandle {

@@ -13,6 +13,7 @@ use crate::{addr::AddressMessageBuilder, try_nl, Error, Handle};
 
 /// A request to create a new address. This is equivalent to the `ip address
 /// add` commands.
+#[derive(Debug, Clone)]
 pub struct AddressAddRequest {
     handle: Handle,
     message: AddressMessage,

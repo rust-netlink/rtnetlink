@@ -6,6 +6,7 @@ use netlink_packet_route::{address::AddressMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct AddressDelRequest {
     handle: Handle,
     message: AddressMessage,

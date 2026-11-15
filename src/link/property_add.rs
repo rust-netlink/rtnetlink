@@ -12,6 +12,7 @@ use netlink_packet_route::{
 
 use crate::{Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct LinkNewPropRequest {
     handle: Handle,
     message: LinkMessage,

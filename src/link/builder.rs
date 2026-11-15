@@ -50,7 +50,7 @@ impl LinkUnspec {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 /// Helper struct for building [LinkMessage].
 /// The [LinkMessageBuilder] is designed for advanced user, wrapper
 /// structs/functions are created

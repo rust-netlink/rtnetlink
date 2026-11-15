@@ -10,7 +10,7 @@ use netlink_packet_route::{
     AddressFamily,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 /// Helper struct for building [AddressMessage].
 pub struct AddressMessageBuilder<T> {
     message: AddressMessage,

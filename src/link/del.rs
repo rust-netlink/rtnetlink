@@ -6,6 +6,7 @@ use netlink_packet_route::{link::LinkMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct LinkDelRequest {
     handle: Handle,
     message: LinkMessage,

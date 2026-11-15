@@ -11,6 +11,7 @@ use netlink_packet_route::{
 
 use crate::{Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct LinkDelPropRequest {
     handle: Handle,
     message: LinkMessage,

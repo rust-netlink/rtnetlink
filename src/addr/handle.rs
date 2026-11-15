@@ -7,6 +7,7 @@ use netlink_packet_route::address::AddressMessage;
 use super::{AddressAddRequest, AddressDelRequest, AddressGetRequest};
 use crate::Handle;
 
+#[derive(Debug, Clone)]
 pub struct AddressHandle(Handle);
 
 impl AddressHandle {

@@ -15,6 +15,7 @@ use netlink_packet_route::{
 
 use crate::{Error, Handle, IpVersion};
 
+#[derive(Debug, Clone)]
 pub struct NeighbourGetRequest {
     handle: Handle,
     message: NeighbourMessage,

@@ -15,6 +15,7 @@ use crate::{try_nl, Error, Handle};
 /// A few methods for common actions (creating a veth pair, creating a vlan
 /// interface, etc.) are provided, but custom requests can be made using the
 /// [`message_mut()`](#method.message_mut) accessor.
+#[derive(Debug, Clone)]
 pub struct LinkAddRequest {
     handle: Handle,
     message: LinkMessage,
