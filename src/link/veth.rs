@@ -24,7 +24,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkVeth> for more detail.
+/// Please check `LinkMessageBuilder::<LinkVeth>` for more detail.
 pub struct LinkVeth;
 
 impl LinkVeth {

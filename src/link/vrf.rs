@@ -27,7 +27,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkVrf> for more detail.
+/// Please check `LinkMessageBuilder::<LinkVrf>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkVrf;
 

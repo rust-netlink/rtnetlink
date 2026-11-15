@@ -29,7 +29,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkVlan> for more detail.
+/// Please check `LinkMessageBuilder::<LinkVlan>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkVxlan;
 

@@ -28,7 +28,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkNetkit> for more detail.
+/// Please check `LinkMessageBuilder::<LinkNetkit>` for more detail.
 pub struct LinkNetkit;
 
 impl LinkNetkit {

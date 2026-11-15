@@ -33,7 +33,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkAmt> for more detail.
+/// Please check `LinkMessageBuilder::<LinkAmt>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkAmt;
 

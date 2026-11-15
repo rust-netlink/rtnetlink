@@ -30,7 +30,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkWwan> for more detail.
+/// Please check `LinkMessageBuilder::<LinkWwan>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkWwan;
 

@@ -32,7 +32,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkRmNet> for more detail.
+/// Please check `LinkMessageBuilder::<LinkRmNet>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkRmNet;
 

@@ -27,7 +27,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkDsa> for more detail.
+/// Please check `LinkMessageBuilder::<LinkDsa>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkDsa;
 

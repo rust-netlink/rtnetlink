@@ -385,7 +385,7 @@ impl RouteMessageBuilder<Ipv4Addr> {
     ///  * protocol: [RouteProtocol::Static]
     ///  * scope: [RouteScope::Universe]
     ///  * kind: [RouteType::Unicast]
-    ///  * address_family: [AddressFamily::Inet4]
+    ///  * address_family: [AddressFamily::Inet]
     ///
     /// For using this message in querying routes, these settings
     /// are ignored unless `NETLINK_GET_STRICT_CHK` been enabled.

@@ -41,7 +41,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkBond> for more detail.
+/// Please check `LinkMessageBuilder::<LinkBond>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkBond;
 

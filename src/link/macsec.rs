@@ -33,7 +33,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkMacSec> for more detail.
+/// Please check `LinkMessageBuilder::<LinkMacSec>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkMacSec;
 

@@ -20,7 +20,7 @@ use crate::{link::LinkMessageBuilder, packet_route::link::InfoKind};
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkVirtWifi> for more detail.
+/// Please check `LinkMessageBuilder::<LinkVirtWifi>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkVirtWifi;
 

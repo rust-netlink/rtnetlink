@@ -27,7 +27,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkGtp> for more detail.
+/// Please check `LinkMessageBuilder::<LinkGtp>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkGtp;
 

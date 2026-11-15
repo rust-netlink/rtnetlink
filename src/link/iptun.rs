@@ -34,7 +34,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkIpIp> for more detail.
+/// Please check `LinkMessageBuilder::<LinkIpIp>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkIpIp;
 

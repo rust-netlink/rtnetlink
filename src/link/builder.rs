@@ -317,7 +317,8 @@ impl<T> LinkMessageBuilder<T> {
     }
 
     /// Include port settings.
-    /// The [LinkBondPort] and [LinkBridgePort] are the helper
+    /// The [`LinkBondPort`](crate::LinkBondPort) and
+    /// [`LinkBridgePort`](crate::LinkBridgePort) are the helpers
     pub fn set_port_data(self, port_data: InfoPortData) -> Self {
         let mut ret = self;
         ret.port_data = Some(port_data);

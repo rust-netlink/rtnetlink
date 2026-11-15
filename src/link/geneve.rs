@@ -28,7 +28,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkGeneve> for more detail.
+/// Please check `LinkMessageBuilder::<LinkGeneve>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkGeneve;
 

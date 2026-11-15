@@ -31,7 +31,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkHsr> for more detail.
+/// Please check `LinkMessageBuilder::<LinkHsr>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkHsr;
 

@@ -31,7 +31,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkCan> for more detail.
+/// Please check `LinkMessageBuilder::<LinkCan>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkCan;
 
@@ -68,8 +68,8 @@ impl LinkMessageBuilder<LinkCan> {
         self.append_info_data(InfoCan::BitTiming(timing))
     }
 
-    /// Set the CAN bitrate (a shorthand for setting just the bitrate in
-    /// [bit_timing]).
+    /// Set the CAN bitrate (a shorthand for setting just the bitrate with
+    /// [`bit_timing()`](Self::bit_timing)).
     ///
     /// This is equivalent to `ip link add ... type can bitrate BITRATE`.
     pub fn bitrate(self, bitrate: u32) -> Self {
