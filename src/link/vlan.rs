@@ -10,9 +10,23 @@ use crate::{
 /// A quality-of-service mapping between the internal priority `from` to the
 /// external vlan priority `to`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct QosMapping {
     pub from: u32,
     pub to: u32,
+}
+
+impl QosMapping {
+    /// Create a new QoS mapping.
+    pub fn new(from: u32, to: u32) -> Self {
+        Self { from, to }
+    }
+}
+
+impl From<(u32, u32)> for QosMapping {
+    fn from((from, to): (u32, u32)) -> Self {
+        Self::new(from, to)
+    }
 }
 
 impl From<QosMapping> for VlanQosMapping {
