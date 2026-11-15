@@ -37,8 +37,8 @@ pub use crate::ns::{NetworkNamespace, NETNS_PATH, NONE_FS, SELF_NS_PATH};
 pub use crate::traffic_control::{
     QDiscDelRequest, QDiscGetRequest, QDiscHandle, QDiscNewRequest,
     TrafficChainGetRequest, TrafficChainHandle, TrafficClassGetRequest,
-    TrafficClassHandle, TrafficFilterGetRequest, TrafficFilterHandle,
-    TrafficFilterNewRequest,
+    TrafficClassHandle, TrafficFilterDelRequest, TrafficFilterGetRequest,
+    TrafficFilterHandle, TrafficFilterNewRequest,
 };
 pub use crate::{
     addr::{
@@ -63,9 +63,9 @@ pub use crate::{
         LinkGetRequest, LinkGre, LinkGre6, LinkGtp, LinkHandle, LinkHsr,
         LinkIfb, LinkIp6Tnl, LinkIpIp, LinkIpVlan, LinkIpVtap, LinkIpoib,
         LinkMacSec, LinkMacVlan, LinkMacVtap, LinkMessageBuilder,
-        LinkNetdevsim, LinkNetkit, LinkNlmon, LinkPfcp, LinkRmNet,
-        LinkSetRequest, LinkSit, LinkTeam, LinkTun, LinkUnspec, LinkVcan,
-        LinkVeth, LinkVirtWifi, LinkVlan, LinkVrf, LinkVti, LinkVti6,
+        LinkNetdevsim, LinkNetkit, LinkNewPropRequest, LinkNlmon, LinkPfcp,
+        LinkRmNet, LinkSetRequest, LinkSit, LinkTeam, LinkTun, LinkUnspec,
+        LinkVcan, LinkVeth, LinkVirtWifi, LinkVlan, LinkVrf, LinkVti, LinkVti6,
         LinkVxcan, LinkVxlan, LinkWireguard, LinkWwan, LinkXfrm, QosMapping,
     },
     multicast::MulticastGroup,
@@ -74,8 +74,8 @@ pub use crate::{
         NeighbourHandle,
     },
     route::{
-        IpVersion, RouteAddRequest, RouteDelRequest, RouteGetRequest,
-        RouteHandle, RouteMessageBuilder, RouteNextHopBuilder,
+        InvalidRouteMessage, IpVersion, RouteAddRequest, RouteDelRequest,
+        RouteGetRequest, RouteHandle, RouteMessageBuilder, RouteNextHopBuilder,
     },
     rule::{RuleAddRequest, RuleDelRequest, RuleGetRequest, RuleHandle},
 };
