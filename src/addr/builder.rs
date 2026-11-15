@@ -33,6 +33,17 @@ impl<T> AddressMessageBuilder<T> {
         self
     }
 
+    /// Return a mutable reference to the message being built.
+    pub fn get_mut(&mut self) -> &mut AddressMessage {
+        &mut self.message
+    }
+
+    /// Append an arbitrary [AddressAttribute].
+    pub fn append_attribute(mut self, attribute: AddressAttribute) -> Self {
+        self.message.attributes.push(attribute);
+        self
+    }
+
     /// Builds [AddressMessage].
     pub fn build(self) -> AddressMessage {
         self.message
