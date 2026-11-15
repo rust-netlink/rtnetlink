@@ -510,6 +510,7 @@ impl Default for RouteMessageBuilder<Ipv6Addr> {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum InvalidRouteMessage {
     AddressFamily(AddressFamily),
 
