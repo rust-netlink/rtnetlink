@@ -20,7 +20,7 @@ smol_socket = ["netlink-proto/smol_socket", "async-global-executor"]
 futures-util = "0.3.11"
 futures-channel = "0.3.11"
 log = "0.4.8"
-netlink-packet-route = { version = "1.0.0-rc1" }
+netlink-packet-route = { version = "1.0.0-rc2" }
 netlink-packet-core = { version = "1.0.0-rc2" }
 netlink-proto = { default-features = false, version = "1.0.0-rc2" }
 nix = { version = "0.31.3", default-features = false, features = ["fs", "mount", "sched", "signal"] }
