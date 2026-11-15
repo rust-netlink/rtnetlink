@@ -5,7 +5,8 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use crate::{
     packet_route::{
         link::{
-            InfoData, InfoIpTunnel, InfoKind, TunnelEncapFlags, TunnelEncapType,
+            InfoData, InfoIpTunnel, InfoKind, SitFlags, TunnelEncapFlags,
+            TunnelEncapType,
         },
         IpProtocol,
     },
@@ -63,7 +64,9 @@ impl LinkSit {
             log::error!("BUG: InfoData is not IpTunnel when processing sit");
             return;
         };
-        infos.push(InfoIpTunnel::Ipv6SitFlags(self.flags));
+        infos.push(InfoIpTunnel::Ipv6SitFlags(SitFlags::from_bits_retain(
+            self.flags,
+        )));
     }
 }
 

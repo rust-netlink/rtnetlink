@@ -16,7 +16,7 @@ use rtnetlink::{
 #[tokio::main]
 async fn main() -> Result<(), String> {
     // Open the netlink socket
-    let (mut connection, _, mut messages) =
+    let (connection, _, mut messages) =
         new_connection().map_err(|e| format!("{e}"))?;
 
     // These flags specify what kinds of broadcast messages we want to listen
@@ -32,8 +32,8 @@ async fn main() -> Result<(), String> {
     // Said address is bound so new conenctions and thus new message broadcasts
     // can be received.
     connection
-        .socket_mut()
-        .socket_mut()
+        .socket_ref()
+        .socket_ref()
         .bind(&addr)
         .expect("failed to bind");
     tokio::spawn(connection);

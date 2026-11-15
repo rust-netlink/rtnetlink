@@ -2,8 +2,8 @@
 
 use crate::{
     packet_route::link::{
-        BridgeMulticastRouterType, BridgePortState, InfoBridgePort,
-        InfoPortData, InfoPortKind,
+        BridgeGroupFwdMask, BridgeMulticastRouterType, BridgePortState,
+        InfoBridgePort, InfoPortData, InfoPortKind,
     },
     LinkMessageBuilder,
 };
@@ -134,7 +134,7 @@ impl LinkMessageBuilder<LinkBridgePort> {
 
     /// This is equivalent to
     /// `ip link set name NAME type bridge_slave group_fwd_mask MASK`.
-    pub fn group_fwd_mask(self, v: u16) -> Self {
+    pub fn group_fwd_mask(self, v: BridgeGroupFwdMask) -> Self {
         self.append_info_data(InfoBridgePort::GroupFwdMask(v))
     }
 

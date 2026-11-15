@@ -86,31 +86,27 @@ impl LinkMessageBuilder<LinkMacSec> {
     }
 
     pub fn encrypt(self, encrypt: bool) -> Self {
-        self.append_info_data(InfoMacSec::Encrypt(if encrypt { 1 } else { 0 }))
+        self.append_info_data(InfoMacSec::Encrypt(encrypt))
     }
 
     pub fn protect(self, protect: bool) -> Self {
-        self.append_info_data(InfoMacSec::Protect(if protect { 1 } else { 0 }))
+        self.append_info_data(InfoMacSec::Protect(protect))
     }
 
     pub fn inc_sci(self, inc_sci: bool) -> Self {
-        self.append_info_data(InfoMacSec::IncSci(if inc_sci { 1 } else { 0 }))
+        self.append_info_data(InfoMacSec::IncSci(inc_sci))
     }
 
     pub fn es(self, es: bool) -> Self {
-        self.append_info_data(InfoMacSec::Es(if es { 1 } else { 0 }))
+        self.append_info_data(InfoMacSec::Es(es))
     }
 
     pub fn scb(self, scb: bool) -> Self {
-        self.append_info_data(InfoMacSec::Scb(if scb { 1 } else { 0 }))
+        self.append_info_data(InfoMacSec::Scb(scb))
     }
 
     pub fn replay_protect(self, replay_protect: bool) -> Self {
-        self.append_info_data(InfoMacSec::ReplayProtect(if replay_protect {
-            1
-        } else {
-            0
-        }))
+        self.append_info_data(InfoMacSec::ReplayProtect(replay_protect))
     }
 
     pub fn validation(self, validation: MacSecValidate) -> Self {

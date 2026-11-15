@@ -292,20 +292,12 @@ impl<T> LinkMessageBuilder<T> {
 
     /// Set protodown state (equivalent to `ip link set DEV protodown on/off`)
     pub fn protodown(self, on: bool) -> Self {
-        self.append_extra_attribute(LinkAttribute::ProtoDown(if on {
-            1
-        } else {
-            0
-        }))
+        self.append_extra_attribute(LinkAttribute::ProtoDown(on))
     }
 
     /// Set carrier state (equivalent to `ip link set DEV carrier on/off`)
     pub fn carrier(self, on: bool) -> Self {
-        self.append_extra_attribute(LinkAttribute::Carrier(if on {
-            1
-        } else {
-            0
-        }))
+        self.append_extra_attribute(LinkAttribute::Carrier(on))
     }
 
     /// Set the operational state (equivalent to `ip link set DEV state STATE`)

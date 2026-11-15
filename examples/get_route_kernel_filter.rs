@@ -13,11 +13,11 @@ use rtnetlink::{
 /// Dump IPv4 routes on table 254 only
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (mut connection, handle, _) = new_connection().unwrap();
+    let (connection, handle, _) = new_connection().unwrap();
 
     connection
-        .socket_mut()
-        .socket_mut()
+        .socket_ref()
+        .socket_ref()
         .set_netlink_get_strict_chk(true)?;
 
     tokio::spawn(connection);
