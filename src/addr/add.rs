@@ -45,6 +45,17 @@ impl AddressAddRequest {
         }
     }
 
+    pub(crate) fn new_with_message(
+        handle: Handle,
+        message: AddressMessage,
+    ) -> Self {
+        AddressAddRequest {
+            handle,
+            message,
+            replace: false,
+        }
+    }
+
     /// Replace existing matching address.
     pub fn replace(self) -> Self {
         Self {

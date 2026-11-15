@@ -31,6 +31,17 @@ impl NeighbourHandle {
         NeighbourAddRequest::new_bridge(self.0.clone(), index, lla)
     }
 
+    /// Add a neighbour entry from a pre-built [NeighbourMessage].
+    ///
+    /// This is useful for address families that do not have a high-level
+    /// helper yet.
+    pub fn add_with_message(
+        &self,
+        message: NeighbourMessage,
+    ) -> NeighbourAddRequest {
+        NeighbourAddRequest::new_with_message(self.0.clone(), message)
+    }
+
     /// Delete a neighbour entry (equivalent to `ip neighbour delete`)
     pub fn del(&self, message: NeighbourMessage) -> NeighbourDelRequest {
         NeighbourDelRequest::new(self.0.clone(), message)

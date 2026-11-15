@@ -72,6 +72,17 @@ impl NeighbourAddRequest {
         }
     }
 
+    pub(crate) fn new_with_message(
+        handle: Handle,
+        message: NeighbourMessage,
+    ) -> Self {
+        NeighbourAddRequest {
+            handle,
+            message,
+            replace: false,
+        }
+    }
+
     /// Set a bitmask of states for the neighbor cache entry.
     /// It should be a combination of `NUD_*` constants.
     pub fn state(mut self, state: NeighbourState) -> Self {

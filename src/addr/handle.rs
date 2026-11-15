@@ -30,6 +30,17 @@ impl AddressHandle {
         AddressAddRequest::new(self.0.clone(), index, address, prefix_len)
     }
 
+    /// Add an address from a pre-built [AddressMessage].
+    ///
+    /// This is useful for address families that do not have a high-level
+    /// helper yet.
+    pub fn add_with_message(
+        &self,
+        message: AddressMessage,
+    ) -> AddressAddRequest {
+        AddressAddRequest::new_with_message(self.0.clone(), message)
+    }
+
     /// Delete the given address
     pub fn del(&self, address: AddressMessage) -> AddressDelRequest {
         AddressDelRequest::new(self.0.clone(), address)
