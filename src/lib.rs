@@ -2,6 +2,13 @@
 
 //! This crate provides methods to manipulate networking resources (links,
 //! addresses, arp tables, route tables) via the netlink protocol.
+//!
+//! # Upstream crate re-exports
+//!
+//! The [`packet_core`], [`packet_route`] and [`proto`] modules re-export the
+//! upstream crates whose types are part of this crate's public API. `rtnetlink
+//! 1.x` relies on the `1.x` semver releases of those crates; an upstream major
+//! release requires a matching `rtnetlink` major release.
 
 #![allow(clippy::module_inception)]
 

@@ -108,14 +108,14 @@ impl NetworkNamespace {
         .await
     }
 
-    pub fn prep_for_fork() -> Result<(), Error> {
+    fn prep_for_fork() -> Result<(), Error> {
         // Placeholder function, nothing to do here.
         Ok(())
     }
 
     /// This is the parent process form the fork, it waits for the
     /// child to exit properly
-    pub fn parent_process(child: nix::unistd::Pid) -> Result<(), Error> {
+    fn parent_process(child: nix::unistd::Pid) -> Result<(), Error> {
         log::trace!("parent_process child PID: {}", child);
         log::trace!("Waiting for child to finish...");
         match waitpid(child, None) {
@@ -174,7 +174,7 @@ impl NetworkNamespace {
     /// This is the child process, it will actually create the namespace
     /// resources. It creates the folder and namespace file.
     /// Returns the namespace file path
-    pub fn child_process_create_ns(
+    fn child_process_create_ns(
         ns_name: impl Into<String>,
     ) -> Result<String, Error> {
         log::trace!("child_process will create the namespace");
@@ -280,9 +280,7 @@ impl NetworkNamespace {
     /// This function unshare the calling process and move into
     /// the given network namespace
     #[allow(unused)]
-    pub fn unshare_processing(
-        netns_path: impl AsRef<Path>,
-    ) -> Result<(), Error> {
+    fn unshare_processing(netns_path: impl AsRef<Path>) -> Result<(), Error> {
         let mut setns_flags = CloneFlags::empty();
         let mut open_flags = OFlag::empty();
         let ns_path = netns_path.as_ref();
