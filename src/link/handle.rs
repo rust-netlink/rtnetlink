@@ -37,12 +37,24 @@ impl LinkHandle {
             .set_flags(NLM_F_REQUEST | NLM_F_ACK)
     }
 
-    pub fn property_add(&self, index: u32) -> LinkNewPropRequest {
-        LinkNewPropRequest::new(self.0.clone(), index)
+    /// Add a property to the link with `message`.
+    pub fn property_add(&self, message: LinkMessage) -> LinkNewPropRequest {
+        LinkNewPropRequest::new(self.0.clone(), message)
     }
 
-    pub fn property_del(&self, index: u32) -> LinkDelPropRequest {
-        LinkDelPropRequest::new(self.0.clone(), index)
+    /// Add a property to the link with the given interface index.
+    pub fn property_add_iface(&self, index: u32) -> LinkNewPropRequest {
+        self.property_add(LinkUnspec::new_with_index(index).build())
+    }
+
+    /// Delete a property from the link with `message`.
+    pub fn property_del(&self, message: LinkMessage) -> LinkDelPropRequest {
+        LinkDelPropRequest::new(self.0.clone(), message)
+    }
+
+    /// Delete a property from the link with the given interface index.
+    pub fn property_del_iface(&self, index: u32) -> LinkDelPropRequest {
+        self.property_del(LinkUnspec::new_with_index(index).build())
     }
 
     /// Delete the link with `message`.

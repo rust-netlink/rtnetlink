@@ -18,9 +18,7 @@ pub struct LinkDelPropRequest {
 }
 
 impl LinkDelPropRequest {
-    pub(crate) fn new(handle: Handle, index: u32) -> Self {
-        let mut message = LinkMessage::default();
-        message.header.index = index;
+    pub(crate) fn new(handle: Handle, message: LinkMessage) -> Self {
         LinkDelPropRequest { handle, message }
     }
 

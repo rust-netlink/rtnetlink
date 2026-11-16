@@ -19,9 +19,7 @@ pub struct LinkNewPropRequest {
 }
 
 impl LinkNewPropRequest {
-    pub(crate) fn new(handle: Handle, index: u32) -> Self {
-        let mut message = LinkMessage::default();
-        message.header.index = index;
+    pub(crate) fn new(handle: Handle, message: LinkMessage) -> Self {
         LinkNewPropRequest { handle, message }
     }
 
