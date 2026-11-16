@@ -83,5 +83,8 @@ pub use crate::{
         InvalidRouteMessage, IpVersion, RouteAddRequest, RouteDelRequest,
         RouteGetRequest, RouteHandle, RouteMessageBuilder, RouteNextHopBuilder,
     },
-    rule::{RuleAddRequest, RuleDelRequest, RuleGetRequest, RuleHandle},
+    rule::{
+        RuleAddRequest, RuleDelRequest, RuleGetRequest, RuleHandle,
+        RuleMessageBuilder,
+    },
 };

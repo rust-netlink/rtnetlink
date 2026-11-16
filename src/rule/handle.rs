@@ -19,9 +19,11 @@ impl RuleHandle {
         RuleGetRequest::new(self.0.clone(), ip_version)
     }
 
-    /// Add a route rule entry (equivalent to `ip rule add`)
-    pub fn add(&self) -> RuleAddRequest {
-        RuleAddRequest::new(self.0.clone())
+    /// Add a route rule entry (equivalent to `ip rule add`).
+    ///
+    /// The [RuleMessage] can be built with [crate::RuleMessageBuilder].
+    pub fn add(&self, message: RuleMessage) -> RuleAddRequest {
+        RuleAddRequest::new(self.0.clone(), message)
     }
 
     /// Delete the given route rule entry (equivalent to `ip rule del`)

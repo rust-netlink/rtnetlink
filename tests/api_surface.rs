@@ -36,7 +36,7 @@ fn crate_root_types_are_nameable() {
         NeighbourGetRequest, NeighbourHandle, NeighbourMessageBuilder,
         QosMapping, RouteAddRequest, RouteDelRequest, RouteGetRequest,
         RouteHandle, RouteMessageBuilder, RouteNextHopBuilder, RuleAddRequest,
-        RuleDelRequest, RuleGetRequest, RuleHandle,
+        RuleDelRequest, RuleGetRequest, RuleHandle, RuleMessageBuilder,
     };
     #[cfg(not(target_os = "freebsd"))]
     use rtnetlink::{

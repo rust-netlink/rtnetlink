@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-use std::env;
+use std::{env, net::Ipv4Addr};
 
 use ipnetwork::Ipv4Network;
-use rtnetlink::{new_connection, Error, Handle};
+use rtnetlink::{new_connection, Error, Handle, RuleMessageBuilder};
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -40,12 +40,11 @@ async fn add_rule(
     handle: Handle,
 ) -> Result<(), Error> {
     let rule = handle.rule();
-    rule.add()
-        .v4()
+    let message = RuleMessageBuilder::<Ipv4Addr>::new()
         .destination_prefix(dst.ip(), dst.prefix())
         .table_id(table_id)
-        .execute()
-        .await?;
+        .build();
+    rule.add(message).execute().await?;
 
     Ok(())
 }
