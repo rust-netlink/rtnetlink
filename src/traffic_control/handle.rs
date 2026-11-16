@@ -26,7 +26,7 @@ impl QDiscHandle {
     /// Create a new qdisc, don't replace if the object already exists.
     /// ( equivalent to `tc qdisc add dev STRING`)
     pub fn add(&self, index: i32) -> QDiscNewRequest {
-        let msg = TcMessage::with_index(index);
+        let msg = TcMessageBuilder::with_index(index).build();
         QDiscNewRequest::new(self.0.clone(), msg, NLM_F_EXCL | NLM_F_CREATE)
     }
 
@@ -48,14 +48,14 @@ impl QDiscHandle {
     /// Replace existing matching qdisc, create qdisc if it doesn't already
     /// exist. ( equivalent to `tc qdisc replace dev STRING`)
     pub fn replace(&self, index: i32) -> QDiscNewRequest {
-        let msg = TcMessage::with_index(index);
+        let msg = TcMessageBuilder::with_index(index).build();
         QDiscNewRequest::new(self.0.clone(), msg, NLM_F_CREATE | NLM_F_REPLACE)
     }
 
     /// Performs a replace where the node must exist already.
     /// ( equivalent to `tc qdisc link dev STRING`)
     pub fn link(&self, index: i32) -> QDiscNewRequest {
-        let msg = TcMessage::with_index(index);
+        let msg = TcMessageBuilder::with_index(index).build();
         QDiscNewRequest::new(self.0.clone(), msg, NLM_F_REPLACE)
     }
 
