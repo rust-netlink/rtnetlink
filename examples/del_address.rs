@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-use std::{
-    env,
-    net::{IpAddr, Ipv4Addr, Ipv6Addr},
-};
+use std::env;
 
 use futures_util::stream::TryStreamExt;
 use ipnetwork::IpNetwork;
-use rtnetlink::{new_connection, AddressMessageBuilder, Error, Handle};
+use rtnetlink::{new_connection, Error, Handle};
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -43,20 +40,11 @@ async fn del_address(
         .match_name(link_name.to_string())
         .execute();
     if let Some(link) = links.try_next().await? {
-        let index = link.header.index;
-        let address = ip.ip();
-        let prefix_len = ip.prefix();
-        let message = match address {
-            IpAddr::V4(address) => AddressMessageBuilder::<Ipv4Addr>::new()
-                .index(index)
-                .address(address, prefix_len)
-                .build(),
-            IpAddr::V6(address) => AddressMessageBuilder::<Ipv6Addr>::new()
-                .index(index)
-                .address(address, prefix_len)
-                .build(),
-        };
-        handle.address().del(message).execute().await?
+        handle
+            .address()
+            .del_ip(link.header.index, ip.ip(), ip.prefix())
+            .execute()
+            .await?
     }
     Ok(())
 }
