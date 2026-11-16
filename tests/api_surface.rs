@@ -41,9 +41,10 @@ fn crate_root_types_are_nameable() {
     #[cfg(not(target_os = "freebsd"))]
     use rtnetlink::{
         NetworkNamespace, QDiscDelRequest, QDiscGetRequest, QDiscHandle,
-        QDiscNewRequest, TrafficChainGetRequest, TrafficChainHandle,
-        TrafficClassGetRequest, TrafficClassHandle, TrafficFilterDelRequest,
-        TrafficFilterGetRequest, TrafficFilterHandle, TrafficFilterNewRequest,
+        QDiscNewRequest, TcMessageBuilder, TrafficChainGetRequest,
+        TrafficChainHandle, TrafficClassGetRequest, TrafficClassHandle,
+        TrafficFilterDelRequest, TrafficFilterGetRequest, TrafficFilterHandle,
+        TrafficFilterNewRequest,
     };
 }
 
