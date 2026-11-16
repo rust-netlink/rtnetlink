@@ -33,7 +33,9 @@ impl QDiscGetRequest {
     }
 
     /// Execute the request
-    pub fn execute(self) -> impl Stream<Item = Result<TcMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<TcMessage, Error>> + Send {
         let QDiscGetRequest {
             mut handle,
             message,
@@ -85,7 +87,9 @@ impl TrafficClassGetRequest {
     }
 
     /// Execute the request
-    pub fn execute(self) -> impl Stream<Item = Result<TcMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<TcMessage, Error>> + Send {
         let TrafficClassGetRequest {
             mut handle,
             message,
@@ -125,7 +129,9 @@ impl TrafficFilterGetRequest {
     }
 
     /// Execute the request
-    pub fn execute(self) -> impl Stream<Item = Result<TcMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<TcMessage, Error>> + Send {
         let TrafficFilterGetRequest {
             mut handle,
             message,
@@ -186,7 +192,9 @@ impl TrafficChainGetRequest {
     }
 
     /// Execute the request
-    pub fn execute(self) -> impl Stream<Item = Result<TcMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<TcMessage, Error>> + Send {
         let TrafficChainGetRequest {
             mut handle,
             message,

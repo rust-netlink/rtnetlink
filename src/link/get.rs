@@ -49,7 +49,9 @@ impl LinkGetRequest {
     }
 
     /// Execute the request
-    pub fn execute(self) -> impl Stream<Item = Result<LinkMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<LinkMessage, Error>> + Send {
         let LinkGetRequest {
             mut handle,
             message,

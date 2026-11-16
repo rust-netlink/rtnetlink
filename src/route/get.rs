@@ -51,7 +51,9 @@ impl RouteGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl Stream<Item = Result<RouteMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<RouteMessage, Error>> + Send {
         let RouteGetRequest {
             mut handle,
             message,

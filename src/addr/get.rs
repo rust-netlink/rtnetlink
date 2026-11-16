@@ -35,7 +35,9 @@ impl AddressGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl Stream<Item = Result<AddressMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<AddressMessage, Error>> + Send {
         let AddressGetRequest {
             mut handle,
             message,

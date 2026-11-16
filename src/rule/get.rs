@@ -38,7 +38,9 @@ impl RuleGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl Stream<Item = Result<RuleMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<RuleMessage, Error>> + Send {
         let RuleGetRequest {
             mut handle,
             message,

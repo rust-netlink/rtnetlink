@@ -56,7 +56,7 @@ impl NeighbourGetRequest {
     /// Execute the request
     pub fn execute(
         self,
-    ) -> impl Stream<Item = Result<NeighbourMessage, Error>> {
+    ) -> impl Stream<Item = Result<NeighbourMessage, Error>> + Send {
         let NeighbourGetRequest {
             mut handle,
             message,

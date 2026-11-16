@@ -38,7 +38,9 @@ impl AfstatsRequest {
     }
 
     /// Execute the request and return a stream of stats messages
-    pub fn execute(self) -> impl Stream<Item = Result<StatsMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<StatsMessage, Error>> + Send {
         let AfstatsRequest {
             mut handle,
             message,
