@@ -4,9 +4,9 @@ use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
 use netlink_packet_route::tc::TcMessage;
 
 use super::{
-    QDiscDelRequest, QDiscGetRequest, QDiscNewRequest, TrafficChainGetRequest,
-    TrafficClassGetRequest, TrafficFilterDelRequest, TrafficFilterGetRequest,
-    TrafficFilterNewRequest,
+    QDiscDelRequest, QDiscGetRequest, QDiscNewRequest, TcMessageBuilder,
+    TrafficChainGetRequest, TrafficClassGetRequest, TrafficFilterDelRequest,
+    TrafficFilterGetRequest, TrafficFilterNewRequest,
 };
 use crate::Handle;
 
@@ -33,9 +33,16 @@ impl QDiscHandle {
     /// Change the qdisc, the handle cannot be changed and neither can the
     /// parent. In other words, change cannot move a node.
     /// ( equivalent to `tc qdisc change dev STRING`)
-    pub fn change(&self, index: i32) -> QDiscNewRequest {
-        let msg = TcMessage::with_index(index);
-        QDiscNewRequest::new(self.0.clone(), msg, 0)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn change(&self, message: TcMessage) -> QDiscNewRequest {
+        QDiscNewRequest::new(self.0.clone(), message, 0)
+    }
+
+    /// Change the qdisc on the given interface index.
+    /// ( equivalent to `tc qdisc change dev STRING`)
+    pub fn change_iface(&self, index: i32) -> QDiscNewRequest {
+        self.change(TcMessageBuilder::with_index(index).build())
     }
 
     /// Replace existing matching qdisc, create qdisc if it doesn't already
@@ -53,9 +60,16 @@ impl QDiscHandle {
     }
 
     /// Delete the qdisc ( equivalent to `tc qdisc del dev STRING`)
-    pub fn del(&self, index: i32) -> QDiscDelRequest {
-        let msg = TcMessage::with_index(index);
-        QDiscDelRequest::new(self.0.clone(), msg)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn del(&self, message: TcMessage) -> QDiscDelRequest {
+        QDiscDelRequest::new(self.0.clone(), message)
+    }
+
+    /// Delete the qdisc on the given interface index.
+    /// ( equivalent to `tc qdisc del dev STRING`)
+    pub fn del_iface(&self, index: i32) -> QDiscDelRequest {
+        self.del(TcMessageBuilder::with_index(index).build())
     }
 }
 
