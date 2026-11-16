@@ -53,7 +53,7 @@ pub use crate::{
     },
     addrlabel::{
         AddrLabelAddRequest, AddrLabelDelRequest, AddrLabelGetRequest,
-        AddrLabelHandle,
+        AddrLabelHandle, AddrLabelMessageBuilder,
     },
     connection::{
         from_socket, new_connection_with_socket,
