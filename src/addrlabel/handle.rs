@@ -28,8 +28,11 @@ impl AddrLabelHandle {
         AddrLabelAddRequest::new(self.0.clone(), message)
     }
 
-    /// Delete an address label (equivalent to `ip addrlabel del`)
-    pub fn del(&self) -> AddrLabelDelRequest {
-        AddrLabelDelRequest::new(self.0.clone())
+    /// Delete an address label (equivalent to `ip addrlabel del`).
+    ///
+    /// The [AddrLabelMessage] can be built with
+    /// [crate::AddrLabelMessageBuilder].
+    pub fn del(&self, message: AddrLabelMessage) -> AddrLabelDelRequest {
+        AddrLabelDelRequest::new(self.0.clone(), message)
     }
 }
