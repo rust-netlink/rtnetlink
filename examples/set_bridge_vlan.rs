@@ -142,7 +142,7 @@ async fn del_bridge_vlan(
         .vlan_range_end(30, BridgeVlanInfoFlags::empty())
         .build();
 
-    handle.link().del_with_message(message).execute().await?;
+    handle.link().del(message).execute().await?;
 
     let message = LinkBridgeVlan::new(bridge_index)
         .bridge_self()
@@ -151,7 +151,7 @@ async fn del_bridge_vlan(
         .vlan_range_end(60, BridgeVlanInfoFlags::empty())
         .build();
 
-    handle.link().del_with_message(message).execute().await?;
+    handle.link().del(message).execute().await?;
 
     Ok(())
 }
@@ -161,8 +161,8 @@ async fn cleanup(
     bridge_index: u32,
     port_index: u32,
 ) -> Result<(), rtnetlink::Error> {
-    handle.link().del(bridge_index).execute().await?;
-    handle.link().del(port_index).execute().await?;
+    handle.link().del_iface(bridge_index).execute().await?;
+    handle.link().del_iface(port_index).execute().await?;
 
     Ok(())
 }

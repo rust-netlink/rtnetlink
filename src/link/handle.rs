@@ -3,7 +3,7 @@
 use super::{
     AfstatsRequest, LinkAddRequest, LinkAssignNsidHandle, LinkDelPropRequest,
     LinkDelRequest, LinkGetNsidHandle, LinkGetRequest, LinkNewPropRequest,
-    LinkSetRequest,
+    LinkSetRequest, LinkUnspec,
 };
 use crate::{
     packet_core::{NLM_F_ACK, NLM_F_REQUEST},
@@ -45,15 +45,14 @@ impl LinkHandle {
         LinkDelPropRequest::new(self.0.clone(), index)
     }
 
-    pub fn del(&self, index: u32) -> LinkDelRequest {
-        LinkDelRequest::new(self.0.clone(), index)
+    /// Delete the link with `message`.
+    pub fn del(&self, message: LinkMessage) -> LinkDelRequest {
+        LinkDelRequest::new(self.0.clone(), message)
     }
 
-    /// Delete specified information from interface.
-    /// For example: To delete bridge VLANs, it is required to include
-    /// LinkMessage of VLAN information to delete.
-    pub fn del_with_message(&self, message: LinkMessage) -> LinkDelRequest {
-        LinkDelRequest::new_with_message(self.0.clone(), message)
+    /// Delete the link with the given interface index.
+    pub fn del_iface(&self, index: u32) -> LinkDelRequest {
+        self.del(LinkUnspec::new_with_index(index).build())
     }
 
     /// Retrieve the list of links (equivalent to `ip link show`)

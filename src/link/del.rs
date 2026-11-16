@@ -13,13 +13,7 @@ pub struct LinkDelRequest {
 }
 
 impl LinkDelRequest {
-    pub(crate) fn new(handle: Handle, index: u32) -> Self {
-        let mut message = LinkMessage::default();
-        message.header.index = index;
-        LinkDelRequest { handle, message }
-    }
-
-    pub fn new_with_message(handle: Handle, message: LinkMessage) -> Self {
+    pub(crate) fn new(handle: Handle, message: LinkMessage) -> Self {
         LinkDelRequest { handle, message }
     }
 
