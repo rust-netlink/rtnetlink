@@ -25,10 +25,10 @@ pub struct TrafficFilterNewRequest {
 }
 
 impl TrafficFilterNewRequest {
-    pub(crate) fn new(handle: Handle, ifindex: i32, flags: u16) -> Self {
+    pub(crate) fn new(handle: Handle, message: TcMessage, flags: u16) -> Self {
         Self {
             handle,
-            message: TcMessage::with_index(ifindex),
+            message,
             flags: NLM_F_REQUEST | flags,
         }
     }

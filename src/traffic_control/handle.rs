@@ -113,22 +113,38 @@ impl TrafficFilterHandle {
     pub fn add(&self) -> TrafficFilterNewRequest {
         TrafficFilterNewRequest::new(
             self.handle.clone(),
-            self.ifindex,
+            TcMessageBuilder::with_index(self.ifindex).build(),
             NLM_F_EXCL | NLM_F_CREATE,
         )
     }
 
     /// Delete a filter from a node, don't replace if the object already exists.
     /// ( equivalent to `tc filter del dev STRING`)
-    pub fn del(&self) -> TrafficFilterDelRequest {
-        TrafficFilterDelRequest::new(self.handle.clone(), self.ifindex)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn del(&self, message: TcMessage) -> TrafficFilterDelRequest {
+        TrafficFilterDelRequest::new(self.handle.clone(), message)
+    }
+
+    /// Delete a filter from the interface of this handle.
+    /// ( equivalent to `tc filter del dev STRING`)
+    pub fn del_iface(&self) -> TrafficFilterDelRequest {
+        self.del(TcMessageBuilder::with_index(self.ifindex).build())
     }
 
     /// Change the filter, the handle cannot be changed and neither can the
     /// parent. In other words, change cannot move a node.
     /// ( equivalent to `tc filter change dev STRING`)
-    pub fn change(&self) -> TrafficFilterNewRequest {
-        TrafficFilterNewRequest::new(self.handle.clone(), self.ifindex, 0)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn change(&self, message: TcMessage) -> TrafficFilterNewRequest {
+        TrafficFilterNewRequest::new(self.handle.clone(), message, 0)
+    }
+
+    /// Change the filter on the interface of this handle.
+    /// ( equivalent to `tc filter change dev STRING`)
+    pub fn change_iface(&self) -> TrafficFilterNewRequest {
+        self.change(TcMessageBuilder::with_index(self.ifindex).build())
     }
 
     /// Replace existing matching filter, create filter if it doesn't already
@@ -136,7 +152,7 @@ impl TrafficFilterHandle {
     pub fn replace(&self) -> TrafficFilterNewRequest {
         TrafficFilterNewRequest::new(
             self.handle.clone(),
-            self.ifindex,
+            TcMessageBuilder::with_index(self.ifindex).build(),
             NLM_F_CREATE,
         )
     }
