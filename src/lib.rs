@@ -20,7 +20,6 @@ pub use netlink_proto::sys;
 mod addr;
 mod addrlabel;
 mod connection;
-pub mod constants;
 mod errors;
 mod handle;
 mod link;

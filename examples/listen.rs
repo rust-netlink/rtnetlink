@@ -5,13 +5,15 @@
 
 use futures_util::stream::StreamExt;
 use rtnetlink::{
-    constants::{
-        RTMGRP_IPV4_IFADDR, RTMGRP_IPV4_ROUTE, RTMGRP_IPV6_IFADDR,
-        RTMGRP_IPV6_ROUTE, RTMGRP_LINK,
-    },
     new_connection,
     sys::{AsyncSocket, SocketAddr},
 };
+
+const RTMGRP_LINK: u32 = 1;
+const RTMGRP_IPV4_IFADDR: u32 = 16;
+const RTMGRP_IPV4_ROUTE: u32 = 64;
+const RTMGRP_IPV6_IFADDR: u32 = 256;
+const RTMGRP_IPV6_ROUTE: u32 = 1024;
 
 #[tokio::main]
 async fn main() -> Result<(), String> {
