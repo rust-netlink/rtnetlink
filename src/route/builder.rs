@@ -6,12 +6,13 @@ use std::{
     net::{IpAddr, Ipv4Addr, Ipv6Addr},
 };
 
+#[cfg(all(not(target_os = "android"), not(target_os = "freebsd")))]
+use netlink_packet_route::route::{MplsLabel, RouteMplsIpTunnel};
 #[cfg(not(target_os = "android"))]
 use netlink_packet_route::route::{
-    MplsLabel, RouteIoam6Tunnel, RouteIp6Tunnel, RouteIpTunnel,
-    RouteLwEnCapType, RouteLwTunnelEncap, RouteMplsIpTunnel, RouteRplIpTunnel,
-    RouteSeg6IpTunnel, RouteSeg6LocalTunnel, RouteXfrmTunnel, Seg6Header,
-    Seg6Mode,
+    RouteIoam6Tunnel, RouteIp6Tunnel, RouteIpTunnel, RouteLwEnCapType,
+    RouteLwTunnelEncap, RouteRplIpTunnel, RouteSeg6IpTunnel,
+    RouteSeg6LocalTunnel, RouteXfrmTunnel, Seg6Header, Seg6Mode,
 };
 use netlink_packet_route::{
     route::{
@@ -100,7 +101,7 @@ impl<T> RouteMessageBuilder<T> {
     }
 
     /// Sets the output MPLS encapsulation labels.
-    #[cfg(not(target_os = "android"))]
+    #[cfg(all(not(target_os = "android"), not(target_os = "freebsd")))]
     pub fn output_mpls(mut self, labels: Vec<MplsLabel>) -> Self {
         if labels.is_empty() {
             return self;
@@ -687,7 +688,7 @@ impl Default for RouteMessageBuilder<IpAddr> {
     }
 }
 
-#[cfg(not(target_os = "android"))]
+#[cfg(all(not(target_os = "android"), not(target_os = "freebsd")))]
 impl RouteMessageBuilder<MplsLabel> {
     /// Create default RouteMessage with header set to:
     ///  * route: [RouteHeader::RT_TABLE_MAIN]
@@ -723,7 +724,7 @@ impl RouteMessageBuilder<MplsLabel> {
         self
     }
 }
-#[cfg(not(target_os = "android"))]
+#[cfg(all(not(target_os = "android"), not(target_os = "freebsd")))]
 impl Default for RouteMessageBuilder<MplsLabel> {
     fn default() -> Self {
         Self::new()
@@ -771,7 +772,7 @@ impl RouteNextHopBuilder {
             (AddressFamily::Inet, IpAddr::V6(v6)) => {
                 RouteAttribute::Via(RouteVia::Inet6(v6))
             }
-            #[cfg(not(target_os = "android"))]
+            #[cfg(all(not(target_os = "android"), not(target_os = "freebsd")))]
             (AddressFamily::Mpls, _) => RouteAttribute::Via(addr.into()),
             (af, _) => return Err(InvalidRouteMessage::AddressFamily(af)),
         };
@@ -789,7 +790,7 @@ impl RouteNextHopBuilder {
     }
 
     /// Sets the nexthop MPLS encapsulation labels.
-    #[cfg(not(target_os = "android"))]
+    #[cfg(all(not(target_os = "android"), not(target_os = "freebsd")))]
     pub fn mpls(mut self, labels: Vec<MplsLabel>) -> Self {
         if labels.is_empty() {
             return self;

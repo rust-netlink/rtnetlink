@@ -68,9 +68,14 @@ impl NeighbourMessageBuilder {
 
     /// Sets the link layer address (`NDA_LLADDR`).
     ///
-    /// If the address family has not been set, it is set to
-    /// `AddressFamily::Bridge`, matching `bridge fdb add`.
+    /// On Linux, Fuchsia and Android, if the address family has not been set,
+    /// it is set to `AddressFamily::Bridge`, matching `bridge fdb add`.
     pub fn link_layer_address(mut self, address: &[u8]) -> Self {
+        #[cfg(any(
+            target_os = "linux",
+            target_os = "fuchsia",
+            target_os = "android"
+        ))]
         if self.message.header.family == AddressFamily::Unspec {
             self.message.header.family = AddressFamily::Bridge;
         }

@@ -37,6 +37,12 @@ mod traffic_control;
 pub use crate::connection::{
     new_connection, new_connection_with_strict_check, new_multicast_connection,
 };
+#[cfg(any(
+    target_os = "linux",
+    target_os = "fuchsia",
+    target_os = "android"
+))]
+pub use crate::link::LinkBridgeVlan;
 #[cfg(not(target_os = "freebsd"))]
 pub use crate::ns::{NetworkNamespace, NETNS_PATH, NONE_FS, SELF_NS_PATH};
 #[cfg(not(target_os = "freebsd"))]
@@ -64,15 +70,15 @@ pub use crate::{
     link::{
         AfstatsRequest, LinkAddRequest, LinkAmt, LinkAssignNsidHandle,
         LinkBareudp, LinkBatAdv, LinkBond, LinkBondPort, LinkBridge,
-        LinkBridgePort, LinkBridgeVlan, LinkCan, LinkDelPropRequest,
-        LinkDelRequest, LinkDsa, LinkDummy, LinkGeneve, LinkGetNsidHandle,
-        LinkGetRequest, LinkGre, LinkGre6, LinkGtp, LinkHandle, LinkHsr,
-        LinkIfb, LinkIp6Tnl, LinkIpIp, LinkIpVlan, LinkIpVtap, LinkIpoib,
-        LinkMacSec, LinkMacVlan, LinkMacVtap, LinkMessageBuilder,
-        LinkNetdevsim, LinkNetkit, LinkNewPropRequest, LinkNlmon, LinkPfcp,
-        LinkRmNet, LinkSetRequest, LinkSit, LinkTeam, LinkTun, LinkUnspec,
-        LinkVcan, LinkVeth, LinkVirtWifi, LinkVlan, LinkVrf, LinkVti, LinkVti6,
-        LinkVxcan, LinkVxlan, LinkWireguard, LinkWwan, LinkXfrm, QosMapping,
+        LinkBridgePort, LinkCan, LinkDelPropRequest, LinkDelRequest, LinkDsa,
+        LinkDummy, LinkGeneve, LinkGetNsidHandle, LinkGetRequest, LinkGre,
+        LinkGre6, LinkGtp, LinkHandle, LinkHsr, LinkIfb, LinkIp6Tnl, LinkIpIp,
+        LinkIpVlan, LinkIpVtap, LinkIpoib, LinkMacSec, LinkMacVlan,
+        LinkMacVtap, LinkMessageBuilder, LinkNetdevsim, LinkNetkit,
+        LinkNewPropRequest, LinkNlmon, LinkPfcp, LinkRmNet, LinkSetRequest,
+        LinkSit, LinkTeam, LinkTun, LinkUnspec, LinkVcan, LinkVeth,
+        LinkVirtWifi, LinkVlan, LinkVrf, LinkVti, LinkVti6, LinkVxcan,
+        LinkVxlan, LinkWireguard, LinkWwan, LinkXfrm, QosMapping,
     },
     multicast::MulticastGroup,
     neighbour::{
