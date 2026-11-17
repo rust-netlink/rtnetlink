@@ -57,7 +57,7 @@ pub use crate::{
     },
     connection::{
         from_socket, new_connection_with_socket,
-        new_multicast_connection_with_socket,
+        new_multicast_connection_with_socket, NetlinkMessageStream,
     },
     errors::Error,
     handle::Handle,

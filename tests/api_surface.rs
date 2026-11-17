@@ -34,9 +34,10 @@ fn crate_root_types_are_nameable() {
         LinkVxcan, LinkVxlan, LinkWireguard, LinkWwan, LinkXfrm,
         MulticastGroup, NeighbourAddRequest, NeighbourDelRequest,
         NeighbourGetRequest, NeighbourHandle, NeighbourMessageBuilder,
-        QosMapping, RouteAddRequest, RouteDelRequest, RouteGetRequest,
-        RouteHandle, RouteMessageBuilder, RouteNextHopBuilder, RuleAddRequest,
-        RuleDelRequest, RuleGetRequest, RuleHandle, RuleMessageBuilder,
+        NetlinkMessageStream, QosMapping, RouteAddRequest, RouteDelRequest,
+        RouteGetRequest, RouteHandle, RouteMessageBuilder, RouteNextHopBuilder,
+        RuleAddRequest, RuleDelRequest, RuleGetRequest, RuleHandle,
+        RuleMessageBuilder,
     };
     #[cfg(not(target_os = "freebsd"))]
     use rtnetlink::{

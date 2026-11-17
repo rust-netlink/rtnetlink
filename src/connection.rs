@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-use std::io;
+use std::{
+    io,
+    pin::Pin,
+    task::{Context, Poll},
+};
 
 use futures_channel::mpsc::UnboundedReceiver;
+use futures_util::stream::{FusedStream, Stream};
 use netlink_packet_core::NetlinkMessage;
 use netlink_packet_route::RouteNetlinkMessage;
 use netlink_proto::{
@@ -14,12 +19,54 @@ use crate::{Handle, MulticastGroup};
 
 const NETLINK_ROUTE: isize = 0;
 
+type ReceivedMessage = (NetlinkMessage<RouteNetlinkMessage>, SocketAddr);
+
+/// A stream of unsolicited messages received from a netlink connection.
+///
+/// This type hides the underlying channel implementation so that `rtnetlink`
+/// can change it without breaking the public API.
+#[derive(Debug)]
+pub struct NetlinkMessageStream {
+    receiver: UnboundedReceiver<ReceivedMessage>,
+}
+
+impl NetlinkMessageStream {
+    fn new(receiver: UnboundedReceiver<ReceivedMessage>) -> Self {
+        Self { receiver }
+    }
+
+    /// Closes the receiving half of the stream.
+    ///
+    /// Messages that are already queued can still be read until the stream is
+    /// drained; any message sent afterwards is dropped.
+    pub fn close(&mut self) {
+        self.receiver.close();
+    }
+}
+
+impl Stream for NetlinkMessageStream {
+    type Item = ReceivedMessage;
+
+    fn poll_next(
+        mut self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+    ) -> Poll<Option<Self::Item>> {
+        Pin::new(&mut self.receiver).poll_next(cx)
+    }
+}
+
+impl FusedStream for NetlinkMessageStream {
+    fn is_terminated(&self) -> bool {
+        self.receiver.is_terminated()
+    }
+}
+
 #[cfg(feature = "tokio_socket")]
 #[allow(clippy::type_complexity)]
 pub fn new_connection() -> io::Result<(
     Connection<RouteNetlinkMessage>,
     Handle,
-    UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+    NetlinkMessageStream,
 )> {
     new_connection_with_socket()
 }
@@ -32,12 +79,12 @@ pub fn new_connection() -> io::Result<(
 pub fn new_connection_with_strict_check() -> io::Result<(
     Connection<RouteNetlinkMessage>,
     Handle,
-    UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+    NetlinkMessageStream,
 )> {
     let (conn, handle, messages): (
         Connection<RouteNetlinkMessage>,
         Handle,
-        UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+        NetlinkMessageStream,
     ) = new_connection_with_socket()?;
     conn.socket_ref()
         .socket_ref()
@@ -53,7 +100,7 @@ pub fn new_multicast_connection(
 ) -> io::Result<(
     Connection<RouteNetlinkMessage>,
     Handle,
-    UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+    NetlinkMessageStream,
 )> {
     new_multicast_connection_with_socket(groups)
 }
@@ -62,7 +109,7 @@ pub fn new_multicast_connection(
 pub fn new_connection_with_socket<S>() -> io::Result<(
     Connection<RouteNetlinkMessage, S>,
     Handle,
-    UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+    NetlinkMessageStream,
 )>
 where
     S: AsyncSocket,
@@ -70,7 +117,11 @@ where
     let (conn, handle, messages) =
         netlink_proto::new_connection_with_socket(NETLINK_ROUTE)
             .map_err(io::Error::other)?;
-    Ok((conn, Handle::new(handle), messages))
+    Ok((
+        conn,
+        Handle::new(handle),
+        NetlinkMessageStream::new(messages),
+    ))
 }
 
 /// Equal to `ip monitor` command
@@ -80,7 +131,7 @@ pub fn new_multicast_connection_with_socket<S>(
 ) -> io::Result<(
     Connection<RouteNetlinkMessage, S>,
     Handle,
-    UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+    NetlinkMessageStream,
 )>
 where
     S: AsyncSocket,
@@ -104,7 +155,11 @@ where
             .add_membership(*group as u32)?;
     }
 
-    Ok((conn, Handle::new(handle), messages))
+    Ok((
+        conn,
+        Handle::new(handle),
+        NetlinkMessageStream::new(messages),
+    ))
 }
 
 #[allow(clippy::type_complexity)]
@@ -113,12 +168,16 @@ pub fn from_socket<S>(
 ) -> (
     Connection<RouteNetlinkMessage, S>,
     Handle,
-    UnboundedReceiver<(NetlinkMessage<RouteNetlinkMessage>, SocketAddr)>,
+    NetlinkMessageStream,
 )
 where
     S: AsyncSocket,
 {
     let (conn, handle, messages) =
         netlink_proto::from_socket_with_codec(socket);
-    (conn, Handle::new(handle), messages)
+    (
+        conn,
+        Handle::new(handle),
+        NetlinkMessageStream::new(messages),
+    )
 }
