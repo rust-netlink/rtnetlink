@@ -12,6 +12,7 @@ use crate::{
 
 /// Represent GRE/Gretap interface (IPv4).
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkGre;
 
 impl LinkGre {

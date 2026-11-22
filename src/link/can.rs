@@ -33,6 +33,7 @@ use crate::{
 ///
 /// Please check `LinkMessageBuilder::<LinkCan>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkCan;
 
 impl LinkCan {

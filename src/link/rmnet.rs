@@ -34,6 +34,7 @@ use crate::{
 ///
 /// Please check `LinkMessageBuilder::<LinkRmNet>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkRmNet;
 
 impl LinkRmNet {

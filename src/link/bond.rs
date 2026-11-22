@@ -43,6 +43,7 @@ use crate::{
 ///
 /// Please check `LinkMessageBuilder::<LinkBond>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkBond;
 
 impl LinkBond {

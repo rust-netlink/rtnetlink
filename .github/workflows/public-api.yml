@@ -1,0 +1,27 @@
+name: Public API
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+jobs:
+  public_api:
+    name: Public API
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Rust Nightly
+        run: |
+          rustup override set nightly
+          rustup update nightly
+
+      - name: Install cargo-public-api
+        run: cargo install cargo-public-api --version 0.52.0 --locked
+
+      - name: Check public API
+        run: ./tools/check-public-api.sh

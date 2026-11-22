@@ -59,6 +59,7 @@ impl From<QosMapping> for VlanQosMapping {
 ///
 /// Please check `LinkMessageBuilder::<LinkVlan>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkVlan;
 
 impl LinkVlan {

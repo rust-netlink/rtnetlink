@@ -22,6 +22,7 @@ use crate::{link::LinkMessageBuilder, packet_route::link::InfoKind};
 ///
 /// Please check `LinkMessageBuilder::<LinkDummy>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkDummy;
 
 impl LinkDummy {

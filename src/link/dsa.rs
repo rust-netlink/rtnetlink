@@ -29,6 +29,7 @@ use crate::{
 ///
 /// Please check `LinkMessageBuilder::<LinkDsa>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkDsa;
 
 impl LinkDsa {

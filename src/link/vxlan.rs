@@ -31,6 +31,7 @@ use crate::{
 ///
 /// Please check `LinkMessageBuilder::<LinkVlan>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkVxlan;
 
 impl LinkVxlan {

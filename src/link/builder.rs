@@ -36,6 +36,7 @@ use crate::packet_route::{
 /// }
 /// ```
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkUnspec;
 
 impl LinkUnspec {

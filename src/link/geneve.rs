@@ -30,6 +30,7 @@ use crate::{
 ///
 /// Please check `LinkMessageBuilder::<LinkGeneve>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkGeneve;
 
 impl LinkGeneve {

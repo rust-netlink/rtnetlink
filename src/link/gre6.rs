@@ -12,6 +12,7 @@ use crate::{
 
 /// Represent IP6GRE/IP6Gretap interface (IPv6).
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkGre6;
 
 impl LinkGre6 {

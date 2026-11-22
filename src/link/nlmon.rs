@@ -20,6 +20,7 @@ use crate::{link::LinkMessageBuilder, packet_route::link::InfoKind};
 /// }
 /// ```
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkNlmon;
 
 impl LinkNlmon {

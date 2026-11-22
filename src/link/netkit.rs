@@ -29,6 +29,7 @@ use crate::{
 /// ```
 ///
 /// Please check `LinkMessageBuilder::<LinkNetkit>` for more detail.
+#[non_exhaustive]
 pub struct LinkNetkit;
 
 impl LinkNetkit {

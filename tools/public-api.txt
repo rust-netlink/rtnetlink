@@ -1,0 +1,1167 @@
+pub mod rtnetlink
+pub use rtnetlink::packet_core
+pub use rtnetlink::packet_route
+pub use rtnetlink::proto
+pub use rtnetlink::sys
+pub macro rtnetlink::try_nl!
+pub macro rtnetlink::try_rtnl!
+#[non_exhaustive] pub enum rtnetlink::Error
+pub rtnetlink::Error::InvalidAddress(alloc::vec::Vec<u8>, alloc::vec::Vec<u8>)
+pub rtnetlink::Error::InvalidHardwareAddress(alloc::vec::Vec<u8>)
+pub rtnetlink::Error::InvalidIp(alloc::vec::Vec<u8>)
+pub rtnetlink::Error::InvalidNla(alloc::string::String)
+pub rtnetlink::Error::NamespaceError(alloc::string::String)
+pub rtnetlink::Error::NetlinkError(netlink_packet_core::error::ErrorMessage)
+pub rtnetlink::Error::NetlinkProtoError(netlink_proto::errors::NetlinkProtoError)
+pub rtnetlink::Error::RequestFailed
+pub rtnetlink::Error::UnexpectedMessage(netlink_packet_core::message::NetlinkMessage<netlink_packet_route::message::RouteNetlinkMessage>)
+impl core::error::Error for rtnetlink::Error
+pub fn rtnetlink::Error::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Display for rtnetlink::Error
+pub fn rtnetlink::Error::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+#[non_exhaustive] pub enum rtnetlink::InvalidRouteMessage
+pub rtnetlink::InvalidRouteMessage::AddressFamily(netlink_packet_route::address_family_linux::AddressFamily)
+pub rtnetlink::InvalidRouteMessage::DestinationPrefix(core::net::ip_addr::IpAddr, u8)
+pub rtnetlink::InvalidRouteMessage::Gateway(core::net::ip_addr::IpAddr)
+pub rtnetlink::InvalidRouteMessage::PrefSource(core::net::ip_addr::IpAddr)
+pub rtnetlink::InvalidRouteMessage::SourcePrefix(core::net::ip_addr::IpAddr, u8)
+impl core::error::Error for rtnetlink::InvalidRouteMessage
+impl core::fmt::Display for rtnetlink::InvalidRouteMessage
+pub fn rtnetlink::InvalidRouteMessage::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum rtnetlink::IpVersion
+pub rtnetlink::IpVersion::V4
+pub rtnetlink::IpVersion::V6
+#[non_exhaustive] #[repr(u32)] pub enum rtnetlink::MulticastGroup
+pub rtnetlink::MulticastGroup::Brvlan = 33
+pub rtnetlink::MulticastGroup::Dcb = 23
+pub rtnetlink::MulticastGroup::DecnetIfaddr = 13
+pub rtnetlink::MulticastGroup::DecnetRoute = 15
+pub rtnetlink::MulticastGroup::DecnetRule = 16
+pub rtnetlink::MulticastGroup::Ipv4Ifaddr = 5
+pub rtnetlink::MulticastGroup::Ipv4Mcaddr = 37
+pub rtnetlink::MulticastGroup::Ipv4Mroute = 6
+pub rtnetlink::MulticastGroup::Ipv4MrouteR = 30
+pub rtnetlink::MulticastGroup::Ipv4Netconf = 24
+pub rtnetlink::MulticastGroup::Ipv4Route = 7
+pub rtnetlink::MulticastGroup::Ipv4Rule = 8
+pub rtnetlink::MulticastGroup::Ipv6Acaddr = 39
+pub rtnetlink::MulticastGroup::Ipv6Ifaddr = 9
+pub rtnetlink::MulticastGroup::Ipv6Ifinfo = 12
+pub rtnetlink::MulticastGroup::Ipv6Mcaddr = 38
+pub rtnetlink::MulticastGroup::Ipv6Mroute = 10
+pub rtnetlink::MulticastGroup::Ipv6MrouteR = 31
+pub rtnetlink::MulticastGroup::Ipv6Netconf = 25
+pub rtnetlink::MulticastGroup::Ipv6Prefix = 18
+pub rtnetlink::MulticastGroup::Ipv6Route = 11
+pub rtnetlink::MulticastGroup::Ipv6Rule = 19
+pub rtnetlink::MulticastGroup::Link = 1
+pub rtnetlink::MulticastGroup::MctpIfaddr = 34
+pub rtnetlink::MulticastGroup::Mdb = 26
+pub rtnetlink::MulticastGroup::MplsNetconf = 29
+pub rtnetlink::MulticastGroup::MplsRoute = 27
+pub rtnetlink::MulticastGroup::NdUseropt = 20
+pub rtnetlink::MulticastGroup::Neigh = 3
+pub rtnetlink::MulticastGroup::Nexthop = 32
+pub rtnetlink::MulticastGroup::Notify = 2
+pub rtnetlink::MulticastGroup::Nsid = 28
+pub rtnetlink::MulticastGroup::PhonetIfaddr = 21
+pub rtnetlink::MulticastGroup::PhonetRoute = 22
+pub rtnetlink::MulticastGroup::Stats = 36
+pub rtnetlink::MulticastGroup::Tc = 4
+pub rtnetlink::MulticastGroup::Tunnel = 35
+impl rtnetlink::MulticastGroup
+pub fn rtnetlink::MulticastGroup::need_via_add_membership(self) -> bool
+pub struct rtnetlink::AddrLabelAddRequest
+impl rtnetlink::AddrLabelAddRequest
+pub async fn rtnetlink::AddrLabelAddRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::AddrLabelAddRequest::message_mut(&mut self) -> &mut netlink_packet_route::addrlabel::message::AddrLabelMessage
+pub struct rtnetlink::AddrLabelDelRequest
+impl rtnetlink::AddrLabelDelRequest
+pub async fn rtnetlink::AddrLabelDelRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::AddrLabelDelRequest::message_mut(&mut self) -> &mut netlink_packet_route::addrlabel::message::AddrLabelMessage
+pub struct rtnetlink::AddrLabelGetRequest
+impl rtnetlink::AddrLabelGetRequest
+pub fn rtnetlink::AddrLabelGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::addrlabel::message::AddrLabelMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::AddrLabelGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::addrlabel::message::AddrLabelMessage
+pub struct rtnetlink::AddrLabelHandle(_)
+impl rtnetlink::AddrLabelHandle
+pub fn rtnetlink::AddrLabelHandle::add(&self, netlink_packet_route::addrlabel::message::AddrLabelMessage) -> rtnetlink::AddrLabelAddRequest
+pub fn rtnetlink::AddrLabelHandle::del(&self, netlink_packet_route::addrlabel::message::AddrLabelMessage) -> rtnetlink::AddrLabelDelRequest
+pub fn rtnetlink::AddrLabelHandle::get(&self, rtnetlink::IpVersion) -> rtnetlink::AddrLabelGetRequest
+pub fn rtnetlink::AddrLabelHandle::new(rtnetlink::Handle) -> Self
+pub struct rtnetlink::AddrLabelMessageBuilder
+impl rtnetlink::AddrLabelMessageBuilder
+pub fn rtnetlink::AddrLabelMessageBuilder::address(self, core::net::ip_addr::IpAddr) -> Self
+pub fn rtnetlink::AddrLabelMessageBuilder::append_attribute(self, netlink_packet_route::addrlabel::attribute::AddrLabelAttribute) -> Self
+pub fn rtnetlink::AddrLabelMessageBuilder::build(self) -> netlink_packet_route::addrlabel::message::AddrLabelMessage
+pub fn rtnetlink::AddrLabelMessageBuilder::family(self, netlink_packet_route::address_family_linux::AddressFamily) -> Self
+pub fn rtnetlink::AddrLabelMessageBuilder::get_mut(&mut self) -> &mut netlink_packet_route::addrlabel::message::AddrLabelMessage
+pub fn rtnetlink::AddrLabelMessageBuilder::index(self, u32) -> Self
+pub fn rtnetlink::AddrLabelMessageBuilder::label(self, u32) -> Self
+pub fn rtnetlink::AddrLabelMessageBuilder::new() -> Self
+pub fn rtnetlink::AddrLabelMessageBuilder::prefix_len(self, u8) -> Self
+impl core::default::Default for rtnetlink::AddrLabelMessageBuilder
+pub fn rtnetlink::AddrLabelMessageBuilder::default() -> Self
+pub struct rtnetlink::AddressAddRequest
+impl rtnetlink::AddressAddRequest
+pub async fn rtnetlink::AddressAddRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::AddressAddRequest::message_mut(&mut self) -> &mut netlink_packet_route::address::message::AddressMessage
+pub fn rtnetlink::AddressAddRequest::replace(self) -> Self
+pub struct rtnetlink::AddressDelRequest
+impl rtnetlink::AddressDelRequest
+pub async fn rtnetlink::AddressDelRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::AddressDelRequest::message_mut(&mut self) -> &mut netlink_packet_route::address::message::AddressMessage
+pub struct rtnetlink::AddressGetRequest
+impl rtnetlink::AddressGetRequest
+pub fn rtnetlink::AddressGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::address::message::AddressMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::AddressGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::address::message::AddressMessage
+pub fn rtnetlink::AddressGetRequest::set_address_filter(self, core::net::ip_addr::IpAddr) -> Self
+pub fn rtnetlink::AddressGetRequest::set_link_index_filter(self, u32) -> Self
+pub fn rtnetlink::AddressGetRequest::set_prefix_length_filter(self, u8) -> Self
+pub struct rtnetlink::AddressHandle(_)
+impl rtnetlink::AddressHandle
+pub fn rtnetlink::AddressHandle::add(&self, netlink_packet_route::address::message::AddressMessage) -> rtnetlink::AddressAddRequest
+pub fn rtnetlink::AddressHandle::add_ip(&self, u32, core::net::ip_addr::IpAddr, u8) -> rtnetlink::AddressAddRequest
+pub fn rtnetlink::AddressHandle::del(&self, netlink_packet_route::address::message::AddressMessage) -> rtnetlink::AddressDelRequest
+pub fn rtnetlink::AddressHandle::del_ip(&self, u32, core::net::ip_addr::IpAddr, u8) -> rtnetlink::AddressDelRequest
+pub fn rtnetlink::AddressHandle::get(&self) -> rtnetlink::AddressGetRequest
+pub fn rtnetlink::AddressHandle::new(rtnetlink::Handle) -> Self
+pub struct rtnetlink::AddressMessageBuilder<T>
+impl rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv4Addr>
+pub fn rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv4Addr>::address(self, core::net::ip_addr::Ipv4Addr, u8) -> Self
+pub fn rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv4Addr>::new() -> Self
+impl rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv6Addr>
+pub fn rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv6Addr>::address(self, core::net::ip_addr::Ipv6Addr, u8) -> Self
+pub fn rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv6Addr>::new() -> Self
+impl<T> rtnetlink::AddressMessageBuilder<T>
+pub fn rtnetlink::AddressMessageBuilder<T>::append_attribute(self, netlink_packet_route::address::attribute::AddressAttribute) -> Self
+pub fn rtnetlink::AddressMessageBuilder<T>::build(self) -> netlink_packet_route::address::message::AddressMessage
+pub fn rtnetlink::AddressMessageBuilder<T>::get_mut(&mut self) -> &mut netlink_packet_route::address::message::AddressMessage
+pub fn rtnetlink::AddressMessageBuilder<T>::index(self, u32) -> Self
+impl core::default::Default for rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv4Addr>
+pub fn rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv4Addr>::default() -> Self
+impl core::default::Default for rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv6Addr>
+pub fn rtnetlink::AddressMessageBuilder<core::net::ip_addr::Ipv6Addr>::default() -> Self
+pub struct rtnetlink::AfstatsRequest
+impl rtnetlink::AfstatsRequest
+pub fn rtnetlink::AfstatsRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::stats::message::StatsMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::AfstatsRequest::match_index(self, u32) -> Self
+pub fn rtnetlink::AfstatsRequest::message_mut(&mut self) -> &mut netlink_packet_route::stats::message::StatsMessage
+pub struct rtnetlink::Handle(_)
+impl rtnetlink::Handle
+pub fn rtnetlink::Handle::address(&self) -> rtnetlink::AddressHandle
+pub fn rtnetlink::Handle::addrlabel(&self) -> rtnetlink::AddrLabelHandle
+pub fn rtnetlink::Handle::closed(&self) -> impl core::future::future::Future<Output = core::option::Option<alloc::rcs::arc::Arc<netlink_proto::errors::NetlinkProtoError>>> + core::marker::Send + use<>
+pub fn rtnetlink::Handle::link(&self) -> rtnetlink::LinkHandle
+pub fn rtnetlink::Handle::neighbours(&self) -> rtnetlink::NeighbourHandle
+pub fn rtnetlink::Handle::notify(&mut self, netlink_packet_core::message::NetlinkMessage<netlink_packet_route::message::RouteNetlinkMessage>) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::Handle::qdisc(&self) -> rtnetlink::QDiscHandle
+pub fn rtnetlink::Handle::request(&mut self, netlink_packet_core::message::NetlinkMessage<netlink_packet_route::message::RouteNetlinkMessage>) -> core::result::Result<impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_core::message::NetlinkMessage<netlink_packet_route::message::RouteNetlinkMessage>, rtnetlink::Error>> + core::marker::Send + use<>, rtnetlink::Error>
+pub fn rtnetlink::Handle::route(&self) -> rtnetlink::RouteHandle
+pub fn rtnetlink::Handle::rule(&self) -> rtnetlink::RuleHandle
+pub fn rtnetlink::Handle::traffic_chain(&self, i32) -> rtnetlink::TrafficChainHandle
+pub fn rtnetlink::Handle::traffic_class(&self, i32) -> rtnetlink::TrafficClassHandle
+pub fn rtnetlink::Handle::traffic_filter(&self, i32) -> rtnetlink::TrafficFilterHandle
+pub struct rtnetlink::LinkAddRequest
+impl rtnetlink::LinkAddRequest
+pub async fn rtnetlink::LinkAddRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::LinkAddRequest::message_mut(&mut self) -> &mut netlink_packet_route::link::message::LinkMessage
+pub fn rtnetlink::LinkAddRequest::replace(self) -> Self
+pub fn rtnetlink::LinkAddRequest::set_flags(self, u16) -> Self
+#[non_exhaustive] pub struct rtnetlink::LinkAmt
+impl rtnetlink::LinkAmt
+pub fn rtnetlink::LinkAmt::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkAssignNsidHandle
+impl rtnetlink::LinkAssignNsidHandle
+pub async fn rtnetlink::LinkAssignNsidHandle::execute(self) -> core::result::Result<(), rtnetlink::Error>
+#[non_exhaustive] pub struct rtnetlink::LinkBareudp
+impl rtnetlink::LinkBareudp
+pub fn rtnetlink::LinkBareudp::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkBatAdv
+impl rtnetlink::LinkBatAdv
+pub fn rtnetlink::LinkBatAdv::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkBond
+impl rtnetlink::LinkBond
+pub fn rtnetlink::LinkBond::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkBondPort
+impl rtnetlink::LinkBondPort
+pub fn rtnetlink::LinkBondPort::new(u32) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkBridge
+impl rtnetlink::LinkBridge
+pub fn rtnetlink::LinkBridge::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkBridgePort
+impl rtnetlink::LinkBridgePort
+pub fn rtnetlink::LinkBridgePort::new(u32) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkBridgeVlan
+impl rtnetlink::LinkBridgeVlan
+pub fn rtnetlink::LinkBridgeVlan::new(u32) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkCan
+impl rtnetlink::LinkCan
+pub fn rtnetlink::LinkCan::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkDelPropRequest
+impl rtnetlink::LinkDelPropRequest
+pub fn rtnetlink::LinkDelPropRequest::alt_ifname(self, &[&str]) -> Self
+pub async fn rtnetlink::LinkDelPropRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::LinkDelPropRequest::message_mut(&mut self) -> &mut netlink_packet_route::link::message::LinkMessage
+pub struct rtnetlink::LinkDelRequest
+impl rtnetlink::LinkDelRequest
+pub async fn rtnetlink::LinkDelRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::LinkDelRequest::message_mut(&mut self) -> &mut netlink_packet_route::link::message::LinkMessage
+#[non_exhaustive] pub struct rtnetlink::LinkDsa
+impl rtnetlink::LinkDsa
+pub fn rtnetlink::LinkDsa::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkDummy
+impl rtnetlink::LinkDummy
+pub fn rtnetlink::LinkDummy::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkGeneve
+impl rtnetlink::LinkGeneve
+pub fn rtnetlink::LinkGeneve::new(&str, u32) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkGetNsidHandle
+impl rtnetlink::LinkGetNsidHandle
+pub async fn rtnetlink::LinkGetNsidHandle::execute(self) -> core::result::Result<core::option::Option<i32>, rtnetlink::Error>
+pub struct rtnetlink::LinkGetRequest
+impl rtnetlink::LinkGetRequest
+pub fn rtnetlink::LinkGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::link::message::LinkMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::LinkGetRequest::match_index(self, u32) -> Self
+pub fn rtnetlink::LinkGetRequest::match_name(self, impl core::convert::Into<alloc::string::String>) -> Self
+pub fn rtnetlink::LinkGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::link::message::LinkMessage
+pub fn rtnetlink::LinkGetRequest::set_filter_mask(self, netlink_packet_route::address_family_linux::AddressFamily, alloc::vec::Vec<netlink_packet_route::link::ext_mask::LinkExtentMask>) -> Self
+#[non_exhaustive] pub struct rtnetlink::LinkGre
+impl rtnetlink::LinkGre
+pub fn rtnetlink::LinkGre::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub fn rtnetlink::LinkGre::new_erspan(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub fn rtnetlink::LinkGre::new_gretap(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkGre6
+impl rtnetlink::LinkGre6
+pub fn rtnetlink::LinkGre6::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub fn rtnetlink::LinkGre6::new_gretap6(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub fn rtnetlink::LinkGre6::new_ip6erspan(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkGtp
+impl rtnetlink::LinkGtp
+pub fn rtnetlink::LinkGtp::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkHandle(_)
+impl rtnetlink::LinkHandle
+pub fn rtnetlink::LinkHandle::add(&self, netlink_packet_route::link::message::LinkMessage) -> rtnetlink::LinkAddRequest
+pub fn rtnetlink::LinkHandle::afstats(&self) -> rtnetlink::AfstatsRequest
+pub fn rtnetlink::LinkHandle::assign_netns_id(&self, impl core::convert::Into<alloc::string::String>, i32) -> rtnetlink::LinkAssignNsidHandle
+pub fn rtnetlink::LinkHandle::change(&self, netlink_packet_route::link::message::LinkMessage) -> rtnetlink::LinkAddRequest
+pub fn rtnetlink::LinkHandle::del(&self, netlink_packet_route::link::message::LinkMessage) -> rtnetlink::LinkDelRequest
+pub fn rtnetlink::LinkHandle::del_iface(&self, u32) -> rtnetlink::LinkDelRequest
+pub fn rtnetlink::LinkHandle::get(&self) -> rtnetlink::LinkGetRequest
+pub fn rtnetlink::LinkHandle::get_netns_id(&self, impl core::convert::Into<alloc::string::String>) -> rtnetlink::LinkGetNsidHandle
+pub fn rtnetlink::LinkHandle::new(rtnetlink::Handle) -> Self
+pub fn rtnetlink::LinkHandle::property_add(&self, netlink_packet_route::link::message::LinkMessage) -> rtnetlink::LinkNewPropRequest
+pub fn rtnetlink::LinkHandle::property_add_iface(&self, u32) -> rtnetlink::LinkNewPropRequest
+pub fn rtnetlink::LinkHandle::property_del(&self, netlink_packet_route::link::message::LinkMessage) -> rtnetlink::LinkDelPropRequest
+pub fn rtnetlink::LinkHandle::property_del_iface(&self, u32) -> rtnetlink::LinkDelPropRequest
+pub fn rtnetlink::LinkHandle::set(&self, netlink_packet_route::link::message::LinkMessage) -> rtnetlink::LinkSetRequest
+pub fn rtnetlink::LinkHandle::set_port(&self, netlink_packet_route::link::message::LinkMessage) -> rtnetlink::LinkAddRequest
+#[non_exhaustive] pub struct rtnetlink::LinkHsr
+impl rtnetlink::LinkHsr
+pub fn rtnetlink::LinkHsr::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkIfb
+impl rtnetlink::LinkIfb
+pub fn rtnetlink::LinkIfb::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkIp6Tnl
+impl rtnetlink::LinkIp6Tnl
+pub fn rtnetlink::LinkIp6Tnl::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkIpIp
+impl rtnetlink::LinkIpIp
+pub fn rtnetlink::LinkIpIp::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkIpVlan
+impl rtnetlink::LinkIpVlan
+pub fn rtnetlink::LinkIpVlan::new(&str, u32, netlink_packet_route::link::link_info::ipvlan::IpVlanMode) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkIpVtap
+impl rtnetlink::LinkIpVtap
+pub fn rtnetlink::LinkIpVtap::new(&str, u32, netlink_packet_route::link::link_info::ipvlan::IpVtapMode) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkIpoib
+impl rtnetlink::LinkIpoib
+pub fn rtnetlink::LinkIpoib::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkMacSec
+impl rtnetlink::LinkMacSec
+pub fn rtnetlink::LinkMacSec::new(&str, u32) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkMacVlan
+impl rtnetlink::LinkMacVlan
+pub fn rtnetlink::LinkMacVlan::new(&str, u32, netlink_packet_route::link::link_info::mac_vlan::MacVlanMode) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkMacVtap
+impl rtnetlink::LinkMacVtap
+pub fn rtnetlink::LinkMacVtap::new(&str, u32, netlink_packet_route::link::link_info::mac_vlan::MacVtapMode) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkMessageBuilder<T>
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::discovery_ip(self, core::net::ip_addr::IpAddr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::gateway_port(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::local_ip(self, core::net::ip_addr::IpAddr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::max_tunnels(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::mode(self, netlink_packet_route::link::link_info::amt::AmtMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::relay_port(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkAmt>::remote_ip(self, core::net::ip_addr::IpAddr) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkBareudp>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBareudp>::dstport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBareudp>::ethertype(self, netlink_packet_core::mac::EthernetProtocol) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBareudp>::multiproto(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBareudp>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBareudp>::srcportmin(self, u16) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkBatAdv>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBatAdv>::algo_name(self, alloc::string::String) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBatAdv>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::active_port(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::ad_actor_sys_prio(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::ad_actor_system(self, [u8; 6]) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::ad_lacp_active(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::ad_lacp_rate(self, netlink_packet_route::link::link_info::bond::BondLacpRate) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::ad_select(self, netlink_packet_route::link::link_info::bond::BondAdSelect) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::ad_user_port_key(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::all_ports_active(self, netlink_packet_route::link::link_info::bond::BondAllPortActive) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::append_info_data(self, netlink_packet_route::link::link_info::bond::InfoBond) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::arp_all_targets(self, netlink_packet_route::link::link_info::bond::BondArpAllTargets) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::arp_interval(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::arp_ip_target(self, alloc::vec::Vec<core::net::ip_addr::Ipv4Addr>) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::arp_validate(self, netlink_packet_route::link::link_info::bond::BondArpValidate) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::downdelay(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::fail_over_mac(self, netlink_packet_route::link::link_info::bond::BondFailOverMac) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::lacp_strict(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::lp_interval(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::miimon(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::min_links(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::missed_max(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::mode(self, netlink_packet_route::link::link_info::bond::BondMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::ns_ip6_target(self, alloc::vec::Vec<core::net::ip_addr::Ipv6Addr>) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::num_peer_notif(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::packets_per_port(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::peer_notif_delay(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::primary(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::primary_reselect(self, netlink_packet_route::link::link_info::bond::BondPrimaryReselect) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::resend_igmp(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::tlb_dynamic_lb(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::updelay(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::use_carrier(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBond>::xmit_hash_policy(self, netlink_packet_route::link::link_info::bond::BondXmitHashPolicy) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkBondPort>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBondPort>::append_info_data(self, netlink_packet_route::link::link_info::bond_port::InfoBondPort) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBondPort>::prio(self, i32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBondPort>::queue_id(self, u16) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::ageing_time(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::append_info_data(self, netlink_packet_route::link::link_info::bridge::InfoBridge) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::fdb_flush(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::fdb_local_vlan_0(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::fdb_max_learned(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::forward_delay(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::group_address(self, [u8; 6]) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::group_fwd_mask(self, netlink_packet_route::link::link_info::bridge::BridgeGroupFwdMask) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::hello_time(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::max_age(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_hash_elasticity(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_hash_max(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_igmp_version(self, netlink_packet_route::link::link_info::bridge::BridgeMulticastIgmpVersion) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_last_member_count(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_last_member_interval(self, u64) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_membership_interval(self, u64) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_mld_version(self, netlink_packet_route::link::link_info::bridge::BridgeMulticastMldVersion) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_querier(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_querier_interval(self, u64) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_query_interval(self, u64) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_query_response_interval(self, u64) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_query_use_ifaddr(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_router(self, netlink_packet_route::link::link_info::bridge::BridgeMulticastRouterType) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_snooping(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_startup_query_count(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_startup_query_interval(self, u64) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_stats_enabled(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mcast_vlan_snooping(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mdb_offload_fail_notification(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::mst_enabled(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::nf_call_arptables(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::nf_call_ip6tables(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::nf_call_iptables(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::no_linklocal_learn(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::priority(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::set_boolean_opt(self, netlink_packet_route::link::link_info::bridge_boolopt::BridgeBooleanOptionFlags, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::stp_mode(self, netlink_packet_route::link::link_info::bridge::BridgeStpMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::stp_state(self, netlink_packet_route::link::link_info::bridge::BridgeStpState) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::vlan_default_pvid(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::vlan_filtering(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::vlan_protocol(self, netlink_packet_route::link::vlan_protocol::VlanProtocol) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::vlan_stats_enabled(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridge>::vlan_stats_per_port(self, bool) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::append_info_data(self, netlink_packet_route::link::link_info::bridge_port::InfoBridgePort) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::backup_nhid(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::backup_port(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::bcast_flood(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::cost(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::fdb_flush(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::flood(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::group_fwd_mask(self, netlink_packet_route::link::link_info::bridge::BridgeGroupFwdMask) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::guard(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::hairpin(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::isolated(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::learning(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::locked(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::mab(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::mcast_fast_leave(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::mcast_flood(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::mcast_router(self, netlink_packet_route::link::link_info::bridge::BridgeMulticastRouterType) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::mcast_to_unicast(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::neigh_forward_grat(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::neigh_suppress(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::neigh_vlan_suppress(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::nobackup_port(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::priority(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::proxy_arp(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::proxy_arp_wifi(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::root_block(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::state(self, netlink_packet_route::link::bridge_port_state::BridgePortState) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgePort>::vlan_tunnel(self, bool) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgeVlan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgeVlan>::append_af_spec(self, netlink_packet_route::link::af_spec::bridge::AfSpecBridge) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgeVlan>::bridge_self(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgeVlan>::vlan(self, u16, netlink_packet_route::link::bridge_vlan::BridgeVlanInfoFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgeVlan>::vlan_range_end(self, u16, netlink_packet_route::link::bridge_vlan::BridgeVlanInfoFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkBridgeVlan>::vlan_range_start(self, u16, netlink_packet_route::link::bridge_vlan::BridgeVlanInfoFlags) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::bit_timing(self, netlink_packet_route::link::link_info::can::CanBitTiming) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::bitrate(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::ctrl_mode(self, netlink_packet_route::link::link_info::can::CanCtrlModeFlags, netlink_packet_route::link::link_info::can::CanCtrlModeFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::ctrl_mode_ext(self, netlink_packet_route::link::link_info::can::CanCtrlModeFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::data_bit_timing(self, netlink_packet_route::link::link_info::can::CanBitTiming) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::restart_ms(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::tdc(self, u32, u32, u32, u32, u32, u32, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkCan>::termination(self, u16) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkDsa>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkDsa>::conduit(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkDsa>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkDummy>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkDummy>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::append_info_data(self, netlink_packet_route::link::link_info::geneve::InfoGeneve) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::collect_metadata(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::df(self, netlink_packet_route::link::link_info::geneve::GeneveDf) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::id(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::inner_proto_inherit(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::label(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::local(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::local6(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::port(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::remote(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::remote6(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::tos(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::ttl(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::ttl_inherit(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::udp_csum(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::udp_zero_csum6_rx(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGeneve>::udp_zero_csum6_tx(self, bool) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::collect_metadata(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::encap_dport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::encap_flags(self, netlink_packet_route::link::link_info::gre::gre_common::GreEncapFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::encap_limit(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::encap_sport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::encap_type(self, netlink_packet_route::link::link_info::gre::gre_common::GreEncapType) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::erspan_dir(self, netlink_packet_route::link::link_info::gre::gre_common::ErSpanDir) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::erspan_hwid(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::erspan_index(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::erspan_ver(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::flowlabel(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::fwmark(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::iflags(self, netlink_packet_route::link::link_info::gre::gre_common::GreIOFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::ikey(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::local(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::new_gre6(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::new_gretap6(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::new_ip6erspan(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::oflags(self, netlink_packet_route::link::link_info::gre::gre_common::GreIOFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::okey(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::remote(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre6>::ttl(self, u8) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::collect_metadata(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::encap_dport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::encap_flags(self, netlink_packet_route::link::link_info::gre::gre_common::GreEncapFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::encap_sport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::encap_type(self, netlink_packet_route::link::link_info::gre::gre_common::GreEncapType) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::erspan_dir(self, netlink_packet_route::link::link_info::gre::gre_common::ErSpanDir) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::erspan_hwid(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::erspan_index(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::erspan_ver(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::fwmark(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::iflags(self, netlink_packet_route::link::link_info::gre::gre_common::GreIOFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::ikey(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::local(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::new_erspan(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::new_gre(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::new_gretap(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::oflags(self, netlink_packet_route::link::link_info::gre::gre_common::GreIOFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::okey(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::pmtudisc(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::remote(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::tos(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGre>::ttl(self, u8) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkGtp>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGtp>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGtp>::pdp_hashsize(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGtp>::restart_count(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkGtp>::role(self, netlink_packet_route::link::link_info::gtp::GtpRole) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>::append_info_data(self, netlink_packet_route::link::link_info::hsr::InfoHsr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>::interlink(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>::port1(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>::port2(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>::protocol(self, netlink_packet_route::link::link_info::hsr::HsrProtocol) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>::supervision(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkHsr>::version(self, netlink_packet_route::link::link_info::hsr::HsrVersion) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkIfb>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIfb>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::collect_metadata(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::encap_dport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::encap_flags(self, netlink_packet_route::link::link_info::iptunnel::TunnelEncapFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::encap_limit(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::encap_sport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::encap_type(self, netlink_packet_route::link::link_info::iptunnel::TunnelEncapType) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::flowinfo_raw(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::flowlabel(self, core::option::Option<u32>) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::fwmark(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::ipv6_flags(self, netlink_packet_route::link::link_info::iptunnel::Ip6TunnelFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::local(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::mode(self, netlink_packet_route::ip::IpProtocol) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::pmtudisc(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::protocol(self, netlink_packet_route::ip::IpProtocol) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::remote(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::set_flag(self, netlink_packet_route::link::link_info::iptunnel::Ip6TunnelFlags, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::tclass(self, core::option::Option<u8>) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIp6Tnl>::ttl(self, u8) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::collect_metadata(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::encap_dport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::encap_flags(self, netlink_packet_route::link::link_info::iptunnel::TunnelEncapFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::encap_sport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::encap_type(self, netlink_packet_route::link::link_info::iptunnel::TunnelEncapType) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::fwmark(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::local(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::pmtudisc(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::protocol(self, netlink_packet_route::ip::IpProtocol) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::remote(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::tos(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpIp>::ttl(self, u8) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVlan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVlan>::append_info_data(self, netlink_packet_route::link::link_info::ipvlan::InfoIpVlan) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVlan>::flag(self, netlink_packet_route::link::link_info::ipvlan::IpVlanFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVlan>::mode(self, netlink_packet_route::link::link_info::ipvlan::IpVlanMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVlan>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVtap>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVtap>::append_info_data(self, netlink_packet_route::link::link_info::ipvlan::InfoIpVtap) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVtap>::flag(self, netlink_packet_route::link::link_info::ipvlan::IpVtapFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVtap>::mode(self, netlink_packet_route::link::link_info::ipvlan::IpVtapMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpVtap>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpoib>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpoib>::mode(self, netlink_packet_route::link::link_info::ipoib::IpoibMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpoib>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpoib>::pkey(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkIpoib>::umcast(self, u16) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::append_info_data(self, netlink_packet_route::link::link_info::macsec::InfoMacSec) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::cipher_suite(self, netlink_packet_route::link::link_info::macsec::MacSecCipherId) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::encoding_sa(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::encrypt(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::es(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::icv_len(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::inc_sci(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::offload(self, netlink_packet_route::link::link_info::macsec::MacSecOffload) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::other(self, netlink_packet_core::nla::DefaultNla) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::port(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::protect(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::replay_protect(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::scb(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::sci(self, u64) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::validation(self, netlink_packet_route::link::link_info::macsec::MacSecValidate) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacSec>::window(self, u32) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacVlan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacVlan>::append_info_data(self, netlink_packet_route::link::link_info::mac_vlan::InfoMacVlan) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacVlan>::mode(self, netlink_packet_route::link::link_info::mac_vlan::MacVlanMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacVlan>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacVtap>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacVtap>::append_info_data(self, netlink_packet_route::link::link_info::mac_vlan::InfoMacVtap) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacVtap>::mode(self, netlink_packet_route::link::link_info::mac_vlan::MacVtapMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkMacVtap>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetdevsim>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetdevsim>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::headroom(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::mode(self, netlink_packet_route::link::link_info::netkit::NetkitMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::new(&str, &str, netlink_packet_route::link::link_info::netkit::NetkitMode) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::peer(self, &str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::peer_policy(self, netlink_packet_route::link::link_info::netkit::NetkitPolicy) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::peer_scrub(self, netlink_packet_route::link::link_info::netkit::NetkitScrub) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::policy(self, netlink_packet_route::link::link_info::netkit::NetkitPolicy) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::primary(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::scrub(self, netlink_packet_route::link::link_info::netkit::NetkitScrub) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNetkit>::tailroom(self, u16) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkNlmon>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkNlmon>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkPfcp>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkPfcp>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkRmNet>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkRmNet>::flags(self, netlink_packet_route::link::link_info::rmnet::RmNetFlags, netlink_packet_route::link::link_info::rmnet::RmNetFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkRmNet>::mux_id(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkRmNet>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkRmNet>::parent_dev_name(self, impl core::convert::Into<alloc::string::String>) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::collect_metadata(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::encap_dport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::encap_flags(self, netlink_packet_route::link::link_info::iptunnel::TunnelEncapFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::encap_sport(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::encap_type(self, netlink_packet_route::link::link_info::iptunnel::TunnelEncapType) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::fwmark(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::ipv6_rd_prefix(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::ipv6_rd_prefixlen(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::ipv6_rd_relay_prefix(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::ipv6_rd_relay_prefixlen(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::isatap(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::local(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::pmtudisc(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::protocol(self, netlink_packet_route::ip::IpProtocol) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::remote(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::tos(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkSit>::ttl(self, u8) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkTeam>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkTeam>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkTun>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkTun>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkUnspec>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkUnspec>::new() -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVcan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVcan>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVeth>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVeth>::new(&str, &str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVeth>::peer(self, &str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVirtWifi>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVirtWifi>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVlan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVlan>::append_info_data(self, netlink_packet_route::link::link_info::vlan::InfoVlan) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVlan>::flags(self, netlink_packet_route::link::link_info::vlan::VlanFlags, netlink_packet_route::link::link_info::vlan::VlanFlags) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVlan>::id(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVlan>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVlan>::protocol(self, netlink_packet_route::link::vlan_protocol::VlanProtocol) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVlan>::qos<I, E>(self, I, E) -> Self where I: core::iter::traits::collect::IntoIterator<Item = rtnetlink::QosMapping>, E: core::iter::traits::collect::IntoIterator<Item = rtnetlink::QosMapping>
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVrf>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVrf>::append_info_data(self, netlink_packet_route::link::link_info::vrf::InfoVrf) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVrf>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVrf>::table_id(self, u32) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti6>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti6>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti6>::fwmark(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti6>::ikey(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti6>::local(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti6>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti6>::okey(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti6>::remote(self, core::net::ip_addr::Ipv6Addr) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti>::fwmark(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti>::ikey(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti>::local(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti>::okey(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVti>::remote(self, core::net::ip_addr::Ipv4Addr) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxcan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxcan>::new(&str, &str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxcan>::peer(self, &str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::ageing(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::append_info_data(self, netlink_packet_route::link::link_info::vxlan::InfoVxlan) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::collect_metadata(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::df(self, netlink_packet_route::link::link_info::vxlan::VxlanDf) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::gbp(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::gpe(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::group(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::group6(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::id(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::l2miss(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::l3miss(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::label(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::label_policy(self, netlink_packet_route::link::link_info::vxlan::VxlanLabelPolicy) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::learning(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::limit(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::local(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::local6(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::localbypass(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::mc_route(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::port(self, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::port_range(self, u16, u16) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::proxy(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::remcsum_no_partial(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::remcsum_rx(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::remcsum_tx(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::remote(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::remote6(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::reserved_bits(self, u64) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::rsc(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::tos(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::ttl(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::ttl_inherit(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::udp_csum(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::udp_zero_csum6_rx(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::udp_zero_csum6_tx(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkVxlan>::vnifilter(self, bool) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkWireguard>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkWireguard>::new(&str) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkWwan>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkWwan>::linkid(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkWwan>::new(&str) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkWwan>::parent_dev_name(self, impl core::convert::Into<alloc::string::String>) -> Self
+impl rtnetlink::LinkMessageBuilder<rtnetlink::LinkXfrm>
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkXfrm>::append_info_data(self, netlink_packet_route::link::link_info::xfrm::InfoXfrm) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkXfrm>::dev(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkXfrm>::if_id(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<rtnetlink::LinkXfrm>::new(&str) -> Self
+impl<T: core::default::Default> rtnetlink::LinkMessageBuilder<T>
+pub fn rtnetlink::LinkMessageBuilder<T>::new_with_info_kind(netlink_packet_route::link::link_info::infos::InfoKind) -> Self
+impl<T> rtnetlink::LinkMessageBuilder<T>
+pub fn rtnetlink::LinkMessageBuilder<T>::address(self, alloc::vec::Vec<u8>) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::alias(self, impl core::convert::Into<alloc::string::String>) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::allmulticast(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::append_extra_attribute(self, netlink_packet_route::link::attribute::LinkAttribute) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::arp(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::broadcast(self, alloc::vec::Vec<u8>) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::build(self) -> netlink_packet_route::link::message::LinkMessage
+pub fn rtnetlink::LinkMessageBuilder<T>::carrier(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::controller(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::down(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::dynamic(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::index(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::interface_family(self, netlink_packet_route::address_family_linux::AddressFamily) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::link(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::link_group(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::mtu(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::multicast(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::name(self, impl core::convert::Into<alloc::string::String>) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::nocontroller(self) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::notrailers(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::operstate(self, u8) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::promiscuous(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::protodown(self, bool) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::set_header(self, netlink_packet_route::link::header::LinkHeader) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::set_info_data(self, netlink_packet_route::link::link_info::info_data::InfoData) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::set_port_data(self, netlink_packet_route::link::link_info::info_port::InfoPortData) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::set_port_kind(self, netlink_packet_route::link::link_info::info_port::InfoPortKind) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::set_pre_build_info_data_func(&mut self, fn(&T, &mut core::option::Option<netlink_packet_route::link::link_info::info_data::InfoData>))
+pub fn rtnetlink::LinkMessageBuilder<T>::setns_by_fd(self, std::os::fd::raw::RawFd) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::setns_by_pid(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::txqueuelen(self, u32) -> Self
+pub fn rtnetlink::LinkMessageBuilder<T>::up(self) -> Self
+impl<T: core::default::Default> core::default::Default for rtnetlink::LinkMessageBuilder<T>
+pub fn rtnetlink::LinkMessageBuilder<T>::default() -> Self
+#[non_exhaustive] pub struct rtnetlink::LinkNetdevsim
+impl rtnetlink::LinkNetdevsim
+pub fn rtnetlink::LinkNetdevsim::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkNetkit
+impl rtnetlink::LinkNetkit
+pub fn rtnetlink::LinkNetkit::new(&str, &str, netlink_packet_route::link::link_info::netkit::NetkitMode) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkNewPropRequest
+impl rtnetlink::LinkNewPropRequest
+pub fn rtnetlink::LinkNewPropRequest::alt_ifname(self, &[&str]) -> Self
+pub async fn rtnetlink::LinkNewPropRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::LinkNewPropRequest::message_mut(&mut self) -> &mut netlink_packet_route::link::message::LinkMessage
+#[non_exhaustive] pub struct rtnetlink::LinkNlmon
+impl rtnetlink::LinkNlmon
+pub fn rtnetlink::LinkNlmon::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkPfcp
+impl rtnetlink::LinkPfcp
+pub fn rtnetlink::LinkPfcp::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkRmNet
+impl rtnetlink::LinkRmNet
+pub fn rtnetlink::LinkRmNet::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::LinkSetRequest
+impl rtnetlink::LinkSetRequest
+pub async fn rtnetlink::LinkSetRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::LinkSetRequest::message_mut(&mut self) -> &mut netlink_packet_route::link::message::LinkMessage
+pub struct rtnetlink::LinkSit
+impl rtnetlink::LinkSit
+pub fn rtnetlink::LinkSit::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkTeam
+impl rtnetlink::LinkTeam
+pub fn rtnetlink::LinkTeam::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkTun
+impl rtnetlink::LinkTun
+pub fn rtnetlink::LinkTun::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkUnspec
+impl rtnetlink::LinkUnspec
+pub fn rtnetlink::LinkUnspec::new_with_index(u32) -> rtnetlink::LinkMessageBuilder<Self>
+pub fn rtnetlink::LinkUnspec::new_with_name(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVcan
+impl rtnetlink::LinkVcan
+pub fn rtnetlink::LinkVcan::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVeth
+impl rtnetlink::LinkVeth
+pub fn rtnetlink::LinkVeth::new(&str, &str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVirtWifi
+impl rtnetlink::LinkVirtWifi
+pub fn rtnetlink::LinkVirtWifi::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVlan
+impl rtnetlink::LinkVlan
+pub fn rtnetlink::LinkVlan::new(&str, u32, u16) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVrf
+impl rtnetlink::LinkVrf
+pub fn rtnetlink::LinkVrf::new(&str, u32) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVti
+impl rtnetlink::LinkVti
+pub fn rtnetlink::LinkVti::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVti6
+impl rtnetlink::LinkVti6
+pub fn rtnetlink::LinkVti6::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVxcan
+impl rtnetlink::LinkVxcan
+pub fn rtnetlink::LinkVxcan::new(&str, &str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkVxlan
+impl rtnetlink::LinkVxlan
+pub fn rtnetlink::LinkVxlan::new(&str, u32) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkWireguard
+impl rtnetlink::LinkWireguard
+pub fn rtnetlink::LinkWireguard::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkWwan
+impl rtnetlink::LinkWwan
+pub fn rtnetlink::LinkWwan::new(&str) -> rtnetlink::LinkMessageBuilder<Self>
+#[non_exhaustive] pub struct rtnetlink::LinkXfrm
+impl rtnetlink::LinkXfrm
+pub fn rtnetlink::LinkXfrm::new(&str, u32, u32) -> rtnetlink::LinkMessageBuilder<Self>
+pub struct rtnetlink::NeighbourAddRequest
+impl rtnetlink::NeighbourAddRequest
+pub fn rtnetlink::NeighbourAddRequest::destination(self, core::net::ip_addr::IpAddr) -> Self
+pub async fn rtnetlink::NeighbourAddRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::NeighbourAddRequest::flags(self, netlink_packet_route::neighbour::flags::NeighbourFlags) -> Self
+pub fn rtnetlink::NeighbourAddRequest::kind(self, netlink_packet_route::route::header::RouteType) -> Self
+pub fn rtnetlink::NeighbourAddRequest::link_layer_address(self, &[u8]) -> Self
+pub fn rtnetlink::NeighbourAddRequest::link_local_address(self, &[u8]) -> Self
+pub fn rtnetlink::NeighbourAddRequest::message_mut(&mut self) -> &mut netlink_packet_route::neighbour::message::NeighbourMessage
+pub fn rtnetlink::NeighbourAddRequest::replace(self) -> Self
+pub fn rtnetlink::NeighbourAddRequest::state(self, netlink_packet_route::neighbour::state::NeighbourState) -> Self
+pub struct rtnetlink::NeighbourDelRequest
+impl rtnetlink::NeighbourDelRequest
+pub async fn rtnetlink::NeighbourDelRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::NeighbourDelRequest::message_mut(&mut self) -> &mut netlink_packet_route::neighbour::message::NeighbourMessage
+pub struct rtnetlink::NeighbourGetRequest
+impl rtnetlink::NeighbourGetRequest
+pub fn rtnetlink::NeighbourGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::neighbour::message::NeighbourMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::NeighbourGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::neighbour::message::NeighbourMessage
+pub fn rtnetlink::NeighbourGetRequest::proxies(self) -> Self
+pub fn rtnetlink::NeighbourGetRequest::set_address_family(self, netlink_packet_route::address_family_linux::AddressFamily) -> Self
+pub fn rtnetlink::NeighbourGetRequest::set_family(self, rtnetlink::IpVersion) -> Self
+pub fn rtnetlink::NeighbourGetRequest::set_flags(self, netlink_packet_route::neighbour::flags::NeighbourFlags) -> Self
+pub struct rtnetlink::NeighbourHandle(_)
+impl rtnetlink::NeighbourHandle
+pub fn rtnetlink::NeighbourHandle::add(&self, netlink_packet_route::neighbour::message::NeighbourMessage) -> rtnetlink::NeighbourAddRequest
+pub fn rtnetlink::NeighbourHandle::add_fdb(&self, u32, &[u8]) -> rtnetlink::NeighbourAddRequest
+pub fn rtnetlink::NeighbourHandle::add_neigh(&self, u32, core::net::ip_addr::IpAddr) -> rtnetlink::NeighbourAddRequest
+pub fn rtnetlink::NeighbourHandle::del(&self, netlink_packet_route::neighbour::message::NeighbourMessage) -> rtnetlink::NeighbourDelRequest
+pub fn rtnetlink::NeighbourHandle::del_fdb(&self, u32, &[u8]) -> rtnetlink::NeighbourDelRequest
+pub fn rtnetlink::NeighbourHandle::del_neigh(&self, u32, core::net::ip_addr::IpAddr) -> rtnetlink::NeighbourDelRequest
+pub fn rtnetlink::NeighbourHandle::get(&self) -> rtnetlink::NeighbourGetRequest
+pub fn rtnetlink::NeighbourHandle::new(rtnetlink::Handle) -> Self
+pub struct rtnetlink::NeighbourMessageBuilder
+impl rtnetlink::NeighbourMessageBuilder
+pub fn rtnetlink::NeighbourMessageBuilder::append_attribute(self, netlink_packet_route::neighbour::attribute::NeighbourAttribute) -> Self
+pub fn rtnetlink::NeighbourMessageBuilder::build(self) -> netlink_packet_route::neighbour::message::NeighbourMessage
+pub fn rtnetlink::NeighbourMessageBuilder::destination(self, core::net::ip_addr::IpAddr) -> Self
+pub fn rtnetlink::NeighbourMessageBuilder::family(self, netlink_packet_route::address_family_linux::AddressFamily) -> Self
+pub fn rtnetlink::NeighbourMessageBuilder::flags(self, netlink_packet_route::neighbour::flags::NeighbourFlags) -> Self
+pub fn rtnetlink::NeighbourMessageBuilder::get_mut(&mut self) -> &mut netlink_packet_route::neighbour::message::NeighbourMessage
+pub fn rtnetlink::NeighbourMessageBuilder::index(self, u32) -> Self
+pub fn rtnetlink::NeighbourMessageBuilder::kind(self, netlink_packet_route::route::header::RouteType) -> Self
+pub fn rtnetlink::NeighbourMessageBuilder::link_layer_address(self, &[u8]) -> Self
+pub fn rtnetlink::NeighbourMessageBuilder::new() -> Self
+pub fn rtnetlink::NeighbourMessageBuilder::state(self, netlink_packet_route::neighbour::state::NeighbourState) -> Self
+impl core::default::Default for rtnetlink::NeighbourMessageBuilder
+pub fn rtnetlink::NeighbourMessageBuilder::default() -> Self
+pub struct rtnetlink::NetlinkMessageStream
+impl rtnetlink::NetlinkMessageStream
+pub fn rtnetlink::NetlinkMessageStream::close(&mut self)
+impl futures_core::stream::FusedStream for rtnetlink::NetlinkMessageStream
+pub fn rtnetlink::NetlinkMessageStream::is_terminated(&self) -> bool
+impl futures_core::stream::Stream for rtnetlink::NetlinkMessageStream
+pub type rtnetlink::NetlinkMessageStream::Item = (netlink_packet_core::message::NetlinkMessage<netlink_packet_route::message::RouteNetlinkMessage>, netlink_sys::addr::SocketAddr)
+pub fn rtnetlink::NetlinkMessageStream::poll_next(core::pin::Pin<&mut Self>, &mut core::task::wake::Context<'_>) -> core::task::poll::Poll<core::option::Option<Self::Item>>
+#[non_exhaustive] pub struct rtnetlink::NetworkNamespace()
+impl rtnetlink::NetworkNamespace
+pub async fn rtnetlink::NetworkNamespace::add(impl core::convert::AsRef<str>) -> core::result::Result<(), rtnetlink::Error>
+pub async fn rtnetlink::NetworkNamespace::del(impl core::convert::AsRef<str>) -> core::result::Result<(), rtnetlink::Error>
+pub struct rtnetlink::QDiscDelRequest
+impl rtnetlink::QDiscDelRequest
+pub async fn rtnetlink::QDiscDelRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::QDiscDelRequest::message_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub struct rtnetlink::QDiscGetRequest
+impl rtnetlink::QDiscGetRequest
+pub fn rtnetlink::QDiscGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::tc::message::TcMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::QDiscGetRequest::index(self, i32) -> Self
+pub fn rtnetlink::QDiscGetRequest::ingress(self) -> Self
+pub fn rtnetlink::QDiscGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub struct rtnetlink::QDiscHandle(_)
+impl rtnetlink::QDiscHandle
+pub fn rtnetlink::QDiscHandle::add(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::QDiscNewRequest
+pub fn rtnetlink::QDiscHandle::add_iface(&self, i32) -> rtnetlink::QDiscNewRequest
+pub fn rtnetlink::QDiscHandle::change(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::QDiscNewRequest
+pub fn rtnetlink::QDiscHandle::change_iface(&self, i32) -> rtnetlink::QDiscNewRequest
+pub fn rtnetlink::QDiscHandle::del(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::QDiscDelRequest
+pub fn rtnetlink::QDiscHandle::del_iface(&self, i32) -> rtnetlink::QDiscDelRequest
+pub fn rtnetlink::QDiscHandle::get(&self) -> rtnetlink::QDiscGetRequest
+pub fn rtnetlink::QDiscHandle::link(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::QDiscNewRequest
+pub fn rtnetlink::QDiscHandle::link_iface(&self, i32) -> rtnetlink::QDiscNewRequest
+pub fn rtnetlink::QDiscHandle::new(rtnetlink::Handle) -> Self
+pub fn rtnetlink::QDiscHandle::replace(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::QDiscNewRequest
+pub fn rtnetlink::QDiscHandle::replace_iface(&self, i32) -> rtnetlink::QDiscNewRequest
+pub struct rtnetlink::QDiscNewRequest
+impl rtnetlink::QDiscNewRequest
+pub async fn rtnetlink::QDiscNewRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::QDiscNewRequest::handle(self, u16, u16) -> Self
+pub fn rtnetlink::QDiscNewRequest::ingress(self) -> Self
+pub fn rtnetlink::QDiscNewRequest::message_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub fn rtnetlink::QDiscNewRequest::parent(self, u32) -> Self
+pub fn rtnetlink::QDiscNewRequest::root(self) -> Self
+#[non_exhaustive] pub struct rtnetlink::QosMapping
+pub rtnetlink::QosMapping::from: u32
+pub rtnetlink::QosMapping::to: u32
+impl rtnetlink::QosMapping
+pub fn rtnetlink::QosMapping::new(u32, u32) -> Self
+impl core::convert::From<(u32, u32)> for rtnetlink::QosMapping
+pub fn rtnetlink::QosMapping::from((u32, u32)) -> Self
+impl core::convert::From<rtnetlink::QosMapping> for netlink_packet_route::link::link_info::vlan::VlanQosMapping
+pub fn netlink_packet_route::link::link_info::vlan::VlanQosMapping::from(rtnetlink::QosMapping) -> Self
+pub struct rtnetlink::RouteAddRequest<T>
+impl<T> rtnetlink::RouteAddRequest<T>
+pub async fn rtnetlink::RouteAddRequest<T>::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::RouteAddRequest<T>::message_mut(&mut self) -> &mut netlink_packet_route::route::message::RouteMessage
+pub fn rtnetlink::RouteAddRequest<T>::replace(self) -> Self
+pub struct rtnetlink::RouteDelRequest
+impl rtnetlink::RouteDelRequest
+pub async fn rtnetlink::RouteDelRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::RouteDelRequest::message_mut(&mut self) -> &mut netlink_packet_route::route::message::RouteMessage
+pub struct rtnetlink::RouteGetRequest
+impl rtnetlink::RouteGetRequest
+pub fn rtnetlink::RouteGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::route::message::RouteMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::RouteGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::route::message::RouteMessage
+pub struct rtnetlink::RouteHandle(_)
+impl rtnetlink::RouteHandle
+pub fn rtnetlink::RouteHandle::add(&self, netlink_packet_route::route::message::RouteMessage) -> rtnetlink::RouteAddRequest
+pub fn rtnetlink::RouteHandle::del(&self, netlink_packet_route::route::message::RouteMessage) -> rtnetlink::RouteDelRequest
+pub fn rtnetlink::RouteHandle::get(&self, netlink_packet_route::route::message::RouteMessage) -> rtnetlink::RouteGetRequest
+pub fn rtnetlink::RouteHandle::new(rtnetlink::Handle) -> Self
+pub struct rtnetlink::RouteMessageBuilder<T>
+impl rtnetlink::RouteMessageBuilder<core::net::ip_addr::IpAddr>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::IpAddr>::destination_prefix(self, core::net::ip_addr::IpAddr, u8) -> core::result::Result<Self, rtnetlink::InvalidRouteMessage>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::IpAddr>::gateway(self, core::net::ip_addr::IpAddr) -> core::result::Result<Self, rtnetlink::InvalidRouteMessage>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::IpAddr>::new() -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::IpAddr>::pref_source(self, core::net::ip_addr::IpAddr) -> core::result::Result<Self, rtnetlink::InvalidRouteMessage>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::IpAddr>::source_prefix(self, core::net::ip_addr::IpAddr, u8) -> core::result::Result<Self, rtnetlink::InvalidRouteMessage>
+impl rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>::destination_prefix(self, core::net::ip_addr::Ipv4Addr, u8) -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>::gateway(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>::new() -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>::pref_source(self, core::net::ip_addr::Ipv4Addr) -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>::source_prefix(self, core::net::ip_addr::Ipv4Addr, u8) -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>::via(self, core::net::ip_addr::Ipv6Addr) -> Self
+impl rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv6Addr>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv6Addr>::destination_prefix(self, core::net::ip_addr::Ipv6Addr, u8) -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv6Addr>::gateway(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv6Addr>::new() -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv6Addr>::pref_source(self, core::net::ip_addr::Ipv6Addr) -> Self
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv6Addr>::source_prefix(self, core::net::ip_addr::Ipv6Addr, u8) -> Self
+impl rtnetlink::RouteMessageBuilder<netlink_packet_route::route::mpls::MplsLabel>
+pub fn rtnetlink::RouteMessageBuilder<netlink_packet_route::route::mpls::MplsLabel>::label(self, netlink_packet_route::route::mpls::MplsLabel) -> Self
+pub fn rtnetlink::RouteMessageBuilder<netlink_packet_route::route::mpls::MplsLabel>::new() -> Self
+pub fn rtnetlink::RouteMessageBuilder<netlink_packet_route::route::mpls::MplsLabel>::via(self, core::net::ip_addr::IpAddr) -> Self
+impl<T> rtnetlink::RouteMessageBuilder<T>
+pub fn rtnetlink::RouteMessageBuilder<T>::build(self) -> netlink_packet_route::route::message::RouteMessage
+pub fn rtnetlink::RouteMessageBuilder<T>::dport(self, u16) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::encap_ioam6(self, alloc::vec::Vec<netlink_packet_route::route::ioam6::RouteIoam6Tunnel>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::encap_ip(self, alloc::vec::Vec<netlink_packet_route::route::lwtunnel::RouteIpTunnel>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::encap_ip6(self, alloc::vec::Vec<netlink_packet_route::route::lwtunnel::RouteIp6Tunnel>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::encap_rpl(self, alloc::vec::Vec<netlink_packet_route::route::rpl::RouteRplIpTunnel>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::encap_seg6(self, alloc::vec::Vec<netlink_packet_route::route::seg6::RouteSeg6IpTunnel>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::encap_seg6local(self, alloc::vec::Vec<netlink_packet_route::route::seg6local::RouteSeg6LocalTunnel>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::encap_xfrm(self, alloc::vec::Vec<netlink_packet_route::route::lwtunnel::RouteXfrmTunnel>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::expires(self, u32) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::flowlabel(self, u32) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::get_mut(&mut self) -> &mut netlink_packet_route::route::message::RouteMessage
+pub fn rtnetlink::RouteMessageBuilder<T>::input_interface(self, u32) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::ip_protocol(self, u8) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::kind(self, netlink_packet_route::route::header::RouteType) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::mark(self, u32) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::multipath(self, alloc::vec::Vec<netlink_packet_route::route::next_hops::RouteNextHop>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::nhid(self, u32) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::onlink(self) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::output_interface(self, u32) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::output_mpls(self, alloc::vec::Vec<netlink_packet_route::route::mpls::MplsLabel>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::output_seg6(self, netlink_packet_route::route::seg6::Seg6Mode, alloc::vec::Vec<core::net::ip_addr::Ipv6Addr>) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::priority(self, u32) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::protocol(self, netlink_packet_route::route::header::RouteProtocol) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::realm(self, netlink_packet_route::route::realm::RouteRealm) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::scope(self, netlink_packet_route::route::header::RouteScope) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::sport(self, u16) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::table_id(self, u32) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::tos(self, u8) -> Self
+pub fn rtnetlink::RouteMessageBuilder<T>::ttl_propagate(self, bool) -> Self
+impl core::default::Default for rtnetlink::RouteMessageBuilder<core::net::ip_addr::IpAddr>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::IpAddr>::default() -> Self
+impl core::default::Default for rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv4Addr>::default() -> Self
+impl core::default::Default for rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv6Addr>
+pub fn rtnetlink::RouteMessageBuilder<core::net::ip_addr::Ipv6Addr>::default() -> Self
+impl core::default::Default for rtnetlink::RouteMessageBuilder<netlink_packet_route::route::mpls::MplsLabel>
+pub fn rtnetlink::RouteMessageBuilder<netlink_packet_route::route::mpls::MplsLabel>::default() -> Self
+pub struct rtnetlink::RouteNextHopBuilder
+impl rtnetlink::RouteNextHopBuilder
+pub fn rtnetlink::RouteNextHopBuilder::build(self) -> netlink_packet_route::route::next_hops::RouteNextHop
+pub fn rtnetlink::RouteNextHopBuilder::flags(self, netlink_packet_route::route::next_hops::RouteNextHopFlags) -> Self
+pub fn rtnetlink::RouteNextHopBuilder::interface(self, u32) -> Self
+pub fn rtnetlink::RouteNextHopBuilder::mpls(self, alloc::vec::Vec<netlink_packet_route::route::mpls::MplsLabel>) -> Self
+pub fn rtnetlink::RouteNextHopBuilder::new(netlink_packet_route::address_family_linux::AddressFamily) -> Self
+pub fn rtnetlink::RouteNextHopBuilder::new_ipv4() -> Self
+pub fn rtnetlink::RouteNextHopBuilder::new_ipv6() -> Self
+pub fn rtnetlink::RouteNextHopBuilder::onlink(self) -> Self
+pub fn rtnetlink::RouteNextHopBuilder::pervasive(self, bool) -> Self
+pub fn rtnetlink::RouteNextHopBuilder::seg6(self, netlink_packet_route::route::seg6::Seg6Mode, alloc::vec::Vec<core::net::ip_addr::Ipv6Addr>) -> Self
+pub fn rtnetlink::RouteNextHopBuilder::via(self, core::net::ip_addr::IpAddr) -> core::result::Result<Self, rtnetlink::InvalidRouteMessage>
+pub fn rtnetlink::RouteNextHopBuilder::weight(self, u8) -> Self
+pub struct rtnetlink::RuleAddRequest
+impl rtnetlink::RuleAddRequest
+pub async fn rtnetlink::RuleAddRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::RuleAddRequest::message_mut(&mut self) -> &mut netlink_packet_route::rule::message::RuleMessage
+pub fn rtnetlink::RuleAddRequest::replace(self) -> Self
+pub struct rtnetlink::RuleDelRequest
+impl rtnetlink::RuleDelRequest
+pub async fn rtnetlink::RuleDelRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::RuleDelRequest::message_mut(&mut self) -> &mut netlink_packet_route::rule::message::RuleMessage
+pub struct rtnetlink::RuleGetRequest
+impl rtnetlink::RuleGetRequest
+pub fn rtnetlink::RuleGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::rule::message::RuleMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::RuleGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::rule::message::RuleMessage
+pub struct rtnetlink::RuleHandle(_)
+impl rtnetlink::RuleHandle
+pub fn rtnetlink::RuleHandle::add(&self, netlink_packet_route::rule::message::RuleMessage) -> rtnetlink::RuleAddRequest
+pub fn rtnetlink::RuleHandle::del(&self, netlink_packet_route::rule::message::RuleMessage) -> rtnetlink::RuleDelRequest
+pub fn rtnetlink::RuleHandle::get(&self, rtnetlink::IpVersion) -> rtnetlink::RuleGetRequest
+pub fn rtnetlink::RuleHandle::new(rtnetlink::Handle) -> Self
+pub struct rtnetlink::RuleMessageBuilder<T>
+impl rtnetlink::RuleMessageBuilder<()>
+pub fn rtnetlink::RuleMessageBuilder<()>::new() -> Self
+impl rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv4Addr>
+pub fn rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv4Addr>::destination_prefix(self, core::net::ip_addr::Ipv4Addr, u8) -> Self
+pub fn rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv4Addr>::new() -> Self
+pub fn rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv4Addr>::source_prefix(self, core::net::ip_addr::Ipv4Addr, u8) -> Self
+impl rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv6Addr>
+pub fn rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv6Addr>::destination_prefix(self, core::net::ip_addr::Ipv6Addr, u8) -> Self
+pub fn rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv6Addr>::new() -> Self
+pub fn rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv6Addr>::source_prefix(self, core::net::ip_addr::Ipv6Addr, u8) -> Self
+impl<T> rtnetlink::RuleMessageBuilder<T>
+pub fn rtnetlink::RuleMessageBuilder<T>::action(self, netlink_packet_route::rule::action::RuleAction) -> Self
+pub fn rtnetlink::RuleMessageBuilder<T>::append_attribute(self, netlink_packet_route::rule::attribute::RuleAttribute) -> Self
+pub fn rtnetlink::RuleMessageBuilder<T>::build(self) -> netlink_packet_route::rule::message::RuleMessage
+pub fn rtnetlink::RuleMessageBuilder<T>::fw_mark(self, u32) -> Self
+pub fn rtnetlink::RuleMessageBuilder<T>::get_mut(&mut self) -> &mut netlink_packet_route::rule::message::RuleMessage
+pub fn rtnetlink::RuleMessageBuilder<T>::input_interface(self, impl core::convert::Into<alloc::string::String>) -> Self
+pub fn rtnetlink::RuleMessageBuilder<T>::output_interface(self, impl core::convert::Into<alloc::string::String>) -> Self
+pub fn rtnetlink::RuleMessageBuilder<T>::priority(self, u32) -> Self
+pub fn rtnetlink::RuleMessageBuilder<T>::table(self, u8) -> Self
+pub fn rtnetlink::RuleMessageBuilder<T>::table_id(self, u32) -> Self
+pub fn rtnetlink::RuleMessageBuilder<T>::tos(self, u8) -> Self
+impl core::default::Default for rtnetlink::RuleMessageBuilder<()>
+pub fn rtnetlink::RuleMessageBuilder<()>::default() -> Self
+impl core::default::Default for rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv4Addr>
+pub fn rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv4Addr>::default() -> Self
+impl core::default::Default for rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv6Addr>
+pub fn rtnetlink::RuleMessageBuilder<core::net::ip_addr::Ipv6Addr>::default() -> Self
+pub struct rtnetlink::TcMessageBuilder
+impl rtnetlink::TcMessageBuilder
+pub fn rtnetlink::TcMessageBuilder::append_attribute(self, netlink_packet_route::tc::attribute::TcAttribute) -> Self
+pub fn rtnetlink::TcMessageBuilder::build(self) -> netlink_packet_route::tc::message::TcMessage
+pub fn rtnetlink::TcMessageBuilder::egress(self) -> Self
+pub fn rtnetlink::TcMessageBuilder::family(self, netlink_packet_route::address_family_linux::AddressFamily) -> Self
+pub fn rtnetlink::TcMessageBuilder::get_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub fn rtnetlink::TcMessageBuilder::handle(self, u16, u16) -> Self
+pub fn rtnetlink::TcMessageBuilder::index(self, i32) -> Self
+pub fn rtnetlink::TcMessageBuilder::ingress(self) -> Self
+pub fn rtnetlink::TcMessageBuilder::new() -> Self
+pub fn rtnetlink::TcMessageBuilder::parent(self, u32) -> Self
+pub fn rtnetlink::TcMessageBuilder::root(self) -> Self
+pub fn rtnetlink::TcMessageBuilder::with_index(i32) -> Self
+pub struct rtnetlink::TrafficChainGetRequest
+impl rtnetlink::TrafficChainGetRequest
+pub fn rtnetlink::TrafficChainGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::tc::message::TcMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::TrafficChainGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub struct rtnetlink::TrafficChainHandle
+impl rtnetlink::TrafficChainHandle
+pub fn rtnetlink::TrafficChainHandle::get(&self) -> rtnetlink::TrafficChainGetRequest
+pub fn rtnetlink::TrafficChainHandle::new(rtnetlink::Handle, i32) -> Self
+pub struct rtnetlink::TrafficClassGetRequest
+impl rtnetlink::TrafficClassGetRequest
+pub fn rtnetlink::TrafficClassGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::tc::message::TcMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::TrafficClassGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub struct rtnetlink::TrafficClassHandle
+impl rtnetlink::TrafficClassHandle
+pub fn rtnetlink::TrafficClassHandle::get(&self) -> rtnetlink::TrafficClassGetRequest
+pub fn rtnetlink::TrafficClassHandle::new(rtnetlink::Handle, i32) -> Self
+pub struct rtnetlink::TrafficFilterDelRequest
+impl rtnetlink::TrafficFilterDelRequest
+pub async fn rtnetlink::TrafficFilterDelRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::TrafficFilterDelRequest::message_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub struct rtnetlink::TrafficFilterGetRequest
+impl rtnetlink::TrafficFilterGetRequest
+pub fn rtnetlink::TrafficFilterGetRequest::egress(self) -> Self
+pub fn rtnetlink::TrafficFilterGetRequest::execute(self) -> impl futures_core::stream::Stream<Item = core::result::Result<netlink_packet_route::tc::message::TcMessage, rtnetlink::Error>> + core::marker::Send
+pub fn rtnetlink::TrafficFilterGetRequest::ingress(self) -> Self
+pub fn rtnetlink::TrafficFilterGetRequest::message_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub fn rtnetlink::TrafficFilterGetRequest::root(self) -> Self
+pub struct rtnetlink::TrafficFilterHandle
+impl rtnetlink::TrafficFilterHandle
+pub fn rtnetlink::TrafficFilterHandle::add(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::TrafficFilterNewRequest
+pub fn rtnetlink::TrafficFilterHandle::add_iface(&self) -> rtnetlink::TrafficFilterNewRequest
+pub fn rtnetlink::TrafficFilterHandle::change(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::TrafficFilterNewRequest
+pub fn rtnetlink::TrafficFilterHandle::change_iface(&self) -> rtnetlink::TrafficFilterNewRequest
+pub fn rtnetlink::TrafficFilterHandle::del(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::TrafficFilterDelRequest
+pub fn rtnetlink::TrafficFilterHandle::del_iface(&self) -> rtnetlink::TrafficFilterDelRequest
+pub fn rtnetlink::TrafficFilterHandle::get(&self) -> rtnetlink::TrafficFilterGetRequest
+pub fn rtnetlink::TrafficFilterHandle::new(rtnetlink::Handle, i32) -> Self
+pub fn rtnetlink::TrafficFilterHandle::replace(&self, netlink_packet_route::tc::message::TcMessage) -> rtnetlink::TrafficFilterNewRequest
+pub fn rtnetlink::TrafficFilterHandle::replace_iface(&self) -> rtnetlink::TrafficFilterNewRequest
+pub struct rtnetlink::TrafficFilterNewRequest
+impl rtnetlink::TrafficFilterNewRequest
+pub fn rtnetlink::TrafficFilterNewRequest::block(self, u32) -> Self
+pub fn rtnetlink::TrafficFilterNewRequest::egress(self) -> Self
+pub async fn rtnetlink::TrafficFilterNewRequest::execute(self) -> core::result::Result<(), rtnetlink::Error>
+pub fn rtnetlink::TrafficFilterNewRequest::index(self, i32) -> Self
+pub fn rtnetlink::TrafficFilterNewRequest::ingress(self) -> Self
+pub fn rtnetlink::TrafficFilterNewRequest::message_mut(&mut self) -> &mut netlink_packet_route::tc::message::TcMessage
+pub fn rtnetlink::TrafficFilterNewRequest::parent(self, u32) -> Self
+pub fn rtnetlink::TrafficFilterNewRequest::priority(self, u16) -> Self
+pub fn rtnetlink::TrafficFilterNewRequest::protocol(self, u16) -> Self
+pub fn rtnetlink::TrafficFilterNewRequest::redirect(self, u32) -> core::result::Result<Self, rtnetlink::Error>
+pub fn rtnetlink::TrafficFilterNewRequest::root(self) -> Self
+pub fn rtnetlink::TrafficFilterNewRequest::u32(self, &[netlink_packet_route::tc::filters::cls_u32::TcFilterU32Option]) -> core::result::Result<Self, rtnetlink::Error>
+pub const rtnetlink::NETNS_PATH: &str
+pub const rtnetlink::NONE_FS: &str
+pub const rtnetlink::SELF_NS_PATH: &str
+pub fn rtnetlink::from_socket<S>(S) -> (netlink_proto::connection::Connection<netlink_packet_route::message::RouteNetlinkMessage, S>, rtnetlink::Handle, rtnetlink::NetlinkMessageStream) where S: netlink_sys::async_socket::AsyncSocket
+pub fn rtnetlink::new_connection() -> core::io::error::Result<(netlink_proto::connection::Connection<netlink_packet_route::message::RouteNetlinkMessage>, rtnetlink::Handle, rtnetlink::NetlinkMessageStream)>
+pub fn rtnetlink::new_connection_with_socket<S>() -> core::io::error::Result<(netlink_proto::connection::Connection<netlink_packet_route::message::RouteNetlinkMessage, S>, rtnetlink::Handle, rtnetlink::NetlinkMessageStream)> where S: netlink_sys::async_socket::AsyncSocket
+pub fn rtnetlink::new_connection_with_strict_check() -> core::io::error::Result<(netlink_proto::connection::Connection<netlink_packet_route::message::RouteNetlinkMessage>, rtnetlink::Handle, rtnetlink::NetlinkMessageStream)>
+pub fn rtnetlink::new_multicast_connection(&[rtnetlink::MulticastGroup]) -> core::io::error::Result<(netlink_proto::connection::Connection<netlink_packet_route::message::RouteNetlinkMessage>, rtnetlink::Handle, rtnetlink::NetlinkMessageStream)>
+pub fn rtnetlink::new_multicast_connection_with_socket<S>(&[rtnetlink::MulticastGroup]) -> core::io::error::Result<(netlink_proto::connection::Connection<netlink_packet_route::message::RouteNetlinkMessage, S>, rtnetlink::Handle, rtnetlink::NetlinkMessageStream)> where S: netlink_sys::async_socket::AsyncSocket

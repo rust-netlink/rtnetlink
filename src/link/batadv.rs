@@ -7,6 +7,7 @@ use crate::{
 
 /// Represent batadv interface.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkBatAdv;
 
 impl LinkBatAdv {

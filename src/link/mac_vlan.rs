@@ -31,6 +31,7 @@ use crate::{
 ///
 /// Please check `LinkMessageBuilder::<LinkMacVlan>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkMacVlan;
 
 impl LinkMacVlan {

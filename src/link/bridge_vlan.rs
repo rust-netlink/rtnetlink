@@ -12,6 +12,7 @@ use crate::{
 };
 
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkBridgeVlan;
 
 impl LinkBridgeVlan {
