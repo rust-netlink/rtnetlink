@@ -17,6 +17,7 @@ jobs:
         include:
           - rust_target: "x86_64-unknown-linux-gnu"
           - rust_target: "x86_64-linux-android"
+          - rust_target: "x86_64-unknown-freebsd"
 
     steps:
       - uses: actions/checkout@v3
