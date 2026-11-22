@@ -15,6 +15,7 @@ use netlink_packet_route::{
 
 use crate::{try_rtnl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct AddressGetRequest {
     handle: Handle,
     message: AddressMessage,
@@ -34,7 +35,9 @@ impl AddressGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl Stream<Item = Result<AddressMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<AddressMessage, Error>> + Send {
         let AddressGetRequest {
             mut handle,
             message,
@@ -85,7 +88,7 @@ impl AddressGetRequest {
 // See:
 // https://lists.infradead.org/pipermail/libnl/2013-June/001014.html
 // https://patchwork.ozlabs.org/patch/133440/
-#[derive(Default)]
+#[derive(Debug, Clone, Default)]
 struct AddressFilterBuilder {
     index: Option<u32>,
     address: Option<IpAddr>,

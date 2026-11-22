@@ -20,8 +20,9 @@ use crate::{link::LinkMessageBuilder, packet_route::link::InfoKind};
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkTun> for more detail.
+/// Please check `LinkMessageBuilder::<LinkTun>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkTun;
 
 impl LinkTun {

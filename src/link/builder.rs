@@ -36,6 +36,7 @@ use crate::packet_route::{
 /// }
 /// ```
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkUnspec;
 
 impl LinkUnspec {
@@ -50,7 +51,7 @@ impl LinkUnspec {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 /// Helper struct for building [LinkMessage].
 /// The [LinkMessageBuilder] is designed for advanced user, wrapper
 /// structs/functions are created
@@ -317,7 +318,8 @@ impl<T> LinkMessageBuilder<T> {
     }
 
     /// Include port settings.
-    /// The [LinkBondPort] and [LinkBridgePort] are the helper
+    /// The [`LinkBondPort`](crate::LinkBondPort) and
+    /// [`LinkBridgePort`](crate::LinkBridgePort) are the helpers
     pub fn set_port_data(self, port_data: InfoPortData) -> Self {
         let mut ret = self;
         ret.port_data = Some(port_data);

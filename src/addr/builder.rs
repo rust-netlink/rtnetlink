@@ -10,7 +10,7 @@ use netlink_packet_route::{
     AddressFamily,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 /// Helper struct for building [AddressMessage].
 pub struct AddressMessageBuilder<T> {
     message: AddressMessage,
@@ -30,6 +30,17 @@ impl<T> AddressMessageBuilder<T> {
     /// Sets the interface index.
     pub fn index(mut self, index: u32) -> Self {
         self.message.header.index = index;
+        self
+    }
+
+    /// Return a mutable reference to the message being built.
+    pub fn get_mut(&mut self) -> &mut AddressMessage {
+        &mut self.message
+    }
+
+    /// Append an arbitrary [AddressAttribute].
+    pub fn append_attribute(mut self, attribute: AddressAttribute) -> Self {
+        self.message.attributes.push(attribute);
         self
     }
 

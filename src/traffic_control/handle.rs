@@ -4,9 +4,9 @@ use netlink_packet_core::{NLM_F_CREATE, NLM_F_EXCL, NLM_F_REPLACE};
 use netlink_packet_route::tc::TcMessage;
 
 use super::{
-    QDiscDelRequest, QDiscGetRequest, QDiscNewRequest, TrafficChainGetRequest,
-    TrafficClassGetRequest, TrafficFilterDelRequest, TrafficFilterGetRequest,
-    TrafficFilterNewRequest,
+    QDiscDelRequest, QDiscGetRequest, QDiscNewRequest, TcMessageBuilder,
+    TrafficChainGetRequest, TrafficClassGetRequest, TrafficFilterDelRequest,
+    TrafficFilterGetRequest, TrafficFilterNewRequest,
 };
 use crate::Handle;
 
@@ -19,43 +19,84 @@ impl QDiscHandle {
     }
 
     /// Retrieve the list of qdisc (equivalent to `tc qdisc show`)
-    pub fn get(&mut self) -> QDiscGetRequest {
+    pub fn get(&self) -> QDiscGetRequest {
         QDiscGetRequest::new(self.0.clone())
     }
 
     /// Create a new qdisc, don't replace if the object already exists.
     /// ( equivalent to `tc qdisc add dev STRING`)
-    pub fn add(&mut self, index: i32) -> QDiscNewRequest {
-        let msg = TcMessage::with_index(index);
-        QDiscNewRequest::new(self.0.clone(), msg, NLM_F_EXCL | NLM_F_CREATE)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn add(&self, message: TcMessage) -> QDiscNewRequest {
+        QDiscNewRequest::new(self.0.clone(), message, NLM_F_EXCL | NLM_F_CREATE)
+    }
+
+    /// Create a new qdisc on the given interface index, don't replace if the
+    /// object already exists.
+    /// ( equivalent to `tc qdisc add dev STRING`)
+    pub fn add_iface(&self, index: i32) -> QDiscNewRequest {
+        self.add(TcMessageBuilder::with_index(index).build())
     }
 
     /// Change the qdisc, the handle cannot be changed and neither can the
     /// parent. In other words, change cannot move a node.
     /// ( equivalent to `tc qdisc change dev STRING`)
-    pub fn change(&mut self, index: i32) -> QDiscNewRequest {
-        let msg = TcMessage::with_index(index);
-        QDiscNewRequest::new(self.0.clone(), msg, 0)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn change(&self, message: TcMessage) -> QDiscNewRequest {
+        QDiscNewRequest::new(self.0.clone(), message, 0)
+    }
+
+    /// Change the qdisc on the given interface index.
+    /// ( equivalent to `tc qdisc change dev STRING`)
+    pub fn change_iface(&self, index: i32) -> QDiscNewRequest {
+        self.change(TcMessageBuilder::with_index(index).build())
     }
 
     /// Replace existing matching qdisc, create qdisc if it doesn't already
     /// exist. ( equivalent to `tc qdisc replace dev STRING`)
-    pub fn replace(&mut self, index: i32) -> QDiscNewRequest {
-        let msg = TcMessage::with_index(index);
-        QDiscNewRequest::new(self.0.clone(), msg, NLM_F_CREATE | NLM_F_REPLACE)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn replace(&self, message: TcMessage) -> QDiscNewRequest {
+        QDiscNewRequest::new(
+            self.0.clone(),
+            message,
+            NLM_F_CREATE | NLM_F_REPLACE,
+        )
+    }
+
+    /// Replace existing matching qdisc on the given interface index, create
+    /// qdisc if it doesn't already exist.
+    /// ( equivalent to `tc qdisc replace dev STRING`)
+    pub fn replace_iface(&self, index: i32) -> QDiscNewRequest {
+        self.replace(TcMessageBuilder::with_index(index).build())
     }
 
     /// Performs a replace where the node must exist already.
     /// ( equivalent to `tc qdisc link dev STRING`)
-    pub fn link(&mut self, index: i32) -> QDiscNewRequest {
-        let msg = TcMessage::with_index(index);
-        QDiscNewRequest::new(self.0.clone(), msg, NLM_F_REPLACE)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn link(&self, message: TcMessage) -> QDiscNewRequest {
+        QDiscNewRequest::new(self.0.clone(), message, NLM_F_REPLACE)
+    }
+
+    /// Performs a replace where the node must exist already, on the given
+    /// interface index. ( equivalent to `tc qdisc link dev STRING`)
+    pub fn link_iface(&self, index: i32) -> QDiscNewRequest {
+        self.link(TcMessageBuilder::with_index(index).build())
     }
 
     /// Delete the qdisc ( equivalent to `tc qdisc del dev STRING`)
-    pub fn del(&mut self, index: i32) -> QDiscDelRequest {
-        let msg = TcMessage::with_index(index);
-        QDiscDelRequest::new(self.0.clone(), msg)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn del(&self, message: TcMessage) -> QDiscDelRequest {
+        QDiscDelRequest::new(self.0.clone(), message)
+    }
+
+    /// Delete the qdisc on the given interface index.
+    /// ( equivalent to `tc qdisc del dev STRING`)
+    pub fn del_iface(&self, index: i32) -> QDiscDelRequest {
+        self.del(TcMessageBuilder::with_index(index).build())
     }
 }
 
@@ -72,7 +113,7 @@ impl TrafficClassHandle {
 
     /// Retrieve the list of traffic class (equivalent to
     /// `tc class show dev <interface_name>`)
-    pub fn get(&mut self) -> TrafficClassGetRequest {
+    pub fn get(&self) -> TrafficClassGetRequest {
         TrafficClassGetRequest::new(self.handle.clone(), self.ifindex)
     }
 }
@@ -90,41 +131,70 @@ impl TrafficFilterHandle {
 
     /// Retrieve the list of filter (equivalent to
     /// `tc filter show dev <iface_name>`)
-    pub fn get(&mut self) -> TrafficFilterGetRequest {
+    pub fn get(&self) -> TrafficFilterGetRequest {
         TrafficFilterGetRequest::new(self.handle.clone(), self.ifindex)
     }
 
     /// Add a filter to a node, don't replace if the object already exists.
     /// ( equivalent to `tc filter add dev STRING`)
-    pub fn add(&mut self) -> TrafficFilterNewRequest {
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn add(&self, message: TcMessage) -> TrafficFilterNewRequest {
         TrafficFilterNewRequest::new(
             self.handle.clone(),
-            self.ifindex,
+            message,
             NLM_F_EXCL | NLM_F_CREATE,
         )
     }
 
+    /// Add a filter to the interface of this handle, don't replace if the
+    /// object already exists. ( equivalent to `tc filter add dev STRING`)
+    pub fn add_iface(&self) -> TrafficFilterNewRequest {
+        self.add(TcMessageBuilder::with_index(self.ifindex).build())
+    }
+
     /// Delete a filter from a node, don't replace if the object already exists.
     /// ( equivalent to `tc filter del dev STRING`)
-    pub fn del(&mut self) -> TrafficFilterDelRequest {
-        TrafficFilterDelRequest::new(self.handle.clone(), self.ifindex)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn del(&self, message: TcMessage) -> TrafficFilterDelRequest {
+        TrafficFilterDelRequest::new(self.handle.clone(), message)
+    }
+
+    /// Delete a filter from the interface of this handle.
+    /// ( equivalent to `tc filter del dev STRING`)
+    pub fn del_iface(&self) -> TrafficFilterDelRequest {
+        self.del(TcMessageBuilder::with_index(self.ifindex).build())
     }
 
     /// Change the filter, the handle cannot be changed and neither can the
     /// parent. In other words, change cannot move a node.
     /// ( equivalent to `tc filter change dev STRING`)
-    pub fn change(&mut self) -> TrafficFilterNewRequest {
-        TrafficFilterNewRequest::new(self.handle.clone(), self.ifindex, 0)
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn change(&self, message: TcMessage) -> TrafficFilterNewRequest {
+        TrafficFilterNewRequest::new(self.handle.clone(), message, 0)
+    }
+
+    /// Change the filter on the interface of this handle.
+    /// ( equivalent to `tc filter change dev STRING`)
+    pub fn change_iface(&self) -> TrafficFilterNewRequest {
+        self.change(TcMessageBuilder::with_index(self.ifindex).build())
     }
 
     /// Replace existing matching filter, create filter if it doesn't already
     /// exist. ( equivalent to `tc filter replace dev STRING`)
-    pub fn replace(&mut self) -> TrafficFilterNewRequest {
-        TrafficFilterNewRequest::new(
-            self.handle.clone(),
-            self.ifindex,
-            NLM_F_CREATE,
-        )
+    ///
+    /// The [TcMessage] can be built with [TcMessageBuilder].
+    pub fn replace(&self, message: TcMessage) -> TrafficFilterNewRequest {
+        TrafficFilterNewRequest::new(self.handle.clone(), message, NLM_F_CREATE)
+    }
+
+    /// Replace existing matching filter on the interface of this handle, create
+    /// filter if it doesn't already exist.
+    /// ( equivalent to `tc filter replace dev STRING`)
+    pub fn replace_iface(&self) -> TrafficFilterNewRequest {
+        self.replace(TcMessageBuilder::with_index(self.ifindex).build())
     }
 }
 
@@ -141,7 +211,7 @@ impl TrafficChainHandle {
 
     /// Retrieve the list of chain (equivalent to
     /// `tc chain show dev <iface_name>`)
-    pub fn get(&mut self) -> TrafficChainGetRequest {
+    pub fn get(&self) -> TrafficChainGetRequest {
         TrafficChainGetRequest::new(self.handle.clone(), self.ifindex)
     }
 }

@@ -86,7 +86,7 @@ async fn add_property_alt_ifnames(
 
     handle
         .link()
-        .property_add(link_index)
+        .property_add_iface(link_index)
         .alt_ifname(&alt_ifnames)
         .execute()
         .await?;
@@ -103,7 +103,7 @@ async fn del_property_alt_ifnames(
 
     handle
         .link()
-        .property_del(link_index)
+        .property_del_iface(link_index)
         .alt_ifname(&alt_ifnames)
         .execute()
         .await?;

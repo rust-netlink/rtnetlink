@@ -9,10 +9,7 @@ fn parse_mapping(parameter: &str) -> Result<QosMapping, Box<dyn StdError>> {
         .split_once(':')
         .ok_or("Failed to parse mapping..")?;
 
-    Ok(QosMapping {
-        from: u32::from_str(from)?,
-        to: u32::from_str(to)?,
-    })
+    Ok(QosMapping::new(u32::from_str(from)?, u32::from_str(to)?))
 }
 
 const ARG_BASE: &str = "--base";

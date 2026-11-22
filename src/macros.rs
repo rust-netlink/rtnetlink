@@ -3,9 +3,11 @@
 #[macro_export]
 macro_rules! try_rtnl {
     ($msg: expr, $message_type:path) => {{
-        use netlink_packet_core::{NetlinkMessage, NetlinkPayload};
-        use netlink_packet_route::RouteNetlinkMessage;
-        use $crate::Error;
+        use $crate::{
+            packet_core::{NetlinkMessage, NetlinkPayload},
+            packet_route::RouteNetlinkMessage,
+            Error,
+        };
 
         let msg = $msg?;
         let (header, payload) = msg.into_parts();
@@ -24,8 +26,7 @@ macro_rules! try_rtnl {
 #[macro_export]
 macro_rules! try_nl {
     ($msg: expr) => {{
-        use netlink_packet_core::NetlinkPayload;
-        use $crate::Error;
+        use $crate::{packet_core::NetlinkPayload, Error};
         let message = $msg?;
         if let NetlinkPayload::Error(err) = message.payload {
             return Err(Error::NetlinkError(err));

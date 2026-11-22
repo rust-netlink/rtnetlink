@@ -13,11 +13,12 @@ use netlink_packet_route::{
         NeighbourState,
     },
     route::RouteType,
-    AddressFamily, RouteNetlinkMessage,
+    RouteNetlinkMessage,
 };
 
 use crate::{Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct NeighbourAddRequest {
     handle: Handle,
     message: NeighbourMessage,
@@ -25,45 +26,7 @@ pub struct NeighbourAddRequest {
 }
 
 impl NeighbourAddRequest {
-    pub(crate) fn new(handle: Handle, index: u32, destination: IpAddr) -> Self {
-        let mut message = NeighbourMessage::default();
-
-        message.header.family = match destination {
-            IpAddr::V4(_) => AddressFamily::Inet,
-            IpAddr::V6(_) => AddressFamily::Inet6,
-        };
-
-        message.header.ifindex = index;
-        message.header.state = NeighbourState::Permanent;
-        message.header.kind = RouteType::Unspec;
-
-        message.attributes.push(NeighbourAttribute::Destination(
-            match destination {
-                IpAddr::V4(v4) => NeighbourAddress::Inet(v4),
-                IpAddr::V6(v6) => NeighbourAddress::Inet6(v6),
-            },
-        ));
-
-        NeighbourAddRequest {
-            handle,
-            message,
-            replace: false,
-        }
-    }
-
-    #[cfg(not(target_os = "freebsd"))]
-    pub(crate) fn new_bridge(handle: Handle, index: u32, lla: &[u8]) -> Self {
-        let mut message = NeighbourMessage::default();
-
-        message.header.family = AddressFamily::Bridge;
-        message.header.ifindex = index;
-        message.header.state = NeighbourState::Permanent;
-        message.header.kind = RouteType::Unspec;
-
-        message
-            .attributes
-            .push(NeighbourAttribute::LinkLayerAddress(lla.to_vec()));
-
+    pub(crate) fn new(handle: Handle, message: NeighbourMessage) -> Self {
         NeighbourAddRequest {
             handle,
             message,

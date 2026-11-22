@@ -10,6 +10,7 @@ use crate::{
 
 /// Represent IPVLAN interface.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkIpVlan;
 
 impl LinkIpVlan {
@@ -53,6 +54,7 @@ impl LinkMessageBuilder<LinkIpVlan> {
 
 /// Represent IPVTAP interface.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkIpVtap;
 
 impl LinkIpVtap {

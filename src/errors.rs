@@ -7,6 +7,7 @@ use netlink_packet_route::RouteNetlinkMessage;
 use netlink_proto::NetlinkProtoError;
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     UnexpectedMessage(NetlinkMessage<RouteNetlinkMessage>),
 

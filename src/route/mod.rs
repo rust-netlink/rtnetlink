@@ -8,7 +8,7 @@ mod handle;
 
 pub use self::{
     add::RouteAddRequest,
-    builder::{RouteMessageBuilder, RouteNextHopBuilder},
+    builder::{InvalidRouteMessage, RouteMessageBuilder, RouteNextHopBuilder},
     del::RouteDelRequest,
     get::{IpVersion, RouteGetRequest},
     handle::RouteHandle,

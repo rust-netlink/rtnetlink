@@ -9,6 +9,7 @@ use crate::{
 };
 
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkBridgePort;
 
 impl LinkBridgePort {

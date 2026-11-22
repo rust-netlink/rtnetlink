@@ -10,6 +10,7 @@ use crate::{
 
 /// Represent BareUDP interface.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkBareudp;
 
 impl LinkBareudp {

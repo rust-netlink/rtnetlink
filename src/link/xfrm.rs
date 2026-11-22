@@ -23,8 +23,9 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkXfrm> for more detail.
+/// Please check `LinkMessageBuilder::<LinkXfrm>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkXfrm;
 
 impl LinkXfrm {

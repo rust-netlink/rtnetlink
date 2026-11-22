@@ -25,12 +25,17 @@ pub struct TrafficFilterNewRequest {
 }
 
 impl TrafficFilterNewRequest {
-    pub(crate) fn new(handle: Handle, ifindex: i32, flags: u16) -> Self {
+    pub(crate) fn new(handle: Handle, message: TcMessage, flags: u16) -> Self {
         Self {
             handle,
-            message: TcMessage::with_index(ifindex),
+            message,
             flags: NLM_F_REQUEST | flags,
         }
+    }
+
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut TcMessage {
+        &mut self.message
     }
 
     /// Execute the request
@@ -267,7 +272,7 @@ mod test {
         let (handle, test1, test2, _netns) = setup_env().await;
         handle
             .qdisc()
-            .add(test1.header.index as i32)
+            .add_iface(test1.header.index as i32)
             .ingress()
             .execute()
             .await
@@ -275,7 +280,7 @@ mod test {
 
         handle
             .qdisc()
-            .add(test2.header.index as i32)
+            .add_iface(test2.header.index as i32)
             .ingress()
             .execute()
             .await
@@ -283,7 +288,7 @@ mod test {
 
         handle
             .traffic_filter(test1.header.index as i32)
-            .add()
+            .add_iface()
             .parent(0xffff0000)
             .protocol(0x0003)
             .redirect(test2.header.index)
@@ -295,7 +300,7 @@ mod test {
         // Verify that attempting to set 2 redirects causes and error
         assert!(handle
             .traffic_filter(test1.header.index as i32)
-            .add()
+            .add_iface()
             .parent(0xffff0000)
             .protocol(0x0003)
             .redirect(test2.header.index)

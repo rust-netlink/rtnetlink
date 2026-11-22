@@ -59,7 +59,7 @@ async fn add_neighbour(
     if let Some(link) = links.try_next().await? {
         handle
             .neighbours()
-            .add(link.header.index, ip)
+            .add_neigh(link.header.index, ip)
             .link_layer_address(&link_layer_address)
             .execute()
             .await?;

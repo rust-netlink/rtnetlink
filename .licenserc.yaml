@@ -11,5 +11,6 @@ header:
     - 'CHANGELOG'
     - 'LICENSE-MIT'
     - '.gitignore'
+    - 'tools/public-api.txt'
 
   comment: on-failure

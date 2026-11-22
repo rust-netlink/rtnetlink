@@ -15,6 +15,7 @@ use crate::{try_nl, Error, Handle};
 /// A few methods for common actions (creating a veth pair, creating a vlan
 /// interface, etc.) are provided, but custom requests can be made using the
 /// [`message_mut()`](#method.message_mut) accessor.
+#[derive(Debug, Clone)]
 pub struct LinkAddRequest {
     handle: Handle,
     message: LinkMessage,
@@ -38,11 +39,16 @@ impl LinkAddRequest {
         ret
     }
 
-    /// Setting arbitrary [NetlinkHeader] flags
+    /// Setting arbitrary [netlink_packet_core::NetlinkHeader] flags
     pub fn set_flags(self, flags: u16) -> Self {
         let mut ret = self;
         ret.flags = flags;
         ret
+    }
+
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut LinkMessage {
+        &mut self.message
     }
 
     /// Execute the request.

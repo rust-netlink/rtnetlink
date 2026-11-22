@@ -8,6 +8,7 @@ use netlink_packet_route::{neighbour::NeighbourMessage, RouteNetlinkMessage};
 
 use crate::{Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct NeighbourDelRequest {
     handle: Handle,
     message: NeighbourMessage,

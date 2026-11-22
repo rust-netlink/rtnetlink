@@ -13,6 +13,7 @@ use netlink_packet_route::{
 
 use crate::{try_rtnl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct LinkGetRequest {
     handle: Handle,
     message: LinkMessage,
@@ -48,7 +49,9 @@ impl LinkGetRequest {
     }
 
     /// Execute the request
-    pub fn execute(self) -> impl Stream<Item = Result<LinkMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<LinkMessage, Error>> + Send {
         let LinkGetRequest {
             mut handle,
             message,

@@ -14,6 +14,7 @@ use crate::{Error, Handle};
 /// Request to resolve a network namespace name to its nsid.
 ///
 /// Equivalent to iproute2's `netns_id_from_name()`.
+#[derive(Debug, Clone)]
 pub struct LinkGetNsidHandle {
     handle: Handle,
     name: String,
@@ -67,6 +68,7 @@ impl LinkGetNsidHandle {
 /// Request to assign a new nsid to a network namespace.
 ///
 /// Equivalent to iproute2's `set_netns_id_from_name()`.
+#[derive(Debug, Clone)]
 pub struct LinkAssignNsidHandle {
     handle: Handle,
     name: String,

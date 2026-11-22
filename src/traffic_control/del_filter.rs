@@ -2,10 +2,7 @@
 
 use futures_util::stream::StreamExt;
 use netlink_packet_core::{NetlinkMessage, NLM_F_ACK, NLM_F_REQUEST};
-use netlink_packet_route::{
-    tc::{TcHandle, TcMessage},
-    RouteNetlinkMessage,
-};
+use netlink_packet_route::{tc::TcMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
@@ -17,12 +14,17 @@ pub struct TrafficFilterDelRequest {
 }
 
 impl TrafficFilterDelRequest {
-    pub(crate) fn new(handle: Handle, ifindex: i32) -> Self {
+    pub(crate) fn new(handle: Handle, message: TcMessage) -> Self {
         Self {
             handle,
-            message: TcMessage::with_index(ifindex),
+            message,
             flags: NLM_F_REQUEST | NLM_F_ACK,
         }
+    }
+
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut TcMessage {
+        &mut self.message
     }
 
     /// Execute the request
@@ -44,33 +46,5 @@ impl TrafficFilterDelRequest {
         }
 
         Ok(())
-    }
-
-    /// Set parent.
-    /// Equivalent to `[ root | ingress | egress | parent CLASSID ]`
-    /// command args. They are mutually exclusive.
-    pub fn parent(mut self, parent: u32) -> Self {
-        self.message.header.parent = parent.into();
-        self
-    }
-
-    /// Set parent to root.
-    pub fn root(mut self) -> Self {
-        self.message.header.parent = TcHandle::ROOT;
-        self
-    }
-
-    /// Set parent to ingress.
-    pub fn ingress(mut self) -> Self {
-        self.message.header.parent =
-            TcHandle::new(0xffff, TcHandle::MIN_INGRESS);
-        self
-    }
-
-    /// Set parent to egress.
-    pub fn egress(mut self) -> Self {
-        self.message.header.parent =
-            TcHandle::new(0xffff, TcHandle::MIN_EGRESS);
-        self
     }
 }

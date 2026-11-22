@@ -29,6 +29,9 @@ impl Handle {
         message: NetlinkMessage<RouteNetlinkMessage>,
     ) -> Result<
         impl Stream<Item = Result<NetlinkMessage<RouteNetlinkMessage>, Error>>
+            + Send
+            // `use<>` captures no generic parameters or lifetimes, so the
+            // returned stream does not borrow `self`.
             + use<>,
         Error,
     > {
@@ -47,7 +50,11 @@ impl Handle {
     /// [`new_multicast_connection`](crate::new_multicast_connection)) ended.
     pub fn closed(
         &self,
-    ) -> impl Future<Output = Option<Arc<NetlinkProtoError>>> + use<> {
+    ) -> impl Future<Output = Option<Arc<NetlinkProtoError>>>
+           + Send
+           // `use<>` captures no generic parameters or lifetimes, so the
+           // returned future does not borrow `self`.
+           + use<> {
         self.0.closed()
     }
 

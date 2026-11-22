@@ -39,7 +39,7 @@ const SIT_ISATAP: u16 = 0x0001;
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkSit> for more detail.
+/// Please check `LinkMessageBuilder::<LinkSit>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkSit {
     flags: u16,

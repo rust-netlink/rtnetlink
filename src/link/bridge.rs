@@ -28,7 +28,7 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkBridge> for more detail.
+/// Please check `LinkMessageBuilder::<LinkBridge>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkBridge {
     boolopt: Option<BridgeBooleanOptions>,

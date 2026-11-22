@@ -23,8 +23,9 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkVxcan> for more detail.
+/// Please check `LinkMessageBuilder::<LinkVxcan>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkVxcan;
 
 impl LinkVxcan {

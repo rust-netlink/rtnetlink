@@ -30,7 +30,7 @@ async fn del_link(
     let name = name.into();
     let mut links = handle.link().get().match_name(&name).execute();
     if let Some(link) = links.try_next().await? {
-        handle.link().del(link.header.index).execute().await
+        handle.link().del_iface(link.header.index).execute().await
     } else {
         eprintln!("link {name} not found");
         Ok(())

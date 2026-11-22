@@ -15,6 +15,7 @@ use netlink_packet_route::{
 
 use crate::{Error, Handle, IpVersion};
 
+#[derive(Debug, Clone)]
 pub struct NeighbourGetRequest {
     handle: Handle,
     message: NeighbourMessage,
@@ -55,7 +56,7 @@ impl NeighbourGetRequest {
     /// Execute the request
     pub fn execute(
         self,
-    ) -> impl Stream<Item = Result<NeighbourMessage, Error>> {
+    ) -> impl Stream<Item = Result<NeighbourMessage, Error>> + Send {
         let NeighbourGetRequest {
             mut handle,
             message,

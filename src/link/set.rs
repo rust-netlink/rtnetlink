@@ -8,6 +8,7 @@ use netlink_packet_route::{link::LinkMessage, RouteNetlinkMessage};
 
 use crate::{try_nl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct LinkSetRequest {
     handle: Handle,
     message: LinkMessage,
@@ -16,6 +17,11 @@ pub struct LinkSetRequest {
 impl LinkSetRequest {
     pub(crate) fn new(handle: Handle, message: LinkMessage) -> Self {
         LinkSetRequest { handle, message }
+    }
+
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut LinkMessage {
+        &mut self.message
     }
 
     /// Execute the request

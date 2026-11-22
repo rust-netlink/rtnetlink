@@ -135,7 +135,7 @@ async fn _get_iface(
 }
 
 async fn _del_iface(handle: &mut LinkHandle, index: u32) -> Result<(), Error> {
-    handle.del(index).execute().await
+    handle.del_iface(index).execute().await
 }
 
 async fn _create_macvlan(

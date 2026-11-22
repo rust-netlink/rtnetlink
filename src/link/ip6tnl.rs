@@ -40,7 +40,7 @@ const IP6_FLOWINFO_FLOWLABEL_MASK: u32 = 0x000fffff;
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkIp6Tnl> for more detail.
+/// Please check `LinkMessageBuilder::<LinkIp6Tnl>` for more detail.
 #[derive(Default, Debug)]
 pub struct LinkIp6Tnl {
     flags: Option<Ip6TunnelFlags>,

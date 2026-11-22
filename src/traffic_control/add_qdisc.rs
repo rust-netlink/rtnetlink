@@ -27,6 +27,11 @@ impl QDiscNewRequest {
         }
     }
 
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut TcMessage {
+        &mut self.message
+    }
+
     /// Execute the request
     pub async fn execute(self) -> Result<(), Error> {
         let Self {
@@ -162,7 +167,7 @@ mod test {
         let (handle, test_link, _netns) = setup_env().await;
         handle
             .qdisc()
-            .add(test_link.header.index as i32)
+            .add_iface(test_link.header.index as i32)
             .ingress()
             .execute()
             .await

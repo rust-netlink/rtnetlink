@@ -29,8 +29,9 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkMacVtap> for more detail.
+/// Please check `LinkMessageBuilder::<LinkMacVtap>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkMacVtap;
 
 impl LinkMacVtap {

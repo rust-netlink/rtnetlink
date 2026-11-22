@@ -30,7 +30,7 @@ impl AddrLabelGetRequest {
     /// Execute the request
     pub fn execute(
         self,
-    ) -> impl Stream<Item = Result<AddrLabelMessage, Error>> {
+    ) -> impl Stream<Item = Result<AddrLabelMessage, Error>> + Send {
         let AddrLabelGetRequest {
             mut handle,
             message,

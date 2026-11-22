@@ -29,8 +29,9 @@ use crate::{
 /// }
 /// ```
 ///
-/// Please check LinkMessageBuilder::<LinkIpoib> for more detail.
+/// Please check `LinkMessageBuilder::<LinkIpoib>` for more detail.
 #[derive(Default, Debug)]
+#[non_exhaustive]
 pub struct LinkIpoib;
 
 impl LinkIpoib {

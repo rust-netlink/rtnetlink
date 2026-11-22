@@ -20,6 +20,11 @@ pub struct RouteGetRequest {
 }
 
 /// Internet Protocol (IP) version.
+///
+/// This enum is intentionally closed. The Linux rtnetlink API only supports
+/// IPv4 and IPv6 for the operations using this type; a future protocol
+/// version would be added with a new method instead of a new variant, so
+/// exhaustive matching on this enum is safe.
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd)]
 pub enum IpVersion {
     /// IPv4
@@ -46,7 +51,9 @@ impl RouteGetRequest {
         &mut self.message
     }
 
-    pub fn execute(self) -> impl Stream<Item = Result<RouteMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<RouteMessage, Error>> + Send {
         let RouteGetRequest {
             mut handle,
             message,

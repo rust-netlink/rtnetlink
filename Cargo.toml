@@ -23,9 +23,11 @@ log = "0.4.8"
 netlink-packet-route = { version = "1.0.0-rc2" }
 netlink-packet-core = { version = "1.0.0-rc2" }
 netlink-proto = { default-features = false, version = "1.0.0-rc2" }
-nix = { version = "0.31.3", default-features = false, features = ["fs", "mount", "sched", "signal"] }
 tokio = { version = "1.0.1", features = ["rt"], optional = true}
 async-global-executor = { version = "2.0.2", optional = true }
+
+[target.'cfg(not(target_os = "freebsd"))'.dependencies]
+nix = { version = "0.31.3", default-features = false, features = ["fs", "mount", "sched", "signal"] }
 
 [dev-dependencies]
 env_logger = "0.11.0"

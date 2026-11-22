@@ -13,6 +13,7 @@ use netlink_packet_route::{
 
 use crate::{try_rtnl, Error, Handle};
 
+#[derive(Debug, Clone)]
 pub struct AfstatsRequest {
     handle: Handle,
     message: StatsMessage,
@@ -25,6 +26,11 @@ impl AfstatsRequest {
         AfstatsRequest { handle, message }
     }
 
+    /// Return a mutable reference to the request message.
+    pub fn message_mut(&mut self) -> &mut StatsMessage {
+        &mut self.message
+    }
+
     /// Filter by link index
     pub fn match_index(mut self, index: u32) -> Self {
         self.message.header.ifindex = index;
@@ -32,7 +38,9 @@ impl AfstatsRequest {
     }
 
     /// Execute the request and return a stream of stats messages
-    pub fn execute(self) -> impl Stream<Item = Result<StatsMessage, Error>> {
+    pub fn execute(
+        self,
+    ) -> impl Stream<Item = Result<StatsMessage, Error>> + Send {
         let AfstatsRequest {
             mut handle,
             message,
