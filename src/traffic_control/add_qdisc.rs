@@ -167,7 +167,7 @@ mod test {
         let (handle, test_link, _netns) = setup_env().await;
         handle
             .qdisc()
-            .add(test_link.header.index as i32)
+            .add_iface(test_link.header.index as i32)
             .ingress()
             .execute()
             .await

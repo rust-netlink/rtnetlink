@@ -25,7 +25,13 @@ async fn main() -> Result<(), ()> {
     let (connection, handle, _) = new_connection().unwrap();
     tokio::spawn(connection);
 
-    if let Err(e) = handle.qdisc().add(index as i32).ingress().execute().await {
+    if let Err(e) = handle
+        .qdisc()
+        .add_iface(index as i32)
+        .ingress()
+        .execute()
+        .await
+    {
         eprintln!("{e}");
     }
 
