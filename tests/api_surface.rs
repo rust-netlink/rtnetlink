@@ -50,6 +50,13 @@ fn crate_root_types_are_nameable() {
 }
 
 #[test]
+fn netlink_message_stream_is_send_and_unpin() {
+    fn assert_send_unpin<T: Send + Unpin>() {}
+
+    assert_send_unpin::<rtnetlink::NetlinkMessageStream>();
+}
+
+#[test]
 fn internal_modules_are_not_exposed_as_pub_mod() {
     // Exposing an internal module would give its types a second, unstable
     // path such as `rtnetlink::link::LinkHandle`.
