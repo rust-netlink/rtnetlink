@@ -9,6 +9,7 @@ use crate::{
     NeighbourMessageBuilder,
 };
 
+#[derive(Debug, Clone)]
 pub struct NeighbourHandle(Handle);
 
 impl NeighbourHandle {
