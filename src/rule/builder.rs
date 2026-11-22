@@ -113,6 +113,20 @@ impl<T> RuleMessageBuilder<T> {
     }
 }
 
+impl Default for RuleMessageBuilder<()> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl RuleMessageBuilder<()> {
+    /// Create a new [RuleMessageBuilder] without specifying the address
+    /// family.
+    pub fn new() -> Self {
+        Self::new_no_address_family()
+    }
+}
+
 impl Default for RuleMessageBuilder<Ipv4Addr> {
     fn default() -> Self {
         Self::new()
